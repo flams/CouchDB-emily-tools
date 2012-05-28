@@ -118,6 +118,7 @@ namespace("tests", function () {
 			TerminalReporter = require("jasmine-node/lib/jasmine-node/reporter").jasmineNode.TerminalReporter;
 		
 		["lib/require.js",
+		 "lib/Emily.js",
 		 "src/*.js", 
 		 "specs/specHelper.js",
 		 "specs/*.js"].forEach(_requireList);
