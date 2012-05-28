@@ -1,3 +1,8 @@
+/**
+ * https://github.com/flams/CouchDB-emily-tools
+ * The MIT License (MIT)
+ * Copyright (c) 2012 Olivier Scherrer <pode.fr@gmail.com>
+ */
 require(["CouchDBUser", "Store", "CouchDBStore"], function (CouchDBUser, Store, CouchDBStore) {
 	
 	describe("CouchDBUserTest", function () {
@@ -52,6 +57,39 @@ require(["CouchDBUser", "Store", "CouchDBStore"], function (CouchDBUser, Store, 
 		
 		it("should have a default value", function () {
 			expect(couchDBUser.getIdPrefix()).toEqual("org.couchdb.user:");
+		});
+		
+		it("should have a function to set id", function () {
+			expect(couchDBUser.has("_id")).toEqual(false);
+			expect(couchDBUser.setId()).toEqual(false);
+			expect(couchDBUser.setId("123")).toEqual(true);
+			
+			expect(couchDBUser.get("_id")).toEqual("org.couchdb.user:123");
+		});
+		
+		it("should have a function to get id", function () {
+			expect(couchDBUser.setId("123")).toEqual(true);
+			expect(couchDBUser.getId()).toEqual("org.couchdb.user:123");
+		});
+		
+	});
+	
+	describe("CouchDBUserLoadSave", function () {
+		
+		var couchDBUser = null;
+		
+		beforeEach(function () {
+			couchDBUser = new CouchDBUser;
+		});
+		
+		it("should have a function to load user", function () {
+			spyOn(couchDBUser, "sync").andReturn(true);
+			expect(couchDBUser.load()).toEqual(false);
+			expect(couchDBUser.load("123")).toEqual(true);
+			
+			expect(couchDBUser.sync.wasCalled).toEqual(true);
+			expect(couchDBUser.sync.mostRecentCall.args[0]).toEqual("_users");
+			expect(couchDBUser.sync.mostRecentCall.args[1]).toEqual("org.couchdb.user:123");
 		});
 		
 	});
