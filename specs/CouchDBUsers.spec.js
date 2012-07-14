@@ -3,7 +3,7 @@
  * The MIT License (MIT)
  * Copyright (c) 2012 Olivier Scherrer <pode.fr@gmail.com>
  */
-require(["CouchDBUsers"], function (CouchDBUsers) {
+require(["CouchDBUsers", "Transport"], function (CouchDBUsers, Transport) {
 
 	describe("CouchDBUsersTest", function () {
 		
@@ -14,5 +14,55 @@ require(["CouchDBUsers"], function (CouchDBUsers) {
 		
 	});
 	
+	describe("CouchDBUsersTransport", function () {
+		
+		var couchDBUsers = null;
+		
+		beforeEach(function () {
+			couchDBUsers = new CouchDBUsers;
+		});
+		
+		it("should have a function to get/setTransport", function () {
+			expect(couchDBUsers.setTransport).toBeInstanceOf(Function);
+			expect(couchDBUsers.getTransport).toBeInstanceOf(Function);
+		});
+		
+		it("should only save instances of Emily's Transport", function () {
+			var transport = new Transport;
+			
+			expect(couchDBUsers.setTransport({})).toEqual(false);
+			expect(couchDBUsers.getTransport()).toEqual(null);
+			expect(couchDBUsers.setTransport(transport)).toEqual(true);
+			expect(couchDBUsers.getTransport()).toBe(transport);
+		});
+		
+	});
+	
+	describe("CouchDBUsersLogin", function () {
+		
+		var couchDBUsers = null,
+			transport = null;
+		
+		beforeEach(function () {
+			couchDBUsers = new CouchDBUsers;
+			transport = new Transport;
+			couchDBUsers.setTransport(transport);
+		});
+		
+		it("should have a login function", function () {
+			expect(couchDBUsers.login).toBeInstanceOf(Function);
+		});
+		
+		it("should open a session", function () {
+			var req;
+			
+			spyOn(transport, "request");
+			couchDBUsers.login("name", "password");
+			
+			expect(transport.request.wasCalled).toEqual(true);
+			expect(transport.request.mostRecentCall.args[0]).toEqual("CouchDB");
+			req = transport.request.mostRecentCall.args[1];
+		});
+	});
 	
 });
