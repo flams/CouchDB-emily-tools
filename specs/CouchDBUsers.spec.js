@@ -3,7 +3,7 @@
  * The MIT License (MIT)
  * Copyright (c) 2012 Olivier Scherrer <pode.fr@gmail.com>
  */
-require(["CouchDBUsers", "Transport"], function (CouchDBUsers, Transport) {
+require(["CouchDBUsers", "Transport", "Promise"], function (CouchDBUsers, Transport, Promise) {
 
 	describe("CouchDBUsersTest", function () {
 		
@@ -47,16 +47,16 @@ require(["CouchDBUsers", "Transport"], function (CouchDBUsers, Transport) {
 			couchDBUsers = new CouchDBUsers;
 			transport = new Transport;
 			couchDBUsers.setTransport(transport);
+			spyOn(transport, "request");
 		});
 		
 		it("should have a login function", function () {
 			expect(couchDBUsers.login).toBeInstanceOf(Function);
 		});
 		
-		it("should open a session", function () {
+		it("should try to open a session", function () {
 			var req;
 			
-			spyOn(transport, "request");
 			couchDBUsers.login("n4me", "p4ssword");
 			
 			expect(transport.request.wasCalled).toEqual(true);
@@ -67,9 +67,37 @@ require(["CouchDBUsers", "Transport"], function (CouchDBUsers, Transport) {
 			expect(req.path).toEqual("/_session");
 			expect(req["Content-Type"]).toEqual("application/x-www-form-urlencoded");
 			expect(req.data).toEqual("name=n4me&password=p4ssword");
+		});
+		
+		it("should return a promise", function () {
+			expect(couchDBUsers.login()).toBeInstanceOf(Promise);
+		});
+		
+		it("should resolve the promise with the request's result", function () {
+			var promise,
+				callback;
 			
+			promise = couchDBUsers.login("","");
+			promise.then(function (result) {
+				expect(result.ok).toEqual(true);
+			});
+			
+			transport.request.mostRecentCall.args[2]({"ok": true});
 			
 		});
+		
+		it("should reject the promise when name and passwords are not strings", function () {
+			var promise;
+			
+			promise = couchDBUsers.login();
+			
+			promise.then(function () {}, function (result) {
+				expect(result.error).toEqual("name & password must be strings");
+			});
+		});
+		
+		
+		
 	});
 	
 });

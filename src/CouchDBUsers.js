@@ -5,14 +5,14 @@
  */
 define("CouchDBUsers", 
 		
-["Transport"],
+["Transport", "Promise"],
 
 /**
  * @class
  * CouchDBUser synchronises a CouchDBStore with a CouchDB User.
  * It also provides tools to ease the creation/modification of users.
  */
-function CouchDBUsers(EmilyTransport) {
+function CouchDBUsers(EmilyTransport, Promise) {
 	
 	return function CouchDBUsersConstructor() {
 		
@@ -33,7 +33,24 @@ function CouchDBUsers(EmilyTransport) {
 		
 		this.login = function login(name, password) {
 			
-			_transport.request("CouchDB", {});
+			var promise = new Promise;
+			
+			if (typeof name == "string" && typeof password == "string") {
+				_transport.request("CouchDB", {
+					method: "POST",
+					path: "/_session",
+					"Content-Type": "application/x-www-form-urlencoded",
+					data: "name=" + name + "&password=" + password
+				}, 
+				promise.resolve,
+				promise);
+			} else {
+				promise.reject({
+					error: "name & password must be strings"
+				});
+			}
+			
+			return promise;
 			
 		};
 		
