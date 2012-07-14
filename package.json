@@ -1,0 +1,36 @@
+{
+ "name": "CouchDB-emily-tools",
+ "description": "CouchDB Tools for Emily&Olives applications",
+ "version": "0.0.1dev",
+ "homepage": "https://github.com/flams/CouchDB-emily-tools",
+ "licenses": [{
+  "type":"MIT",
+  "url":"https://raw.github.com/flams/CouchDB-emily-tools/master/LICENSE"
+ }],
+ "files": [
+ 	"build",
+ 	"LICENSE",
+ 	"tools.js"
+ ],
+ "author": "Olivier Scherrer <pode.fr@gmail.com>",
+ "dependencies": {
+  "requirejs": ">=2.0.4",
+  "emily": ">=1.1.4"
+  },
+ "keywords": ["CouchDB", "Emily", "Olives", "Tools"],
+ "repository": {
+  "type": "git",
+  "url": "git@github.com:flams/CouchDB-emily-tools.git"
+ },
+ "bugs": {
+  "url": "https://github.com/flams/CouchDB-emily-tools/issues"
+ },
+ "main":"tools.js",
+ "engines": { 
+ 	"node":">= 0.8.0"
+ }, 
+ "scripts": {
+ 	"test": "jake tests:node"
+ }
+
+}
