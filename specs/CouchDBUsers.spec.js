@@ -57,11 +57,18 @@ require(["CouchDBUsers", "Transport"], function (CouchDBUsers, Transport) {
 			var req;
 			
 			spyOn(transport, "request");
-			couchDBUsers.login("name", "password");
+			couchDBUsers.login("n4me", "p4ssword");
 			
 			expect(transport.request.wasCalled).toEqual(true);
 			expect(transport.request.mostRecentCall.args[0]).toEqual("CouchDB");
 			req = transport.request.mostRecentCall.args[1];
+			
+			expect(req.method).toEqual("POST");
+			expect(req.path).toEqual("/_session");
+			expect(req["Content-Type"]).toEqual("application/x-www-form-urlencoded");
+			expect(req.data).toEqual("name=n4me&password=p4ssword");
+			
+			
 		});
 	});
 	
