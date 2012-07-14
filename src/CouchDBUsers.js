@@ -9,8 +9,8 @@ define("CouchDBUsers",
 
 /**
  * @class
- * CouchDBUser synchronises a CouchDBStore with a CouchDB User.
- * It also provides tools to ease the creation/modification of users.
+ * CouchDBUsers is a library with utility tools to manage users.
+ * It helps with the creation of users and login
  */
 function CouchDBUsers(EmilyTransport, Promise) {
 	
@@ -18,6 +18,11 @@ function CouchDBUsers(EmilyTransport, Promise) {
 		
 		var _transport = null;
 		
+		/**
+		 * Set the transport to be used, must be an Emily Transport
+		 * @param transport
+		 * @returns true if Transport is from Emily
+		 */
 		this.setTransport = function setTransport(transport) {
 			if (transport instanceof EmilyTransport) {
 				_transport = transport;
@@ -27,20 +32,33 @@ function CouchDBUsers(EmilyTransport, Promise) {
 			}
 		};
 		
+		/**
+		 * Get the currently set transport
+		 * For debugging only
+		 * @private
+		 * @returns {Transport}
+		 */
 		this.getTransport = function getTransport() {
 			return _transport;
 		};
 		
+		/**
+		 * User login. It fetches the user document
+		 * the corresponds to the given name.
+		 * It will only work if the credentials are correct.
+		 * @param {String} name the name of the user
+		 * @param {String} password the password of the user
+		 * @returns {Promise}
+		 */
 		this.login = function login(name, password) {
 			
 			var promise = new Promise;
 			
 			if (typeof name == "string" && typeof password == "string") {
 				_transport.request("CouchDB", {
-					method: "POST",
-					path: "/_session",
-					"Content-Type": "application/x-www-form-urlencoded",
-					data: "name=" + name + "&password=" + password
+					method: "GET",
+					path: "/_users/org.couchdb.user:"+name,
+					auth: name + ":" + password
 				}, 
 				promise.resolve,
 				promise);
@@ -53,6 +71,8 @@ function CouchDBUsers(EmilyTransport, Promise) {
 			return promise;
 			
 		};
+		
+		
 		
 	};
 	

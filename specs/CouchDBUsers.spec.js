@@ -63,10 +63,9 @@ require(["CouchDBUsers", "Transport", "Promise"], function (CouchDBUsers, Transp
 			expect(transport.request.mostRecentCall.args[0]).toEqual("CouchDB");
 			req = transport.request.mostRecentCall.args[1];
 			
-			expect(req.method).toEqual("POST");
-			expect(req.path).toEqual("/_session");
-			expect(req["Content-Type"]).toEqual("application/x-www-form-urlencoded");
-			expect(req.data).toEqual("name=n4me&password=p4ssword");
+			expect(req.method).toEqual("GET");
+			expect(req.path).toEqual("/_users/org.couchdb.user:n4me");
+			expect(req.auth).toEqual("n4me:p4ssword");
 		});
 		
 		it("should return a promise", function () {
@@ -79,10 +78,10 @@ require(["CouchDBUsers", "Transport", "Promise"], function (CouchDBUsers, Transp
 			
 			promise = couchDBUsers.login("","");
 			promise.then(function (result) {
-				expect(result.ok).toEqual(true);
+				expect(result.result).toEqual("whatever");
 			});
 			
-			transport.request.mostRecentCall.args[2]({"ok": true});
+			transport.request.mostRecentCall.args[2]({"result": "whatever"});
 			
 		});
 		
