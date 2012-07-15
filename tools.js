@@ -9,3 +9,4 @@ var requirejs = require("requirejs"),
 
 requirejs(__dirname + "/build/CouchDBTools.js");
 
+module.exports.requirejs = requirejs;
