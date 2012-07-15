@@ -12,14 +12,14 @@
 <span class='line'>  5</span>  */</span><span class="WHIT">
 <span class='line'>  6</span> </span><span class="NAME">define</span><span class="PUNC">(</span><span class="STRN">"CouchDBUsers"</span><span class="PUNC">,</span><span class="WHIT"> 
 <span class='line'>  7</span> 		
-<span class='line'>  8</span> </span><span class="PUNC">[</span><span class="STRN">"Transport"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">"Promise"</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>  8</span> </span><span class="PUNC">[</span><span class="STRN">"Promise"</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
 <span class='line'>  9</span> 
 <span class='line'> 10</span> </span><span class="COMM">/**
 <span class='line'> 11</span>  * @class
 <span class='line'> 12</span>  * CouchDBUsers is a library with utility tools to manage users.
 <span class='line'> 13</span>  * It helps with the creation of users and login
 <span class='line'> 14</span>  */</span><span class="WHIT">
-<span class='line'> 15</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">CouchDBUsers</span><span class="PUNC">(</span><span class="NAME">EmilyTransport</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">Promise</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 15</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">CouchDBUsers</span><span class="PUNC">(</span><span class="NAME">Promise</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 16</span> </span><span class="WHIT">	
 <span class='line'> 17</span> 	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">CouchDBUsersConstructor</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 18</span> </span><span class="WHIT">		
@@ -31,7 +31,7 @@
 <span class='line'> 24</span> 		 * @returns true if Transport is from Emily
 <span class='line'> 25</span> 		 */</span><span class="WHIT">
 <span class='line'> 26</span> </span><span class="WHIT">		</span><span class="NAME">this.setTransport</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">setTransport</span><span class="PUNC">(</span><span class="NAME">transport</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 27</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">transport</span><span class="WHIT"> </span><span class="KEYW">instanceof</span><span class="WHIT"> </span><span class="NAME">EmilyTransport</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 27</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">transport</span><span class="WHIT"> </span><span class="KEYW">instanceof</span><span class="WHIT"> </span><span class="NAME">Object</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 28</span> </span><span class="WHIT">				</span><span class="NAME">_transport</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">transport</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 29</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 30</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
