@@ -1,3 +1,5 @@
+Currently work in progress
+
 CouchDB-emily-tools
 ===================
 
