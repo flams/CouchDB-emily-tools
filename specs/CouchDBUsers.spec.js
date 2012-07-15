@@ -28,9 +28,9 @@ require(["CouchDBUsers", "Transport", "Promise"], function (CouchDBUsers, Transp
 		});
 		
 		it("should only save instances of Emily's Transport", function () {
-			var transport = new Transport;
+			var transport = {};
 			
-			expect(couchDBUsers.setTransport({})).toEqual(false);
+			expect(couchDBUsers.setTransport()).toEqual(false);
 			expect(couchDBUsers.getTransport()).toEqual(null);
 			expect(couchDBUsers.setTransport(transport)).toEqual(true);
 			expect(couchDBUsers.getTransport()).toBe(transport);

@@ -5,14 +5,14 @@
  */
 define("CouchDBUsers", 
 		
-["Transport", "Promise"],
+["Promise"],
 
 /**
  * @class
  * CouchDBUsers is a library with utility tools to manage users.
  * It helps with the creation of users and login
  */
-function CouchDBUsers(EmilyTransport, Promise) {
+function CouchDBUsers(Promise) {
 	
 	return function CouchDBUsersConstructor() {
 		
@@ -24,7 +24,7 @@ function CouchDBUsers(EmilyTransport, Promise) {
 		 * @returns true if Transport is from Emily
 		 */
 		this.setTransport = function setTransport(transport) {
-			if (transport instanceof EmilyTransport) {
+			if (transport instanceof Object) {
 				_transport = transport;
 				return true;
 			} else {
