@@ -3,7 +3,9 @@
  * The MIT License (MIT)
  * Copyright (c) 2012 Olivier Scherrer <pode.fr@gmail.com>
  */
-require(["CouchDBUser", "Store", "CouchDBStore"], function (CouchDBUser, Store, CouchDBStore) {
+require(["CouchDBUser", "Store", "CouchDBStore", "Transport", "Promise"], 
+		
+function (CouchDBUser, Store, CouchDBStore, Transport, Promise) {
 	
 	describe("CouchDBUserTest", function () {
 		
@@ -90,6 +92,71 @@ require(["CouchDBUser", "Store", "CouchDBStore"], function (CouchDBUser, Store, 
 			expect(couchDBUser.sync.wasCalled).toEqual(true);
 			expect(couchDBUser.sync.mostRecentCall.args[0]).toEqual("_users");
 			expect(couchDBUser.sync.mostRecentCall.args[1]).toEqual("org.couchdb.user:123");
+		});
+		
+	});
+	
+	describe("CouchDBUserLogin", function () {
+		
+		var couchDBUser = null,
+			transport = null;
+		
+		beforeEach(function () {
+			couchDBUser = new CouchDBUser;
+			transport = new Transport;
+			couchDBUser.setTransport(transport);
+			spyOn(transport, "request");
+		});
+		
+		it("should have a function to log the user in", function () {
+			expect(couchDBUser.login).toBeInstanceOf(Function);
+		});
+		
+		it("should try to open a session", function () {
+			var req;
+			
+			couchDBUser.set("name", "n4me");
+			couchDBUser.set("password", "p4ssword");
+			
+			couchDBUser.login();
+			
+			expect(transport.request.wasCalled).toEqual(true);
+			expect(transport.request.mostRecentCall.args[0]).toEqual("CouchDB");
+			req = transport.request.mostRecentCall.args[1];
+			
+			expect(req.method).toEqual("GET");
+			expect(req.path).toEqual("/_users/org.couchdb.user:n4me");
+			expect(req.auth).toEqual("n4me:p4ssword");
+		});
+		
+		it("should return a promise", function () {
+			expect(couchDBUser.login()).toBeInstanceOf(Promise);
+		});
+		
+		it("should resolve the promise with the request's result", function () {
+			var promise,
+				callback;
+			
+			couchDBUser.set("name", "n4me");
+			couchDBUser.set("password", "p4ssword");
+			
+			promise = couchDBUser.login();
+			promise.then(function (result) {
+				expect(result.result).toEqual("whatever");
+			});
+			
+			transport.request.mostRecentCall.args[2]({"result": "whatever"});
+			
+		});
+		
+		it("should reject the promise when name or password is not a string", function () {
+			var promise;
+			
+			promise = couchDBUser.login();
+			
+			promise.then(function () {}, function (result) {
+				expect(result.error).toEqual("name & password must be strings");
+			});
 		});
 		
 	});

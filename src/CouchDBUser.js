@@ -5,14 +5,14 @@
  */
 define("CouchDBUser", 
 		
-["CouchDBStore"], 
+["CouchDBStore", "Promise"], 
 
 /**
  * @class
  * CouchDBUser synchronises a CouchDBStore with a CouchDB User.
  * It also provides tools to ease the creation/modification of users.
  */
-function CouchDBUser(CouchDBStore) {
+function CouchDBUser(CouchDBStore, Promise) {
 	
 	/**
 	 * Defines CouchDBUser
@@ -109,6 +109,41 @@ function CouchDBUser(CouchDBStore) {
 			} else {
 				return false;
 			}
+		};
+		
+		/**
+		 * Gets the user profile in couchDB by using its own credentials.
+		 * name and password must be set prior to calling login, or the promise will be rejected.
+		 * If the login is successful, the promise is fulfilled with the user information like:
+		 * { _id: 'org.couchdb.user:couchdb',
+		 *  _rev: '1-8995e8ff247dae75048ab2dc800136d7',
+		 * name: 'couchdb',
+		 * password: null,
+		 * roles: [],
+		 * type: 'user' }
+		 * 
+		 * @returns {Promise}
+		 */
+		this.login = function login() {
+			var promise = new Promise,
+				name = this.get("name"),
+				password = this.get("password");
+			
+			if (name && typeof name == "string" && typeof password == "string") {
+				this.getTransport().request("CouchDB", {
+					method: "GET",
+					path: "/_users/org.couchdb.user:"+name,
+					auth: name + ":" + password
+				}, 
+				promise.resolve,
+				promise);
+			} else {
+				promise.reject({
+					error: "name & password must be strings"
+				});
+			}
+			
+			return promise;
 		};
 		
 	};
