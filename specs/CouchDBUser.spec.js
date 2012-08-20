@@ -85,13 +85,18 @@ function (CouchDBUser, Store, CouchDBStore, Transport, Promise) {
 		});
 		
 		it("should have a function to load user", function () {
-			spyOn(couchDBUser, "sync").andReturn(true);
-			expect(couchDBUser.load()).toEqual(false);
-			expect(couchDBUser.load("123")).toEqual(true);
-			
+			spyOn(couchDBUser, "sync");
+			couchDBUser.load("123");
+
 			expect(couchDBUser.sync.wasCalled).toEqual(true);
 			expect(couchDBUser.sync.mostRecentCall.args[0]).toEqual("_users");
 			expect(couchDBUser.sync.mostRecentCall.args[1]).toEqual("org.couchdb.user:123");
+		});
+
+		it("should return sync's promise", function () {
+			var promise = {};
+			spyOn(couchDBUser, "sync").andReturn(promise);
+			expect(couchDBUser.load("123")).toBe(promise);
 		});
 		
 	});
@@ -152,11 +157,121 @@ function (CouchDBUser, Store, CouchDBStore, Transport, Promise) {
 		it("should reject the promise when name or password is not a string", function () {
 			var promise;
 			
+			couchDBUser.set("name", {});
+			couchDBUser.set("password", {});
+			
 			promise = couchDBUser.login();
 			
 			promise.then(function () {}, function (result) {
 				expect(result.error).toEqual("name & password must be strings");
 			});
+		});
+		
+	});
+	
+	describe("CouchDBUserCreate", function () {
+		
+		var couchDBUser = null,
+		transport = null;
+	
+		beforeEach(function () {
+			couchDBUser = new CouchDBUser;
+			transport = new Transport;
+			couchDBUser.setTransport(transport);
+			spyOn(transport, "request");
+			couchDBUser.set("name", "name");
+		});
+		
+		it("should have a function to create a user, given a name and a password", function () {
+			expect(couchDBUser.create).toBeInstanceOf(Function);
+		});
+		
+		it("should return a promise", function () {
+			expect(couchDBUser.create()).toBeInstanceOf(Promise);
+		});
+		
+		it("should reject the promise if the user already exists", function () {
+			var loadPromise = new Promise,
+				promise,
+				assert;
+			
+			loadPromise.resolve(),
+
+			spyOn(couchDBUser, "load").andReturn(loadPromise);
+						
+			promise = couchDBUser.create();
+
+			expect(couchDBUser.load.wasCalled).toEqual(true);
+			expect(couchDBUser.load.mostRecentCall.args[0]).toEqual("name");
+
+			promise.then(function() {}, function (failed) {
+				assert = failed;
+			});
+			
+			expect(assert).toBeTruthy();
+			expect(assert.error).toEqual("Failed to create user. The user already exists");
+		});
+
+		it("should save the user if it doesn't exist", function () {
+			var loadPromise = new Promise,
+				uploadPromise = new Promise,
+				promise,
+				assert;
+
+			loadPromise.reject();
+			uploadPromise.resolve("success");
+
+			spyOn(couchDBUser, "load").andReturn(loadPromise);
+			spyOn(couchDBUser, "upload").andReturn(uploadPromise);
+
+			promise = couchDBUser.create();
+
+			promise.then(function (success) {
+				assert = success;
+			});
+
+			expect(couchDBUser.upload.wasCalled).toEqual(true);
+			expect(couchDBUser.upload.mostRecentCall.args[0]).toBeUndefined();
+
+			expect(assert).toEqual("success");
+		});
+
+		it("should fulfill the promise with upload's promise's result if it fails too", function () {
+			var loadPromise = new Promise,
+				uploadPromise = new Promise,
+				promise,
+				assert;
+
+			loadPromise.reject();
+			uploadPromise.reject("failed");
+
+			spyOn(couchDBUser, "load").andReturn(loadPromise);
+			spyOn(couchDBUser, "upload").andReturn(uploadPromise);
+
+			promise = couchDBUser.create();
+
+			promise.then(function () {}, function (failed) {
+				assert = failed;
+			});
+
+			expect(assert).toEqual("failed");
+		});
+		
+		it("should create the user if defaults params for roles and type if not set", function () {
+			couchDBUser.create();
+			expect(JSON.stringify(couchDBUser.get("roles"))).toEqual("[]");
+			expect(couchDBUser.get("type")).toEqual("user");
+		});
+
+		it("shouldn't override given fields", function () {
+			var roles = ["writer"];
+			couchDBUser.set("type", "admin");
+			couchDBUser.set("roles", roles);
+
+			couchDBUser.create();
+
+			expect(couchDBUser.get("type")).toEqual("admin");
+			expect(couchDBUser.get("roles")).toBe(roles);
 		});
 		
 	});

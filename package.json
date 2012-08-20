@@ -1,7 +1,7 @@
 {
  "name": "couchdb-emily-tools",
  "description": "WIP - CouchDB Tools for Emily&Olives applications",
- "version": "0.0.2dev",
+ "version": "0.0.333dev",
  "homepage": "https://github.com/flams/CouchDB-emily-tools",
  "licenses": [{
   "type":"MIT",

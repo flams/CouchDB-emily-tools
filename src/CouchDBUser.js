@@ -104,11 +104,7 @@ function CouchDBUser(CouchDBStore, Promise) {
 		 * @returns {Boolean} true if sync succeeded
 		 */
 		this.load = function load(id) {
-			if (id) {
-				return this.sync(_userDB, _idPrefix + id);
-			} else {
-				return false;
-			}
+			return this.sync(_userDB, _idPrefix + id);
 		};
 		
 		/**
@@ -146,6 +142,43 @@ function CouchDBUser(CouchDBStore, Promise) {
 			return promise;
 		};
 		
+		/**
+		 * Adds a user to the database
+		 * The following fields must be set prior to calling create:
+		 * name: the name of the user
+		 * password: its desired password, NOT encrypted
+		 *
+ 		 * If not specified, the following fields have default values:
+		 * type: "user"
+		 * roles: []
+		 *
+		 * The function itself will not warn you for incorrect fields
+		 * but the promise that is returned will fulfilled with couchdb's reply.
+		 * @returns {Promise}
+		*/
+		this.create = function create() {
+			var promise = new Promise;
+
+			if (!this.get("type")) {
+				this.set("type", "user");
+			}
+
+			if (!this.get("roles")) {
+				this.set("roles", []);
+			}
+			
+			this.load(this.get("name")).then(function () {
+				promise.reject({error: "Failed to create user. The user already exists"});
+			}, function () {
+				this.upload().then(function (success) {
+					promise.resolve(success);
+				}, function (error) {
+					promise.reject(error);
+				});
+			}, this);
+			
+			return promise;
+		};
 	};
 	
 	return function CouchDBUserFactory() {
