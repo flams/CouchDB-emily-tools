@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - CouchDBUser</title>
+		<title>JsDoc Reference - CouchDBStore</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -206,7 +206,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class CouchDBUser
+				Class CouchDBStore
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -214,17 +214,17 @@ ul.inheritsList
 				
 				
 			
-				CouchDBUser synchronises a CouchDBStore with a CouchDB User.
-It also provides tools to ease the creation/modification of users.
+				CouchDBStore synchronises a Store with a CouchDB view or document
+It subscribes to _changes to keep its data up to date.
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_CouchDBUser.js.html">CouchDBUser.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_CouchDBStore.js.html">CouchDBStore.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class CouchDBUser.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class CouchDBStore.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -237,7 +237,7 @@ It also provides tools to ease the creation/modification of users.
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/CouchDBUser.html#constructor">CouchDBUser</a></b>(CouchDBStore, Promise)
+								<b><a href="../symbols/CouchDBStore.html#constructor">CouchDBStore</a></b>(Store, StateMachine, Tools, Promise)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -253,7 +253,7 @@ It also provides tools to ease the creation/modification of users.
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class CouchDBUser.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class CouchDBStore.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -266,100 +266,55 @@ It also provides tools to ease the creation/modification of users.
 						<tr>
 							<td class="attributes">&lt;inner&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBUser.html#-CouchDBUserConstructor">CouchDBUserConstructor</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#-CouchDBStoreConstructor">CouchDBStoreConstructor</a></b>()
 								</div>
-								<div class="description">Defines CouchDBUser</div>
+								<div class="description">Defines the CouchDBStore</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBUser.html#create">create</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#remove">remove</a></b>()
 								</div>
-								<div class="description">Adds a user to the database
-The following fields must be set prior to calling create:
-name: the name of the user
-password: its desired password, NOT encrypted
-
-If not specified, the following fields have default values:
-type: "user"
-roles: []
-
-The function itself will not warn you for incorrect fields
-but the promise that is returned will fulfilled with couchdb's reply.</div>
+								<div class="description">Remove the document from the database</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBUser.html#getId">getId</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#setTransport">setTransport</a></b>(transport)
 								</div>
-								<div class="description">Get the user's id</div>
+								<div class="description">The transport object to use</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBUser.html#getIdPrefix">getIdPrefix</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#sync">sync</a></b>(database, view)
 								</div>
-								<div class="description">Get the string that prefixes the users' id</div>
+								<div class="description">Synchronize the store with a view</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBUser.html#getUserDB">getUserDB</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#unsync">unsync</a></b>()
 								</div>
-								<div class="description">Get the name of the users' db</div>
+								<div class="description">Unsync a store.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBUser.html#load">load</a></b>(id)
+								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#upload">upload</a></b>()
 								</div>
-								<div class="description">Load a user given it's id</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBUser.html#login">login</a></b>()
-								</div>
-								<div class="description">Gets the user profile in couchDB by using its own credentials.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBUser.html#setId">setId</a></b>(id)
-								</div>
-								<div class="description">Set user's id</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBUser.html#setIdPrefix">setIdPrefix</a></b>(name)
-								</div>
-								<div class="description">Set the string that prefixes the users' id</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBUser.html#setUserDB">setUserDB</a></b>(name)
-								</div>
-								<div class="description">Set the name of the users' db</div>
+								<div class="description">Upload the document to the database
+Works for CouchDBStore that are synchronized with documents or bulk of documents.</div>
 							</td>
 						</tr>
 					
@@ -380,7 +335,7 @@ but the promise that is returned will fulfilled with couchdb's reply.</div>
 				</div>
 				
 				<div class="fixedFont">
-						<b>CouchDBUser</b>(CouchDBStore, Promise)
+						<b>CouchDBStore</b>(Store, StateMachine, Tools, Promise)
 				</div>
 				
 				<div class="description">
@@ -396,7 +351,19 @@ but the promise that is returned will fulfilled with couchdb's reply.</div>
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								 <b>CouchDBStore</b>
+								 <b>Store</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								 <b>StateMachine</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								 <b>Tools</b>
 								
 							</dt>
 								<dd></dd>
@@ -428,15 +395,15 @@ but the promise that is returned will fulfilled with couchdb's reply.</div>
 					Method Detail
 				</div>
 				
-					<a name="-CouchDBUserConstructor"> </a>
+					<a name="-CouchDBStoreConstructor"> </a>
 					<div class="fixedFont">&lt;inner&gt; 
 					
-					<span class="light">{CouchDBUserConstructor}</span>
-					<b>CouchDBUserConstructor</b>()
+					<span class="light">{CouchDBStoreConstructor}</span>
+					<b>CouchDBStoreConstructor</b>()
 					
 					</div>
 					<div class="description">
-						Defines CouchDBUser
+						Defines the CouchDBStore
 						
 						
 					</div>
@@ -451,7 +418,7 @@ but the promise that is returned will fulfilled with couchdb's reply.</div>
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{CouchDBUserConstructor}</span> </dd>
+								<dd><span class="light fixedFont">{CouchDBStoreConstructor}</span> </dd>
 							
 							</dl>
 						
@@ -460,25 +427,15 @@ but the promise that is returned will fulfilled with couchdb's reply.</div>
 
 					<hr />
 				
-					<a name="create"> </a>
+					<a name="remove"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{Promise}</span>
-					<b>create</b>()
+					
+					<b>remove</b>()
 					
 					</div>
 					<div class="description">
-						Adds a user to the database
-The following fields must be set prior to calling create:
-name: the name of the user
-password: its desired password, NOT encrypted
-
-If not specified, the following fields have default values:
-type: "user"
-roles: []
-
-The function itself will not warn you for incorrect fields
-but the promise that is returned will fulfilled with couchdb's reply.
+						Remove the document from the database
 						
 						
 					</div>
@@ -493,7 +450,7 @@ but the promise that is returned will fulfilled with couchdb's reply.
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Promise}</span> </dd>
+								<dd>true if remove called</dd>
 							
 							</dl>
 						
@@ -502,111 +459,15 @@ but the promise that is returned will fulfilled with couchdb's reply.
 
 					<hr />
 				
-					<a name="getId"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{String}</span>
-					<b>getId</b>()
-					
-					</div>
-					<div class="description">
-						Get the user's id
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{String}</span> the user's id</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="getIdPrefix"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{String}</span>
-					<b>getIdPrefix</b>()
-					
-					</div>
-					<div class="description">
-						Get the string that prefixes the users' id
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{String}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="getUserDB"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{String}</span>
-					<b>getUserDB</b>()
-					
-					</div>
-					<div class="description">
-						Get the name of the users' db
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{String}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="load"> </a>
+					<a name="setTransport"> </a>
 					<div class="fixedFont">
 					
 					<span class="light">{Boolean}</span>
-					<b>load</b>(id)
+					<b>setTransport</b>(transport)
 					
 					</div>
 					<div class="description">
-						Load a user given it's id
+						The transport object to use
 						
 						
 					</div>
@@ -618,10 +479,10 @@ but the promise that is returned will fulfilled with couchdb's reply.
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>id</b>
+									<span class="light fixedFont">{Object}</span> <b>transport</b>
 									
 								</dt>
-								<dd>of the user (without prefix)</dd>
+								<dd>the transport object</dd>
 							
 							</dl>
 						
@@ -632,7 +493,7 @@ but the promise that is returned will fulfilled with couchdb's reply.
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Boolean}</span> true if sync succeeded</dd>
+								<dd><span class="light fixedFont">{Boolean}</span> true if</dd>
 							
 							</dl>
 						
@@ -641,55 +502,15 @@ but the promise that is returned will fulfilled with couchdb's reply.
 
 					<hr />
 				
-					<a name="login"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Promise}</span>
-					<b>login</b>()
-					
-					</div>
-					<div class="description">
-						Gets the user profile in couchDB by using its own credentials.
-name and password must be set prior to calling login, or the promise will be rejected.
-If the login is successful, the promise is fulfilled with the user information like:
-{ _id: 'org.couchdb.user:couchdb',
- _rev: '1-8995e8ff247dae75048ab2dc800136d7',
-name: 'couchdb',
-password: null,
-roles: [],
-type: 'user' }
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Promise}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="setId"> </a>
+					<a name="sync"> </a>
 					<div class="fixedFont">
 					
 					<span class="light">{Boolean}</span>
-					<b>setId</b>(id)
+					<b>sync</b>(database, view)
 					
 					</div>
 					<div class="description">
-						Set user's id
+						Synchronize the store with a view
 						
 						
 					</div>
@@ -701,55 +522,93 @@ type: 'user' }
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>id</b>
+									<span class="light fixedFont">{String}</span> <b>database</b>
 									
 								</dt>
+								<dd>the name of the database where to get...</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>...design</b>
+									
+								</dt>
+								<dd>the design document, in which...</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>view</b>
+									
+								</dt>
+								<dd>...the view is.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Boolean}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="unsync"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>unsync</b>()
+					
+					</div>
+					<div class="description">
+						Unsync a store. Unsync must be called prior to resynchronization.
+That will prevent any unwanted resynchronization.
+Notice that previous data will still be available.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
 								<dd></dd>
 							
 							</dl>
 						
 						
 						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Boolean}</span> true if id truthy</dd>
-							
-							</dl>
-						
-						
-						
 
 					<hr />
 				
-					<a name="setIdPrefix"> </a>
+					<a name="upload"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{Boolean}</span>
-					<b>setIdPrefix</b>(name)
+					
+					<b>upload</b>()
 					
 					</div>
 					<div class="description">
-						Set the string that prefixes the users' id
+						Upload the document to the database
+Works for CouchDBStore that are synchronized with documents or bulk of documents.
+If synchronized with a bulk of documents, you can set the documents to delete _deleted property to true.
+No modification can be done on views.
 						
 						
 					</div>
 					
 					
 					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
-									
-								</dt>
-								<dd>string that prefixes the users' id</dd>
-							
-							</dl>
 						
 						
 						
@@ -758,50 +617,7 @@ type: 'user' }
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Boolean}</span> true if name truthy</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="setUserDB"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Boolean}</span>
-					<b>setUserDB</b>(name)
-					
-					</div>
-					<div class="description">
-						Set the name of the users' db
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
-									
-								</dt>
-								<dd>of the db</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Boolean}</span> true if name truthy</dd>
+								<dd>true if upload called</dd>
 							
 							</dl>
 						
