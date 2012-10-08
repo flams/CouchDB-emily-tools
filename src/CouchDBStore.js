@@ -208,7 +208,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 						} else {
 							if (json.deleted) {
 								action = "delete";
-							} else if (json.changes[0].rev.search("1-") == 0) {
+							} else if (json.changes && json.changes[0].rev.search("1-") == 0) {
 								action = "add";
 							} else {
 								action = "change";

@@ -439,13 +439,24 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 		it("should not fail with empty json from heartbeat", function () {
 			var callback;
 
-			couchDBStore.actions.subscribeToViewChanges.call(couchDBStore, 8);
+			couchDBStore.actions.subscribeToViewChanges.call(couchDBStore);
 			callback = transportMock.listen.mostRecentCall.args[2];
 
 			expect(function() {
 				callback("\n");
 			}).not.toThrow();
 
+		});
+
+		it("should not fail if json has no changes properties (happens when used with couchdb lucene)", function () {
+			var callback;
+
+			couchDBStore.actions.subscribeToViewChanges.call(couchDBStore);
+			callback = transportMock.listen.mostRecentCall.args[2];
+
+			expect(function() {
+				callback("{}");
+			}).not.toThrow();
 		});
 
 		it("should call for document update if one of them has changed", function () {
