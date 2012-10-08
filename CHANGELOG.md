@@ -1,4 +1,4 @@
-##1.01 - 08 OCT 2012
+##1.0.1 - 08 OCT 2012
 
 CouchDBStore Views are compatible with couchdb-lucene's
 
