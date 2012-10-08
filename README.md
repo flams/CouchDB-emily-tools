@@ -2,6 +2,8 @@
 
 A set of tools to manage and secure CouchDB from an Emily/Olives app.
 
+Changelog is available here: https://github.com/flams/CouchDB-emily-tools/blob/master/CHANGELOG.md
+
 ###To install and use the library on the server side:
 
 ```bash
