@@ -184,7 +184,6 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
             	Tools.mixin({
 					feed: "continuous",
 					heartbeat: 20000,
-					limit: 0,
 					descending: true
 				}, _syncInfo.query);
 
@@ -230,7 +229,6 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 					query: {
 						 feed: "continuous",
 						 heartbeat: 20000,
-						 limit: 0,
 						 descending: true
 						}
 					},
@@ -266,7 +264,6 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 				Tools.mixin({
 					feed: "continuous",
 					heartbeat: 20000,
-					limit: 0,
 					descending: true,
 					include_docs: true
 				}, _syncInfo.query);
