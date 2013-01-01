@@ -1,3 +1,7 @@
+##1.0.2 - 01 JAN 2013
+
+The CouchDB handler for Emily is now part of CouchDB-Emily-Tools
+
 ##1.0.1 - 08 OCT 2012
 
 CouchDBStore Views are compatible with couchdb-lucene's
