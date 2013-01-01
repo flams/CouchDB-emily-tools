@@ -1,7 +1,7 @@
 /**
  * https://github.com/flams/CouchDB-emily-tools
  * The MIT License (MIT)
- * Copyright (c) 2012 Olivier Scherrer <pode.fr@gmail.com>
+ * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  */
 require(["CouchDBUser", "Store", "CouchDBStore", "Transport", "Promise"],
 
@@ -138,7 +138,7 @@ function (CouchDBUser, Store, CouchDBStore, Transport, Promise) {
 			expect(couchDBUser.login()).toBeInstanceOf(Promise);
 		});
 
-		it("should resolve the promise with the request's result", function () {
+		it("should fulfill the promise with the request's result", function () {
 			var promise,
 				callback;
 
@@ -190,12 +190,12 @@ function (CouchDBUser, Store, CouchDBStore, Transport, Promise) {
 			expect(couchDBUser.create()).toBeInstanceOf(Promise);
 		});
 
-		it("should reject the promise if the user already exists", function () {
+		it("should reject the promise if the user already exists", function (done) {
 			var loadPromise = new Promise,
 				promise,
 				assert;
 
-			loadPromise.resolve(),
+			loadPromise.fulfill(),
 
 			spyOn(couchDBUser, "load").andReturn(loadPromise);
 
@@ -205,21 +205,22 @@ function (CouchDBUser, Store, CouchDBStore, Transport, Promise) {
 			expect(couchDBUser.load.mostRecentCall.args[0]).toEqual("name");
 
 			promise.then(function() {}, function (failed) {
-				assert = failed;
+				expect(failed).toBeTruthy();
+				expect(failed.error).toEqual("Failed to create user. The user already exists");
+				done();
 			});
 
-			expect(assert).toBeTruthy();
-			expect(assert.error).toEqual("Failed to create user. The user already exists");
+
 		});
 
-		it("should save the user if it doesn't exist", function () {
+		it("should save the user if it doesn't exist", function (done) {
 			var loadPromise = new Promise,
 				uploadPromise = new Promise,
 				promise,
 				assert;
 
 			loadPromise.reject();
-			uploadPromise.resolve("success");
+			uploadPromise.fulfill("success");
 
 			spyOn(couchDBUser, "load").andReturn(loadPromise);
 			spyOn(couchDBUser, "upload").andReturn(uploadPromise);
@@ -227,16 +228,14 @@ function (CouchDBUser, Store, CouchDBStore, Transport, Promise) {
 			promise = couchDBUser.create();
 
 			promise.then(function (success) {
-				assert = success;
+				expect(couchDBUser.upload.wasCalled).toEqual(true);
+				expect(couchDBUser.upload.mostRecentCall.args[0]).toBeUndefined();
+				expect(success).toEqual("success");
+				done();
 			});
-
-			expect(couchDBUser.upload.wasCalled).toEqual(true);
-			expect(couchDBUser.upload.mostRecentCall.args[0]).toBeUndefined();
-
-			expect(assert).toEqual("success");
 		});
 
-		it("should fulfill the promise with upload's promise's result if it fails too", function () {
+		it("should fulfill the promise with upload's promise's result if it fails too", function (done) {
 			var loadPromise = new Promise,
 				uploadPromise = new Promise,
 				promise,
@@ -251,10 +250,11 @@ function (CouchDBUser, Store, CouchDBStore, Transport, Promise) {
 			promise = couchDBUser.create();
 
 			promise.then(function () {}, function (failed) {
-				assert = failed;
+				expect(failed).toEqual("failed");
+				done();
 			});
 
-			expect(assert).toEqual("failed");
+
 		});
 
 		it("should create the user if defaults params for roles and type if not set", function () {

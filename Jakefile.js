@@ -1,7 +1,7 @@
 /**
  * @license https://github.com/flams/CouchDB-emily-tools
  * The MIT License (MIT)
- * Copyright (c) 2012 Olivier Scherrer <pode.fr@gmail.com>
+ * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  */
 
 var PROJECT_NAME = "CouchDBTools";
@@ -9,7 +9,7 @@ var PROJECT_NAME = "CouchDBTools";
 var requirejs = require("requirejs"),
 	fs = require("fs"),
 	cp = require("child_process"),
-	
+
 	_filesList = {},
 	_getFiles = function _getFiles(path) {
 		if (!_filesList[path]) {
@@ -37,7 +37,7 @@ var requirejs = require("requirejs"),
 		}
 
 	},
-	
+
 	_execCommand = function _execCommand(cmd) {
 		cp.exec(cmd, function (error, stdout, stderr) {
 			 console.log(stdout);
@@ -49,7 +49,7 @@ var requirejs = require("requirejs"),
 			    }
 			});
 	};
-	
+
 	requirejs.config({
 		baseUrl: "src",
 		nodeRequire: require
@@ -59,7 +59,7 @@ namespace("docs", function () {
 	task("clean", [], function () {
 		// Delete previous files first.
 	});
-	
+
 	desc("Generate " + PROJECT_NAME + "'s documentation");
 	task("generate", ["docs:clean"], function () {
 		var cmd = "java -jar tools/JsDoc/jsrun.jar " +
@@ -79,54 +79,54 @@ namespace("build", function () {
 		fs.unlink("build/" + PROJECT_NAME + "-map.js");
 		fs.unlink("build/uncompressed/concat.js");
 	});
-	
+
 	task("concat", ["build:clean"], function () {
 		var files = _getFiles("src"),
 			concat = fs.readFileSync("LICENSE-MINI","utf8");
-		
+
 		files.forEach(function (file) {
 			concat += fs.readFileSync("src/" + file,"utf8");
 		});
-		
+
 		fs.writeFile("build/uncompressed/concat.js", concat, function (err) {
 			if (err) {
 				throw err;
 			}
 		});
 	});
-	
+
 	task("minify", ["build:concat"], function () {
 		var cmd = "java -jar tools/GoogleCompiler/compiler.jar" +
 				" --js build/uncompressed/concat.js" +
 				" --js_output_file build/" + PROJECT_NAME + ".js" +
 				" --create_source_map build/" + PROJECT_NAME + "-map";
-		
+
 		_execCommand(cmd);
 	});
-	
+
 	task("copyLicense", function () {
 		_execCommand("cp LICENSE build/");
 	});
 });
 
 namespace("tests", function () {
-	
+
 	task("node", [], function () {
 		// I shouldn't have to get jasmine terminal reporter like this,
 		// i need to contact misko hevery to know why I can't do it like before (new TerminalReporter)
 		var jasmine = require("jasmine-node"),
 			TerminalReporter = require("jasmine-node/lib/jasmine-node/reporter").jasmineNode.TerminalReporter;
-		
+
 		["lib/require.js",
 		 "lib/Emily.js",
-		 "src/*.js", 
+		 "src/*.js",
 		 "specs/specHelper.js",
 		 "specs/*.js"].forEach(_requireList);
 
 		jasmine.getEnv().addReporter(new TerminalReporter({}));
 		jasmine.getEnv().execute();
 	});
-	
+
 	task("all", ["tests:node"], function () {});
 });
 

@@ -11,19 +11,23 @@ npm install emily couchdb-emily-tools
 ```
 
 ```js
-var Emily = require("emily"),
-	CouchDBTools = require("couchdb-emily-tools");
+var emily = require("emily"),
+	tools = require("couchdb-emily-tools");
 
-CouchDBTools.requirejs(["CouchDBStore", "Transport"], function (CouchDBStore, Transport) {
+emily.handlers.set("CouchDB", tools.handler);
+
+tools.requirejs(["CouchDBStore", "Transport"], function (CouchDBStore, Transport) {
 
 	var cdb = new CouchDBStore,
-		transport = new Transport(Emily.handlers);
+		transport = new Transport(emily.handlers);
 
 	cdb.setTransport(transport);
 
 	cdb.sync("mydatabase", "mydocument")
 	.then(function () {
 		console.log(cdb.toJSON());
+	}, function (error) {
+		console.log(error);
 	});
 });
 ```

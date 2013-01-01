@@ -1,13 +1,19 @@
-emily = require("emily")
-tools = require("./tools");
+var emily = require("emily"),
+	tools = require("./tools");
 
-emily.requirejs(["Transport"], function (Transport) {
+emily.handlers.set("CouchDB", tools.handler);
 
-	emily.handlers.set("CouchDB", tools.handler);
+tools.requirejs(["CouchDBStore", "Transport"], function (CouchDBStore, Transport) {
 
-	var t = new Transport(emily.handlers);
+	var cdb = new CouchDBStore,
+		transport = new Transport(emily.handlers);
 
-	t.request("CouchDB", { path: "/_all_dbs" } , function (dbs) {
-		console.log(dbs);
+	cdb.setTransport(transport);
+
+	cdb.sync("test", "mydocument")
+	.then(function () {
+		console.log(cdb.toJSON());
+	}, function (error) {
+		console.log(error);
 	});
 });

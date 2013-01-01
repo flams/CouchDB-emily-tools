@@ -1,7 +1,7 @@
 /**
  * https://github.com/flams/CouchDB-emily-tools
  * The MIT License (MIT)
- * Copyright (c) 2012 Olivier Scherrer <pode.fr@gmail.com>
+ * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  */
 
 define("CouchDBStore",
@@ -74,7 +74,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 						throw new Error("CouchDBStore [" + _syncInfo.database + ", " + _syncInfo.design + ", " + _syncInfo.view + "].sync() failed: " + results);
 					} else {
 						this.reset(json.rows);
-						_syncPromise.resolve(this);
+						_syncPromise.fulfill(this);
 						if (typeof json.total_rows == "undefined") {
 							this.setReducedViewInfo(true);
 						}
@@ -98,7 +98,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 					var json = JSON.parse(results);
 					if (json._id) {
 						this.reset(json);
-						_syncPromise.resolve(this);
+						_syncPromise.fulfill(this);
 						_stateMachine.event("subscribeToDocumentChanges");
 					} else {
 						_syncPromise.reject(results);
@@ -145,7 +145,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 						throw new Error("CouchDBStore.sync(\"" + _syncInfo.database + "\", " + errorString + ") failed: " + results);
 					} else {
 						this.reset(json.rows);
-						_syncPromise.resolve(this);
+						_syncPromise.fulfill(this);
 						_stateMachine.event("subscribeToBulkChanges");
 					}
 				}, this);
@@ -167,7 +167,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
             	}, function (result) {
             		var json = JSON.parse(result);
             		if (json.ok) {
-            			promise.resolve(json);
+            			promise.fulfill(json);
                 		_stateMachine.event("subscribeToDocumentChanges");
             		} else {
             			promise.reject(json);
@@ -491,7 +491,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
             		var json = JSON.parse(response);
             		if (json.ok) {
             			this.set("_rev", json.rev);
-            			promise.resolve(json);
+            			promise.fulfill(json);
             		} else {
             			promise.reject(json);
             		}
@@ -517,7 +517,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		    		},
 		    		data: JSON.stringify({"docs": docs})
 		    	}, function (response) {
-		    		promise.resolve(JSON.parse(response));
+		    		promise.fulfill(JSON.parse(response));
             	});
 		    },
 

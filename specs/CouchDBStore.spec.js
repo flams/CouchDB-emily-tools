@@ -1,7 +1,7 @@
 /**
  * https://github.com/flams/CouchDB-emily-tools
  * The MIT License (MIT)
- * Copyright (c) 2012 Olivier Scherrer <pode.fr@gmail.com>
+ * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  */
 
 /**
@@ -375,7 +375,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBStore);
 		});
 
-		it("should resolve the promise when the view is synched", function () {
+		it("should fulfill the promise when the view is synched", function () {
 			var promise = couchDBStore.sync("db", "view", "name"),
 				res =  '{"total_rows":3,"update_seq":8,"offset":0,"rows":[' +
 						'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' +
@@ -384,12 +384,12 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 	    		callback;
 
 			couchDBStore.actions.getView.call(couchDBStore);
-			spyOn(promise, "resolve");
+			spyOn(promise, "fulfill");
 			callback = transportMock.request.mostRecentCall.args[2];
 
 			callback.call(couchDBStore, res);
-			expect(promise.resolve.wasCalled).toEqual(true);
-			expect(promise.resolve.mostRecentCall.args[0]).toBe(couchDBStore);
+			expect(promise.fulfill.wasCalled).toEqual(true);
+			expect(promise.fulfill.mostRecentCall.args[0]).toBe(couchDBStore);
 		});
 
 		it("should set the reduced flag if the view is reduced", function () {
@@ -430,7 +430,6 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(reqData.feed).toEqual("continuous");
 			expect(reqData.heartbeat).toEqual(20000);
 			expect(reqData.descending).toEqual(true);
-			expect(reqData.limit).toEqual(0);
 			expect(reqData).toBe(query);
 			expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			expect(transportMock.listen.mostRecentCall.args[3]).toBe(couchDBStore);
@@ -930,17 +929,17 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(promise.reject.mostRecentCall.args[0]).toEqual("{}");
 		});
 
-		it("should resolve the promise when the doc is synched", function () {
+		it("should fulfill the promise when the doc is synched", function () {
 			var promise = couchDBStore.sync("db", "document2"),
 				callback = transportMock.request.mostRecentCall.args[2];
 
 			couchDBStore.actions.getDocument.call(couchDBStore);
 
-			spyOn(promise, "resolve");
+			spyOn(promise, "fulfill");
 			callback.call(couchDBStore, '{"_id": "id"}');
 
-			expect(promise.resolve.wasCalled).toEqual(true);
-			expect(promise.resolve.mostRecentCall.args[0]).toBe(couchDBStore);
+			expect(promise.fulfill.wasCalled).toEqual(true);
+			expect(promise.fulfill.mostRecentCall.args[0]).toBe(couchDBStore);
 		});
 
 		it("should subscribe to document changes", function () {
@@ -954,7 +953,6 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			reqData = transportMock.listen.mostRecentCall.args[1].query;
 			expect(reqData.feed).toEqual("continuous");
 			expect(reqData.heartbeat).toEqual(20000);
-			expect(reqData.limit).toEqual(0);
 			expect(reqData.descending).toEqual(true);
 			expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			expect(transportMock.listen.mostRecentCall.args[3]).toBe(couchDBStore);
@@ -1095,7 +1093,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(couchDBStore.upload()).toBeInstanceOf(Promise);
 		});
 
-		it("should resolve the promise on upload", function () {
+		it("should fulfill the promise on upload", function () {
 			spyOn(stateMachine, "event");
 			var promise = couchDBStore.upload();
 			expect(stateMachine.event.mostRecentCall.args[1]).toBe(promise);
@@ -1124,14 +1122,14 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(JSON.parse(reqData.data).fakeRev).toEqual("10-hello");
 		});
 
-		it("should resolve the promise on update if update ok", function () {
+		it("should fulfill the promise on update if update ok", function () {
 			var promise = new Promise,
 				response = '{"ok":true}';
-			spyOn(promise, "resolve");
+			spyOn(promise, "fulfill");
 			couchDBStore.actions.updateDatabase.call(couchDBStore, promise);
 			transportMock.request.mostRecentCall.args[2].call(couchDBStore, response);
-			expect(promise.resolve.wasCalled).toEqual(true);
-			expect(promise.resolve.mostRecentCall.args[0].ok).toEqual(true);
+			expect(promise.fulfill.wasCalled).toEqual(true);
+			expect(promise.fulfill.mostRecentCall.args[0].ok).toEqual(true);
 		});
 
 		it("should update rev of update ok", function () {
@@ -1177,14 +1175,14 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("subscribeToDocumentChanges");
 		});
 
-		it("should resolve the promise on doc create if update ok", function () {
+		it("should fulfill the promise on doc create if update ok", function () {
 			var promise = new Promise,
 				response = '{"ok":true}';
-			spyOn(promise, "resolve");
+			spyOn(promise, "fulfill");
 			couchDBStore.actions.createDocument.call(couchDBStore, promise);
 			transportMock.request.mostRecentCall.args[2](response);
-			expect(promise.resolve.wasCalled).toEqual(true);
-			expect(promise.resolve.mostRecentCall.args[0].ok).toEqual(true);
+			expect(promise.fulfill.wasCalled).toEqual(true);
+			expect(promise.fulfill.mostRecentCall.args[0].ok).toEqual(true);
 		});
 
 		it("should reject the promise on doc create if update failed", function () {
@@ -1390,7 +1388,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				}).toThrow('CouchDBStore.sync("db", {"keys":["document1","document2"]}) failed: {"error":""}');
 			});
 
-			it("should resolve the promise when the bulk of docs is synched", function () {
+			it("should fulfill the promise when the bulk of docs is synched", function () {
 				var promise = couchDBStore.sync("db", {}),
 					res = '{"total_rows":2,"update_seq":2,"offset":0,"rows":['+
 						'{"id":"document1","key":"document1","value":{"rev":"1-793111e6af0ccddb08147c0be1f49843"},"doc":{"_id":"document1","_rev":"1-793111e6af0ccddb08147c0be1f49843","desc":"my first doc"}},'+
@@ -1399,12 +1397,12 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 					callback;
 
 				couchDBStore.actions.getBulkDocuments.call(couchDBStore);
-				spyOn(promise, "resolve");
+				spyOn(promise, "fulfill");
 				callback = transportMock.request.mostRecentCall.args[2];
 
 				callback.call(couchDBStore, res);
-				expect(promise.resolve.wasCalled).toEqual(true);
-				expect(promise.resolve.mostRecentCall.args[0]).toBe(couchDBStore);
+				expect(promise.fulfill.wasCalled).toEqual(true);
+				expect(promise.fulfill.mostRecentCall.args[0]).toBe(couchDBStore);
 			});
 
 			it("should subscribe to bulk changes", function () {
@@ -1420,7 +1418,6 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				reqData = transportMock.listen.mostRecentCall.args[1].query;
 				expect(reqData.feed).toEqual("continuous");
 				expect(reqData.heartbeat).toEqual(20000);
-				expect(reqData.limit).toEqual(0);
 				expect(reqData.descending).toEqual(true);
 				expect(reqData.include_docs).toEqual(true);
 				expect(reqData).toBe(query);
@@ -1584,14 +1581,14 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				expect(couchDBStore.upload()).toBeInstanceOf(Promise);
 			});
 
-			it("should resolve the promise on update if update ok", function () {
+			it("should fulfill the promise on update if update ok", function () {
 				var promise = new Promise,
 					response = '{}';
-				spyOn(promise, "resolve");
+				spyOn(promise, "fulfill");
 				couchDBStore.actions.updateDatabaseWithBulkDoc.call(couchDBStore, promise);
 				transportMock.request.mostRecentCall.args[2](response);
-				expect(promise.resolve.wasCalled).toEqual(true);
-				expect(promise.resolve.mostRecentCall.args[0]).toBeInstanceOf(Object);
+				expect(promise.fulfill.wasCalled).toEqual(true);
+				expect(promise.fulfill.mostRecentCall.args[0]).toBeInstanceOf(Object);
 			});
 
 			it("shouldn't allow for removing a document (a doc to delete should have a _deleted property set to true)", function () {
