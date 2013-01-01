@@ -61,4 +61,13 @@ requirejs(__dirname + "/build/CouchDBTools.js");
 			};
 		}*/
 
+// And add this to Conf
+		// CouchDB is built-in
+		// Copy this to CouchDB2, 3... if you have more than one of them
+		/*"CouchDB": {
+			hostname: "127.0.0.1",
+			port: 5984
+		}*/
+
+
 module.exports.requirejs = requirejs;
