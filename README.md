@@ -35,16 +35,18 @@ tools.requirejs(["CouchDBStore", "Transport"], function (CouchDBStore, Transport
 ###To install and use the library on the client side:
 
 place the CouchDBTools.js file into your project alongside Olives, Require.js, and socket.io
+Using it on the client side requires Olives.js's socketIOTransport which will bind itself with Emily's.
 
 ```html
-<scirpt src="requirej.js" />
+<scirpt src="requirejs.js" />
 <script src="/socket.io/socket.io.js" />
-<script src="Olives.min.js" />
+<script src="Emily.js" />
+<script src="Olives.js" />
 <script src="CouchDBTools.js" />
 ```
 
 ```js
-	requirejs(["CouchDBStore", "Transport"], function (CouchDBStore, Transport) {
+	requirejs(["CouchDBStore", "SocketIOTransport"], function (CouchDBStore, SocketIOTransport) {
 
 		var cdb = new CouchDBStore,
 			transport = new Transport(io, location.href);
