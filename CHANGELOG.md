@@ -1,3 +1,7 @@
+##1.0.3 - 11 MAR 2013
+
+* Updated emily + requirejs
+
 ##1.0.2 - 01 JAN 2013
 
 Now using Emily 1.3.1 promises wich are fully compliant with promise/A+ specs
