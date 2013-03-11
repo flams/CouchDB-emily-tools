@@ -13,6 +13,10 @@ tools.requirejs(["CouchDBStore", "Transport"], function (CouchDBStore, Transport
 	cdb.sync("test", "mydocument")
 	.then(function () {
 		console.log(cdb.toJSON());
+		cdb.watch("updated", function () {
+			console.log(arguments, cdb.toJSON());
+		});
+
 	}, function (error) {
 		console.log(error);
 	});
