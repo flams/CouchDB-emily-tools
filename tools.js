@@ -7,7 +7,8 @@
 var requirejs = require("requirejs"),
 	http = require("http"),
 	qs = require("querystring"),
-	cookie = require("cookie");
+	cookie = require("cookie"),
+	emily = require("emily");
 
 requirejs(__dirname + "/build/CouchDBTools.js");
 
