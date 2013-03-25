@@ -14,7 +14,8 @@ requirejs(__dirname + "/build/CouchDBTools.js");
 
 var configuration = {
 	hostname: "localhost",
-	port: 5984
+	port: 5984,
+	cookieID: ''
 },
 
 handler = function (data, onEnd, onData) {
@@ -43,12 +44,12 @@ handler = function (data, onEnd, onData) {
 		req.end(data.data, "utf8");
 	};
 
-	if (data.handshake) {
+	if (data.handshake && configuration.cookieID) {
 
 		var cookieJSON = cookie.parse(data.handshake.headers.cookie);
 
 		// I don't like the split but is there a better solution?
-		configuration.sessionStore.get(cookieJSON["suggestions.sid"].split("s:")[1].split(".")[0], function (err, session) {
+		configuration.sessionStore.get(cookieJSON[configuration.cookieID].split("s:")[1].split(".")[0], function (err, session) {
 			if (err) {
 				throw new Error(err);
 			} else {
