@@ -82,7 +82,7 @@ requirejs(["CouchDBStore", "SocketIOTransport"], function (CouchDBStore, SocketI
 
 ## Changelog
 
-###1.0.4 - 25 MAR 2014
+###1.0.5 - 25 MAR 2014
 
 * Removed specific code imported from another application after 1.0.2
 * Updated documentation
