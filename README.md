@@ -2,9 +2,9 @@
 
 A set of tools to manage and secure CouchDB from an Emily/Olives app.
 
-Changelog is available here: https://github.com/flams/CouchDB-emily-tools/blob/master/CHANGELOG.md
+##To install and use the library on the server side only:
 
-###To install and use the library on the server side:
+CouchDB-emily-tools requires Emily to work on the server side
 
 ```bash
 npm install emily couchdb-emily-tools
@@ -32,10 +32,29 @@ tools.requirejs(["CouchDBStore", "Transport"], function (CouchDBStore, Transport
 });
 ```
 
-###To install and use the library on the client side:
+##To install and use the library on the client side:
 
-place the CouchDBTools.js file into your project alongside Olives, Require.js, and socket.io
-Using it on the client side requires Olives.js's socketIOTransport which will bind itself with Emily's.
+CouchDB-emily-tools requires Olives to work on the client side. Olives embedds Emily for you.
+It also expects you to have socket.io installed, and a store for storing sessions, like redis store.
+In future implementations, redis store will probably be optional and an adapter will be accepted to any other store.
+[An example can be found in the suggestions application](https://github.com/podefr/suggestions/blob/master/server.js)
+
+```bash
+npm install olives couchdb-emily-tools
+```
+
+```js
+var olives = require("olives"),
+	tools = require("couchdb-emily-tools");
+
+// sessionStore can be a new RedisStore for instance
+CouchDBTools.configuration.sessionStore = sessionStore;
+
+// Add the CouchDB handler to Olives
+olives.handlers.set("CouchDB", tools.handler);
+```
+
+And on the client side:
 
 ```html
 <scirpt src="requirejs.js" />
@@ -46,19 +65,47 @@ Using it on the client side requires Olives.js's socketIOTransport which will bi
 ```
 
 ```js
-	requirejs(["CouchDBStore", "SocketIOTransport"], function (CouchDBStore, SocketIOTransport) {
+requirejs(["CouchDBStore", "SocketIOTransport"], function (CouchDBStore, SocketIOTransport) {
 
-		var cdb = new CouchDBStore,
-			transport = new Transport(io, location.href);
+	var socket = io.connect("http://localhost"),
+		cdb = new CouchDBStore,
+		transport = new SocketIOTransport(socket);
 
-		cdb.setTransport(transport);
+	cdb.setTransport(transport);
 
-		cdb.sync("mydatabase", "mydocument")
-		.then(function () {
-			console.log(cdb.toJSON());
-		});
+	cdb.sync("mydatabase", "mydocument")
+	.then(function () {
+		console.log(cdb.toJSON());
 	});
+});
 ```
+
+## Changelog
+
+###1.0.4 - 25 MAR 2014
+
+* Removed specific code imported from another application after 1.0.2
+* Updated documentation
+
+###1.0.3 - 11 MAR 2013
+
+* Updated emily + requirejs
+
+###1.0.2 - 01 JAN 2013
+
+* Now using Emily 1.3.1 promises wich are fully compliant with promise/A+ specs
+* Moved Emily's CouchDB handler to CouchDB Emily Tools
+* Updated tests
+
+###1.0.1 - 08 OCT 2012
+
+* CouchDBStore Views are compatible with couchdb-lucene's
+
+###1.0.0 - 07 OCT 2012
+
+* CouchDBStore was removed from Emily and added to CouchDB-Emily-Tools.
+* It's now a library by itself, as it concentrates more work than the rest of Emily.
+
 
 
 
