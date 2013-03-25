@@ -2,6 +2,8 @@
 
 Complete set of tools for synchronizing an observable key/value stores with CouchDB documents, views, and managing users or security documents. Works both in the browser and in node.js
 
+Documentation is currently being rewritten. Some doc is available here: https://github.com/flams/CouchDB-emily-tools/wiki/CouchDBStore
+
 ##To install and use the library on the server side only:
 
 CouchDB-emily-tools requires Emily to work on the server side
