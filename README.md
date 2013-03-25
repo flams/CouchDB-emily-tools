@@ -1,6 +1,6 @@
 #CouchDB-emily-tools
 
-A set of tools to manage and secure CouchDB from an Emily/Olives app.
+Complete set of tools for synchronizing an observable key/value stores with CouchDB documents, views, and managing users or security documents. Works both in the browser and in node.js
 
 ##To install and use the library on the server side only:
 
