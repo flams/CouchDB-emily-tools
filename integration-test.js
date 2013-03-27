@@ -17,6 +17,8 @@ tools.requirejs(["CouchDBStore", "Transport"], function (CouchDBStore, Transport
 			console.log(arguments, cdb.toJSON());
 		});
 
+		cdb.unsync();
+
 	}, function (error) {
 		console.log(error);
 	});

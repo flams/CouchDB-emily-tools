@@ -84,7 +84,11 @@ requirejs(["CouchDBStore", "SocketIOTransport"], function (CouchDBStore, SocketI
 
 ## Changelog
 
-###1.0.5 - 25 MAR 2014
+###1.0.6 - 27 MAR 2013
+
+* Aborting a non established connection doesn't fail anymore
+
+###1.0.5 - 25 MAR 2013
 
 * Removed specific code imported from another application after 1.0.2
 * Updated documentation

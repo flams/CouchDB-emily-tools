@@ -20,7 +20,8 @@ var configuration = {
 
 handler = function (data, onEnd, onData) {
 
-	var req;
+	var req = {},
+		isAborted = false;
 
 	data.hostname = configuration.hostname;
 	data.port = configuration.port;
@@ -53,8 +54,13 @@ handler = function (data, onEnd, onData) {
 			if (err) {
 				throw new Error(err);
 			} else {
-				data.auth = session.auth;
-				exec();
+				if (!isAborted) {
+					data.auth = session.auth;
+					exec();
+				} else {
+					// do nothing!
+				}
+
 			}
 		});
 	} else {
@@ -62,6 +68,7 @@ handler = function (data, onEnd, onData) {
 	}
 
 	return function () {
+		isAborted = true;
 		req.abort && req.abort();
 	};
 };
