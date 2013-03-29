@@ -60,7 +60,13 @@ function CouchDBBase(Store, StateMachine, Tools) {
 		 * The transport to use to issue the requests
 		 * @private
 		 */
-		_transport = null;
+		_transport = null,
+
+		/**
+		 * The current synchronization informations
+		 * @private
+		 */
+		_syncInfo;
 
 		/**
 		 * Get the current state machine
@@ -128,6 +134,39 @@ function CouchDBBase(Store, StateMachine, Tools) {
 			} else {
 				return false;
 			}
+		};
+
+		/**
+		 * Synchronize the store with CouchDB
+		 * depending on the provided sync info
+		 * @param {Object} a configuration object
+		 * @returns {Boolean} false if no configuration object given
+		 */
+		this.sync = function sync(syncInfo) {
+			if (typeof syncInfo == "object") {
+				_syncInfo = syncInfo;
+				_stateMachine.event("sync");
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Unsync the store
+		 * @returns {Boolean} true if unsynched
+		 */
+		this.unsync = function unsync() {
+			return _stateMachine.event("unsync");
+		};
+
+		/**
+		 * Returns the current synchronization info
+		 * For debugging purpose
+		 * @private
+		 */
+		this.getSyncInfo = function getSyncInfo() {
+			return _syncInfo;
 		};
 
 	}

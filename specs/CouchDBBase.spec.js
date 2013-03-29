@@ -98,5 +98,37 @@ function (CouchDBBase, Store, Promise, StateMachine) {
 
 	});
 
+	describe("CouchDBBase has a common set of methods", function () {
+		var couchDBBase = null,
+			stateMachine = null,
+			fakeReturn = {};
+
+		beforeEach(function () {
+			couchDBBase = new CouchDBBase;
+			stateMachine = {
+				event: jasmine.createSpy().andReturn(fakeReturn)
+			};
+			couchDBBase.setStateMachine(stateMachine);
+		});
+
+		it("should have a function for synchronizing the store with CouchDB", function () {
+			var syncInfo = {};
+			expect(couchDBBase.sync).toBeInstanceOf(Function);
+			expect(couchDBBase.sync(syncInfo)).toBe(true);
+			expect(couchDBBase.sync()).toBe(false);
+			expect(couchDBBase.getSyncInfo()).toBe(syncInfo);
+
+			expect(stateMachine.event.wasCalled).toBe(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toBe("sync");
+		});
+
+		it("should have a function for unsynchronizing the store", function () {
+			expect(couchDBBase.unsync).toBeInstanceOf(Function);
+			expect(couchDBBase.unsync()).toBe(fakeReturn);
+
+			expect(stateMachine.event.wasCalled).toBe(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toBe("unsync");
+		});
+	});
 
 });
