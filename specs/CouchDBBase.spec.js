@@ -40,8 +40,33 @@ function (CouchDBBase, Store, Promise, StateMachine) {
 			couchDBBase = new CouchDBBase({
 				"key": "value"
 			});
-			expect(couchDBBase.get("key")).toEqual("value");
+			expect(couchDBBase.get("key")).toBe("value");
 		});
+	});
+
+	describe("CouchDBBase delegates its internal states to a stateMachine", function () {
+
+		var couchDBBase = null,
+			stateMachine = null;
+
+		beforeEach(function () {
+			couchDBBase = new CouchDBBase;
+			stateMachine = couchDBBase.getStateMachine();
+		});
+
+		it("should embed a stateMachine", function () {
+			expect(couchDBBase.getStateMachine).toBeInstanceOf(Function);
+			expect(couchDBBase.getStateMachine()).toBeInstanceOf(StateMachine);
+		});
+
+		it("should have a function to set a new stateMachine", function () {
+			var stateMachine = {event:function(){}};
+			expect(couchDBBase.setStateMachine).toBeInstanceOf(Function);
+			expect(couchDBBase.setStateMachine({})).toBe(false);
+			expect(couchDBBase.setStateMachine(stateMachine)).toBe(true);
+			expect(couchDBBase.getStateMachine()).toBe(stateMachine);
+		});
+
 	});
 
 });
