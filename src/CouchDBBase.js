@@ -16,12 +16,26 @@ define("CouchDBBase",
 function CouchDBBase(Store, StateMachine, Tools) {
 
 	/**
-	 * Duck typing
+	 * Duck typing.
 	 * @private
 	 */
 	function _isStateMachine(stateMachine) {
 		if (typeof stateMachine == "object" &&
 			typeof stateMachine.event == "function" ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Double duck typing
+	 * @private
+	 */
+	function _isTransport(transport) {
+		if (typeof transport == "object" &&
+			typeof transport.request == "function" &&
+			typeof transport.listen == "function") {
 			return true;
 		} else {
 			return false;
@@ -34,7 +48,19 @@ function CouchDBBase(Store, StateMachine, Tools) {
 		 * It has a default state Machine
 		 * @private
 		 */
-		var _stateMachine = new StateMachine;
+		var _stateMachine = new StateMachine,
+
+		/**
+		 * The default handler name
+		 * @private
+		 */
+		_handlerName = "CouchDB",
+
+		/**
+		 * The transport to use to issue the requests
+		 * @private
+		 */
+		_transport = null;
 
 		/**
 		 * Get the current state machine
@@ -47,10 +73,57 @@ function CouchDBBase(Store, StateMachine, Tools) {
 		/**
 		 * Set the state machine
 		 * @param {StateMachine} stateMachine the state machine to set
+		 * @returns {Boolean} true if it's an accepted state Machine
 		 */
 		this.setStateMachine = function setStateMachine(stateMachine) {
 			if (_isStateMachine(stateMachine)) {
 				_stateMachine = stateMachine;
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Get the current transport
+		 * @returns {Transport} the current transport
+		 */
+		this.getTransport = function getTransport() {
+			return _transport;
+		};
+
+		/**
+		 * Set the current transport
+		 * @param {Transport} transport the transport to use
+		 * @returns {Boolean} true if its an accepted transport
+		 */
+		this.setTransport = function setTransport(transport) {
+			if (_isTransport(transport)) {
+				_transport = transport;
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Get the current CouchDB handler name
+		 * @returns {String} the current handler name
+		 */
+		this.getHandlerName = function getHandlerName() {
+			return _handlerName;
+		};
+
+		/**
+		 * Set the current CouchDB handler name
+		 * @param {String} handlerName the name of the handler
+		 * The name must be a string that matches with the handler
+		 * as it's been added in Emily/Olives handlers
+		 * @returns {Boolean} true if it's a string
+		 */
+		this.setHandlerName = function setHandlerName(handlerName) {
+			if (typeof handlerName == "string") {
+				_handlerName = handlerName;
 				return true;
 			} else {
 				return false;

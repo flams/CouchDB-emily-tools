@@ -44,6 +44,35 @@ function (CouchDBBase, Store, Promise, StateMachine) {
 		});
 	});
 
+	describe("CouchDBBase can be configured", function () {
+
+		var couchDBBase = null;
+
+		beforeEach(function () {
+			couchDBBase = new CouchDBBase;
+		});
+
+		it("should have a function for setting the name of CouchDB's handler", function () {
+			expect(couchDBBase.setHandlerName).toBeInstanceOf(Function);
+			expect(couchDBBase.setHandlerName("CouchDB")).toBe(true);
+			expect(couchDBBase.setHandlerName({})).toBe(false);
+			expect(couchDBBase.getHandlerName()).toBe("CouchDB");
+		});
+
+		it("should have a default handler name", function () {
+			expect(couchDBBase.getHandlerName()).toBe("CouchDB");
+		});
+
+		it("should have a function for setting the transport", function () {
+			expect(couchDBBase.getTransport()).toBe(null);
+			expect(couchDBBase.setTransport()).toBe(false);
+			expect(couchDBBase.setTransport({})).toBe(false);
+			expect(couchDBBase.setTransport(transportMock)).toBe(true);
+			expect(couchDBBase.getTransport()).toBe(transportMock);
+		});
+
+	});
+
 	describe("CouchDBBase delegates its internal states to a stateMachine", function () {
 
 		var couchDBBase = null,
@@ -68,5 +97,6 @@ function (CouchDBBase, Store, Promise, StateMachine) {
 		});
 
 	});
+
 
 });
