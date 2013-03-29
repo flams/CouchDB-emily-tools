@@ -6,8 +6,22 @@
 
 define("CouchDBBase",
 
-["Store", "StateMachine", "Tools", "Promise"],
+["Store", "StateMachine", "Tools"],
 
-function CouchDBBase() {
+/**
+ * @class
+ * CouchDBBase is a subtype of an Emily Store
+ * and is an abstract class for CouchDBViews, BulkViews, Documents, BulkDocuments
+ */
+function CouchDBBase(Store, StateMachine, Tools) {
+
+	function CouchDBBaseConstructor() {
+
+	}
+
+	return function CouchDBSBaseFactory(data) {
+		CouchDBBaseConstructor.prototype = new Store(data);
+		return new CouchDBBaseConstructor;
+	};
 
 });
