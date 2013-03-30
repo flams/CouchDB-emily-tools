@@ -48,7 +48,7 @@ function CouchDBBase(Store, StateMachine, Tools) {
 		 * It has a default state Machine
 		 * @private
 		 */
-		var _stateMachine = new StateMachine,
+		var _stateMachine = null,
 
 		/**
 		 * The default handler name
@@ -168,6 +168,26 @@ function CouchDBBase(Store, StateMachine, Tools) {
 		this.getSyncInfo = function getSyncInfo() {
 			return _syncInfo;
 		};
+
+		/**
+		 * This function will be called when the Store needs to be synchronized
+		 *
+		 */
+		this.onSync = function onSync() {
+
+		};
+
+		this.setStateMachine(new StateMachine("Unsynched", {
+
+			"Unsynched": [
+				["sync", this.onSync, this, "Synched"]
+			],
+
+			"Synched": [
+
+			]
+
+		}));
 
 	}
 
