@@ -42,6 +42,12 @@ function CouchDBBase(Store, StateMachine, Tools) {
 		}
 	}
 
+	/**
+	 * A noop function
+	 * @private
+	 */
+	function NOOP() {}
+
 	function CouchDBBaseConstructor() {
 
 		/**
@@ -171,9 +177,17 @@ function CouchDBBase(Store, StateMachine, Tools) {
 
 		/**
 		 * This function will be called when the Store needs to be synchronized
-		 *
+		 * It's to be overriden in the sub Store
 		 */
 		this.onSync = function onSync() {
+
+		};
+
+		/**
+		 * This function will be called when the Store needs to be subscribe to changes
+		 * It's to be overriden in the sub Store
+		 */
+		this.onListen = function onListen() {
 
 		};
 
@@ -184,7 +198,11 @@ function CouchDBBase(Store, StateMachine, Tools) {
 			],
 
 			"Synched": [
+				["listen", this.onListen, this, "Listening"],
+				["unsync", NOOP, "Unsynched"]
+			],
 
+			"Listening": [
 			]
 
 		}));

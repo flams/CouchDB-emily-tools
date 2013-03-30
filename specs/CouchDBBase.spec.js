@@ -109,6 +109,21 @@ function (CouchDBBase, Store, Promise, StateMachine) {
 			expect(sync[2]).toBe("Synched");
 		});
 
+		it("should have a default synched state", function () {
+			var synched = stateMachine.get("Synched");
+
+			var listen = synched.get("listen");
+			expect(listen[0]).toBe(couchDBBase.onListen);
+			expect(listen[1]).toBe(couchDBBase);
+			expect(listen[2]).toBe("Listening");
+
+			var unsync = stateMachine.get("Synched");
+
+			var unsync = synched.get("unsync");
+			expect(unsync[0].name).toBe("NOOP");
+			expect(unsync[2]).toBe("Unsynched");
+		});
+
 	});
 
 	describe("CouchDBBase has a common set of methods", function () {
