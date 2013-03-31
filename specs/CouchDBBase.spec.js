@@ -101,27 +101,38 @@ function (CouchDBBase, Store, Promise, StateMachine) {
 		});
 
 		it("should have a default Unsynched state", function () {
-			var unsynched = stateMachine.get("Unsynched");
+			var Unsynched = stateMachine.get("Unsynched");
 
-			var sync = unsynched.get("sync");
+			var sync = Unsynched.get("sync");
 			expect(sync[0]).toBe(couchDBBase.onSync);
 			expect(sync[1]).toBe(couchDBBase);
 			expect(sync[2]).toBe("Synched");
 		});
 
 		it("should have a default synched state", function () {
-			var synched = stateMachine.get("Synched");
+			var Synched = stateMachine.get("Synched");
 
-			var listen = synched.get("listen");
+			var listen = Synched.get("listen");
 			expect(listen[0]).toBe(couchDBBase.onListen);
 			expect(listen[1]).toBe(couchDBBase);
 			expect(listen[2]).toBe("Listening");
 
-			var unsync = stateMachine.get("Synched");
-
-			var unsync = synched.get("unsync");
+			var unsync = Synched.get("unsync");
 			expect(unsync[0].name).toBe("NOOP");
 			expect(unsync[2]).toBe("Unsynched");
+		});
+
+		it("should have a default Listening state", function () {
+			var Listening = stateMachine.get("Listening");
+
+			var unsync = Listening.get("unsync");
+			expect(unsync[0]).toBe(couchDBBase.stopListening);
+			expect(unsync[1]).toBe(couchDBBase);
+			expect(unsync[2]).toBe("Unsynched");
+
+			var change = Listening.get("change");
+			expect(change[0]).toBe(couchDBBase.onChange);
+			expect(change[1]).toBe(couchDBBase);
 		});
 
 	});

@@ -184,13 +184,32 @@ function CouchDBBase(Store, StateMachine, Tools) {
 		};
 
 		/**
-		 * This function will be called when the Store needs to be subscribe to changes
+		 * This function will be called when the Store needs to subscribe to changes
 		 * It's to be overriden in the sub Store
 		 */
 		this.onListen = function onListen() {
 
 		};
 
+		/**
+		 * This function will be called when the Store is unsynched
+		 * It's to be overriden in the sub Store
+		 */
+		this.stopListening = function stopListening() {
+
+		};
+
+		/**
+		 * This function will be called when the Store needs to be subscribe to changes
+		 * It's to be overriden in the sub Store
+		 */
+		this.onChange = function onChange() {
+
+		};
+
+		/**
+		 * Create the state machine with the default states
+		 */
 		this.setStateMachine(new StateMachine("Unsynched", {
 
 			"Unsynched": [
@@ -203,6 +222,8 @@ function CouchDBBase(Store, StateMachine, Tools) {
 			],
 
 			"Listening": [
+				["unsync", this.stopListening, this, "Unsynched"],
+				["change", this.onChange, this]
 			]
 
 		}));
