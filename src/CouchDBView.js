@@ -18,8 +18,8 @@ function CouchDBView(Store, CouchDBBase) {
 
 	}
 
-	return function CouchDBViewFactory() {
-		CouchDBViewConstructor.prototype = new CouchDBBase();
+	return function CouchDBViewFactory(data) {
+		CouchDBViewConstructor.prototype = new CouchDBBase(data);
 		return new CouchDBViewConstructor;
 	};
 

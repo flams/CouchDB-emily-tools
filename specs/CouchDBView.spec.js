@@ -23,7 +23,6 @@ function (CouchDBBase, CouchDBView, Store) {
 				couchDBView = new CouchDBView(data);
 
 			expect(couchDBView.get("a")).toBe(10);
-
 		});
 
 	});
