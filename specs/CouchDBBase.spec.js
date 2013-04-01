@@ -140,7 +140,12 @@ function (CouchDBBase, Store, Promise, StateMachine) {
 	describe("CouchDBBase has a common set of methods", function () {
 		var couchDBBase = null,
 			stateMachine = null,
-			fakeReturn = {};
+			fakeReturn = {},
+			promise = {
+				fulfill: function () {},
+				reject: function () {},
+				then: function () {}
+			};
 
 		beforeEach(function () {
 			couchDBBase = new CouchDBBase;
@@ -150,15 +155,29 @@ function (CouchDBBase, Store, Promise, StateMachine) {
 			couchDBBase.setStateMachine(stateMachine);
 		});
 
+		it("should have a function for setting the promise to be returned on sync", function () {
+			expect(couchDBBase.setPromise).toBeInstanceOf(Function);
+			expect(couchDBBase.setPromise()).toBe(false);
+			expect(couchDBBase.setPromise(promise)).toBe(true);
+			expect(couchDBBase.getPromise()).toBe(promise);
+		});
+
 		it("should have a function for synchronizing the store with CouchDB", function () {
 			var syncInfo = {};
+			couchDBBase.setPromise(promise);
 			expect(couchDBBase.sync).toBeInstanceOf(Function);
-			expect(couchDBBase.sync(syncInfo)).toBe(true);
+			expect(couchDBBase.sync(syncInfo)).toBeTruthy();
 			expect(couchDBBase.sync()).toBe(false);
 			expect(couchDBBase.getSyncInfo()).toBe(syncInfo);
 
 			expect(stateMachine.event.wasCalled).toBe(true);
 			expect(stateMachine.event.mostRecentCall.args[0]).toBe("sync");
+		});
+
+		it("should return the promise on sync", function () {
+			var syncInfo = {};
+			couchDBBase.setPromise(promise);
+			expect(couchDBBase.sync(syncInfo)).toBe(promise);
 		});
 
 		it("should have a function for unsynchronizing the store", function () {

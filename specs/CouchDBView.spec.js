@@ -27,4 +27,9 @@ function (CouchDBBase, CouchDBView, Store) {
 
 	});
 
+	describe("CouchDBView can be synchronized with a CouchDB view", function () {
+
+
+	});
+
 });

@@ -43,6 +43,21 @@ function CouchDBBase(Store, StateMachine, Tools) {
 	}
 
 	/**
+	 * Triple duck typing
+	 * @private
+	 */
+	function _isPromise(promise) {
+		if (typeof promise == "object" &&
+			typeof promise.fulfill == "function" &&
+			typeof promise.reject == "function" &&
+			typeof promise.then == "function") {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * A noop function
 	 * @private
 	 */
@@ -72,7 +87,34 @@ function CouchDBBase(Store, StateMachine, Tools) {
 		 * The current synchronization informations
 		 * @private
 		 */
-		_syncInfo;
+		_syncInfo,
+
+		/**
+		 * A promise returned and resolved when the store is synched
+		 * @private
+		 */
+		_promise = null;
+
+		/**
+		 * Set the promise to be resolved when the store is synched
+		 * @return {Boolean} true if it's a promise
+		 */
+		this.setPromise = function setPromise(promise) {
+			if (_isPromise(promise)) {
+				_promise = promise;
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Get the promise to be resolved when the store is synched
+		 * @return {Promise} the promise
+		 */
+		this.getPromise = function getPromise() {
+			return _promise;
+		};
 
 		/**
 		 * Get the current state machine
@@ -152,7 +194,7 @@ function CouchDBBase(Store, StateMachine, Tools) {
 			if (typeof syncInfo == "object") {
 				_syncInfo = syncInfo;
 				_stateMachine.event("sync");
-				return true;
+				return _promise;
 			} else {
 				return false;
 			}
