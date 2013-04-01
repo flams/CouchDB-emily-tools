@@ -14,6 +14,13 @@ define("CouchDBView",
  */
 function CouchDBView(Store, CouchDBBase) {
 
+	function CouchDBViewConstructor() {
 
+	}
+
+	return function CouchDBViewFactory() {
+		CouchDBViewConstructor.prototype = new CouchDBBase();
+		return new CouchDBViewConstructor;
+	};
 
 });
