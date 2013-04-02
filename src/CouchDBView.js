@@ -34,7 +34,7 @@ function CouchDBView(Store, CouchDBBase) {
 						"database": database,
 						"design": designDocument,
 						"view": view,
-						"query": query
+						"query": query || {}
 					};
 				} else {
 					return false;
@@ -50,7 +50,6 @@ function CouchDBView(Store, CouchDBBase) {
 		 */
 		this.onSync = function onSync() {
 			var _syncInfo = this.getSyncInfo();
-			_syncInfo.query = _syncInfo.query || {};
 
 			this.getTransport().request(this.getHandlerName(), {
 				method: "GET",
@@ -64,7 +63,7 @@ function CouchDBView(Store, CouchDBBase) {
 					this.reset(json.rows);
 					this.getPromise().fulfill(this);
 					if (typeof json.total_rows == "undefined") {
-						this.setReducedViewInfo(true);
+						_syncInfo.reducedView = true;
 					}
 
 					this.getStateMachine().event("subscribeToViewChanges");

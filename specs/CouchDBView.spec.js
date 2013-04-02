@@ -119,7 +119,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 
 			expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBView);
 		});
-/**
+
 		it("should fulfill the promise when the view is synched", function () {
 			var promise = couchDBView.sync("db", "view", "name"),
 				res =  '{"total_rows":3,"update_seq":8,"offset":0,"rows":[' +
@@ -128,7 +128,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 						'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"for the example"}}]}',
 	    		callback;
 
-			couchDBView.actions.getView.call(couchDBView);
+			couchDBView.onSync();
 			spyOn(promise, "fulfill");
 			callback = transportMock.request.mostRecentCall.args[2];
 
@@ -141,17 +141,14 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			var res = '{"rows":[{"key":null,"value":[150]}]}',
 				callback;
 
-			spyOn(couchDBView, "setReducedViewInfo");
-
-			couchDBView.actions.getView.call(couchDBView);
+			couchDBView.onSync();
 			callback = transportMock.request.mostRecentCall.args[2];
 			callback.call(couchDBView, res);
 
-			expect(couchDBView.setReducedViewInfo.wasCalled).toEqual(true);
-			expect(couchDBView.setReducedViewInfo.mostRecentCall.args[0]).toEqual(true);
+			expect(couchDBView.getSyncInfo().reducedView).toEqual(true);
 
 		});
-
+/**
 		it("should throw an explicit error if resulting json has no 'row' property", function () {
 			var cb;
 			couchDBView.actions.getView();
