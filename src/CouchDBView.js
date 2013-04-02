@@ -22,6 +22,14 @@ function CouchDBView(Store, CouchDBBase, Promise) {
 		 */
 		var _promise = new Promise;
 
+		/**
+		 * Set the synchronization data if valid data is supplied
+		 * @param {String} database the database to sync with
+		 * @param {String} designDocument the design document to be used
+		 * @param {String} view the name of the view to request
+		 * @param {Object} [optional] query an object with queryparams
+		 * @returns {Object} syncInfo if valid, false if not
+		 */
 		this.setSyncInfo = function setSyncInfo(database, designDocument, view, query) {
 			if (typeof database == "string" &&
 				typeof designDocument == "string" &&
@@ -42,7 +50,33 @@ function CouchDBView(Store, CouchDBBase, Promise) {
 			}
 		};
 
+		/**
+		 * Get a CouchDB view
+		 * @private
+		 */
+		this.onSync = function onSync() {
+			var _syncInfo = this.getSyncInfo();
+			_syncInfo.query = _syncInfo.query || {};
 
+			this.getTransport().request(this.getHandlerName(), {
+				method: "GET",
+				path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + _syncInfo.view,
+				query: _syncInfo.query
+			}, function (results) {
+				var json = JSON.parse(results);
+				if (!json.rows) {
+					throw new Error("CouchDBStore [" + _syncInfo.database + ", " + _syncInfo.design + ", " + _syncInfo.view + "].sync() failed: " + results);
+				} else {
+					this.reset(json.rows);
+					_syncPromise.fulfill(this);
+					if (typeof json.total_rows == "undefined") {
+						this.setReducedViewInfo(true);
+					}
+
+					_stateMachine.event("subscribeToViewChanges");
+				}
+			}, this);
+		};
 
 		/**
 		 * Set the promise so it's returned on sync
