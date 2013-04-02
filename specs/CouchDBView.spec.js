@@ -95,7 +95,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			expect(reqData["path"]).toEqual("/db/_design/design/_view/view");
 			expect(reqData["query"]).toBe(query);
 		});
-/**
+
 		it("should reset the store on sync and ask for changes subscription", function () {
 			var res =  '{"total_rows":3,"update_seq":8,"offset":0,"rows":[' +
 						'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' +
@@ -105,7 +105,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 
 			spyOn(stateMachine, "event");
 			spyOn(couchDBView, "reset");
-			couchDBView.actions.getView.call(couchDBView);
+			couchDBView.onSync();
 			callback = transportMock.request.mostRecentCall.args[2];
 
 			callback.call(couchDBView, res);
@@ -119,7 +119,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 
 			expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBView);
 		});
-
+/**
 		it("should fulfill the promise when the view is synched", function () {
 			var promise = couchDBView.sync("db", "view", "name"),
 				res =  '{"total_rows":3,"update_seq":8,"offset":0,"rows":[' +
