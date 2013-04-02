@@ -442,7 +442,14 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			expect(couchDBView.del.wasCalled).toEqual(true);
 			expect(couchDBView.del.mostRecentCall.args[0]).toEqual(3);
 		});
-/**
+
+		it("should add a transition for updating a reduced view", function () {
+			var Listening = stateMachine.get("Listening");
+			var updateReduced = Listening.get("updateReduced");
+			expect(updateReduced[0]).toBe(couchDBView.updateReduced);
+			expect(updateReduced[1]).toBe(couchDBView);
+		});
+
 		it("should update the reduced view", function () {
 			var reqData,
 				json,
@@ -453,7 +460,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			spyOn(couchDBView, "set");
 			spyOn(JSON, "parse").andReturn(parsed);
 
-			couchDBView.actions.updateReduced.call(couchDBView);
+			couchDBView.updateReduced();
 			expect(transportMock.request.wasCalled).toEqual(true);
 			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
 
@@ -473,7 +480,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			expect(couchDBView.set.mostRecentCall.args[0]).toEqual(0);
 			expect(couchDBView.set.mostRecentCall.args[1]).toBe(parsed.rows[0]);
 		});
-
+/**
 		it("should unsync a view, ie. stop listening to changes and reset it", function () {
 			var spy = jasmine.createSpy();
 			couchDBView.stopListening = spy;

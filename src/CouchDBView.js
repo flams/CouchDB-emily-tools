@@ -218,6 +218,33 @@ function CouchDBView(Store, CouchDBBase, Tools) {
 			}, this);
 		};
 
+		/**
+		 * Update a reduced view (it has one row with no id)
+		 * @private
+		 */
+		this.updateReduced = function updateReduced() {
+
+			var _syncInfo = this.getSyncInfo();
+
+			this.getTransport().request(
+				this.getHandlerName(),{
+					method: "GET",
+					path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + _syncInfo.view,
+					query: _syncInfo.query
+			}, function (view) {
+				var json = JSON.parse(view);
+
+				this.set(0, json.rows[0]);
+
+			}, this);
+		};
+
+		// Add the missing states
+		var stateMachine = this.getStateMachine(),
+			Listening = stateMachine.get("Listening");
+
+		Listening.add("updateReduced", this.updateReduced, this);
+
 	}
 
 	return function CouchDBViewFactory(data) {
