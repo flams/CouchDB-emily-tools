@@ -177,11 +177,11 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			expect(transportMock.listen.mostRecentCall.args[3]).toBe(couchDBView);
 		});
-/**
+
 		it("should not fail with empty json from heartbeat", function () {
 			var callback;
 
-			couchDBView.actions.subscribeToViewChanges.call(couchDBView);
+			couchDBView.onListen();
 			callback = transportMock.listen.mostRecentCall.args[2];
 
 			expect(function() {
@@ -193,11 +193,11 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 		it("should not fail if json has no changes properties (happens when used with couchdb lucene)", function () {
 			var callback;
 
-			couchDBView.actions.subscribeToViewChanges.call(couchDBView);
+			couchDBView.onListen();
 			callback = transportMock.listen.mostRecentCall.args[2];
 
 			expect(function() {
-				callback("{}");
+				callback.call(couchDBView, "{}");
 			}).not.toThrow();
 		});
 
@@ -207,9 +207,9 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 
 			spyOn(stateMachine, "event");
 
-			couchDBView.actions.subscribeToViewChanges.call(couchDBView, 8);
+			couchDBView.onListen(8);
 			callback = transportMock.listen.mostRecentCall.args[2];
-			callback(listenRes);
+			callback.call(couchDBView, listenRes);
 
 			expect(stateMachine.event.wasCalled).toEqual(true);
 			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("change");
@@ -222,9 +222,9 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 
 			spyOn(stateMachine, "event");
 
-			couchDBView.actions.subscribeToViewChanges.call(couchDBView, 8);
+			couchDBView.onListen(8);
 			callback = transportMock.listen.mostRecentCall.args[2];
-			callback(listenRes);
+			callback.call(couchDBView, listenRes);
 
 			expect(stateMachine.event.wasCalled).toEqual(true);
 			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("add");
@@ -237,9 +237,9 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 
 			spyOn(stateMachine, "event");
 
-			couchDBView.actions.subscribeToViewChanges.call(couchDBView, 8);
+			couchDBView.onListen(8);
 			callback = transportMock.listen.mostRecentCall.args[2];
-			callback(listenRes);
+			callback.call(couchDBView, listenRes);
 
 			expect(stateMachine.event.wasCalled).toEqual(true);
 			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("delete");
@@ -251,16 +251,16 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 				callback;
 
 			spyOn(stateMachine, "event");
-			couchDBView.setReducedViewInfo(true);
-			couchDBView.actions.subscribeToViewChanges.call(couchDBView, 8);
+			couchDBView.getSyncInfo().reducedView = true;
+			couchDBView.onListen(8);
 			callback = transportMock.listen.mostRecentCall.args[2];
-			callback(listenRes);
+			callback.call(couchDBView, listenRes);
 
 			expect(stateMachine.event.wasCalled).toEqual(true);
 			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("updateReduced");
 			expect(stateMachine.event.mostRecentCall.args[1]).toBeUndefined();
 		});
-
+/**
 		it("should update the selected document", function () {
 			var reqData,
 				value,
