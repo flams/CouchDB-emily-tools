@@ -398,7 +398,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 
 			expect(value.value.body).toEqual("do you see me?");
 		});
-/**
+
 		it("should delete the removed document", function () {
 			couchDBView.reset([{
 				"id":"document1",
@@ -438,11 +438,11 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			}]);
 
 			spyOn(couchDBView, "del");
-			couchDBView.actions.removeDocInStore.call(couchDBView, "document4");
+			couchDBView.onRemove("document4");
 			expect(couchDBView.del.wasCalled).toEqual(true);
 			expect(couchDBView.del.mostRecentCall.args[0]).toEqual(3);
 		});
-
+/**
 		it("should update the reduced view", function () {
 			var reqData,
 				json,
