@@ -6,15 +6,27 @@
 
 define("CouchDBView",
 
-["Store", "CouchDBBase"],
+["Store", "CouchDBBase", "Promise"],
 
 /**
  * @class
  * CouchDBView synchronizes a Store with a CouchDB view
  */
-function CouchDBView(Store, CouchDBBase) {
+function CouchDBView(Store, CouchDBBase, Promise) {
 
 	function CouchDBViewConstructor() {
+
+		/**
+		 * It has a promise that is resolved when the store is synched
+		 * @private
+		 */
+		var _promise = new Promise;
+
+
+		/**
+		 * Set the promise so it's returned on sync
+		 */
+		this.setPromise(_promise);
 
 	}
 

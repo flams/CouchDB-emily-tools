@@ -4,9 +4,9 @@
  * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  */
 
-require(["CouchDBBase", "CouchDBView", "Store"],
+require(["CouchDBBase", "CouchDBView", "Store", "Promise"],
 
-function (CouchDBBase, CouchDBView, Store) {
+function (CouchDBBase, CouchDBView, Store, Promise) {
 
 	describe("CouchDBView inherits from CouchDBBase", function () {
 
@@ -25,9 +25,16 @@ function (CouchDBBase, CouchDBView, Store) {
 			expect(couchDBView.get("a")).toBe(10);
 		});
 
+		it("should return a new promise", function () {
+			var couchDBView = new CouchDBView,
+				promise = couchDBView.sync({});
+			expect(promise).toBeInstanceOf(Promise);
+		});
+
 	});
 
 	describe("CouchDBView can be synchronized with a CouchDB view", function () {
+
 
 
 	});
