@@ -148,17 +148,17 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			expect(couchDBView.getSyncInfo().reducedView).toEqual(true);
 
 		});
-/**
+
 		it("should throw an explicit error if resulting json has no 'row' property", function () {
 			var cb;
-			couchDBView.actions.getView();
+			couchDBView.onSync();
 			cb = transportMock.request.mostRecentCall.args[2];
 
 			expect(function () {
 				cb.call(couchDBView, '{"error":""}');
 			}).toThrow('CouchDBStore [db, design, _view/view].sync() failed: {"error":""}');
 		});
-
+/**
 		it("should subscribe to view changes", function () {
 			var reqData;
 
