@@ -236,8 +236,9 @@ function CouchDBBase(Store, StateMachine, Tools, Promise) {
 		 * This function will be called when the Store is unsynched
 		 * It's to be overriden in the sub Store
 		 */
-		this.stopListening = function stopListening() {
-
+		this.unsync = function unsync() {
+			this.stopListening();
+			delete this.stopListening;
 		};
 
 		/**
@@ -290,7 +291,7 @@ function CouchDBBase(Store, StateMachine, Tools, Promise) {
 			],
 
 			"Listening": [
-				["unsync", this.stopListening, this, "Unsynched"],
+				["unsync", this.unsync, this, "Unsynched"],
 				["change", this.onChange, this],
 				["add", this.onAdd, this],
 				["remove", this.onRemove, this]

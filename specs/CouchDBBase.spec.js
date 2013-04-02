@@ -12,13 +12,11 @@ require(["CouchDBBase", "Store", "Promise", "StateMachine"],
 function (CouchDBBase, Store, Promise, StateMachine) {
 
 	var transportMock = null,
-		couchDBBase = null,
-		stopListening = null;
+		couchDBBase = null;
 
 	beforeEach(function () {
-		stopListening = jasmine.createSpy();
 		transportMock = {
-				listen: jasmine.createSpy("listen").andReturn(stopListening),
+				listen: jasmine.createSpy("listen"),
 				request: jasmine.createSpy("request")
 			};
 		couchDBBase = new CouchDBBase;
@@ -126,7 +124,7 @@ function (CouchDBBase, Store, Promise, StateMachine) {
 			var Listening = stateMachine.get("Listening");
 
 			var unsync = Listening.get("unsync");
-			expect(unsync[0]).toBe(couchDBBase.stopListening);
+			expect(unsync[0]).toBe(couchDBBase.unsync);
 			expect(unsync[1]).toBe(couchDBBase);
 			expect(unsync[2]).toBe("Unsynched");
 
@@ -188,14 +186,6 @@ function (CouchDBBase, Store, Promise, StateMachine) {
 			expect(couchDBBase.sync(syncInfo)).toBe(promise);
 		});
 
-		it("should have a function for unsynchronizing the store", function () {
-			expect(couchDBBase.unsync).toBeInstanceOf(Function);
-			expect(couchDBBase.unsync()).toBe(fakeReturn);
-
-			expect(stateMachine.event.wasCalled).toBe(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toBe("unsync");
-		});
-
 		it("should have a function for validating and setting the sync info that can be overriden", function () {
 			expect(couchDBBase.setSyncInfo).toBeInstanceOf(Function);
 			spyOn(couchDBBase, "setSyncInfo");
@@ -215,6 +205,14 @@ function (CouchDBBase, Store, Promise, StateMachine) {
 
 			expect(spySetInfo.wasCalled).toBe(true);
 			expect(spySetInfo.mostRecentCall.args[0]).toBe(syncInfo);
+		});
+
+		it("should unsync a store, ie. stop listening to changes and reset it", function () {
+			var spy = jasmine.createSpy();
+			couchDBBase.stopListening = spy;
+			couchDBBase.unsync();
+			expect(spy.wasCalled).toEqual(true);
+			expect(couchDBBase.stopListening).toBeUndefined();
 		});
 	});
 

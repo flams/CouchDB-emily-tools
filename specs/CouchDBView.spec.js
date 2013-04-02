@@ -165,7 +165,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 		it("should subscribe to view changes", function () {
 			var reqData;
 
-			expect(couchDBView.stopListening).not.toBe(stopListening);
+			expect(couchDBView.stopListening).toBeUndefined();
 			couchDBView.onListen();
 			expect(couchDBView.stopListening).toBe(stopListening);
 			expect(transportMock.listen.wasCalled).toEqual(true);
@@ -481,14 +481,6 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			expect(couchDBView.set.mostRecentCall.args[1]).toBe(parsed.rows[0]);
 		});
 /**
-		it("should unsync a view, ie. stop listening to changes and reset it", function () {
-			var spy = jasmine.createSpy();
-			couchDBView.stopListening = spy;
-			couchDBView.actions.unsync.call(couchDBView);
-			expect(spy.wasCalled).toEqual(true);
-			expect(couchDBView.stopListening).toBeUndefined();
-		});
-
 		it("shouldn't allow for database modification (a view is readonly)", function () {
 			spyOn(stateMachine, "event");
 			expect(couchDBView.remove()).toEqual(false);
