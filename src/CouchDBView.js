@@ -117,6 +117,36 @@ function CouchDBView(Store, CouchDBBase, Tools) {
 				}, this);
 		};
 
+		/**
+		 * Update in the Store a document that was updated in CouchDB
+		 * Get the whole view :(, then get the modified document and update it.
+		 * I have no choice but to request the whole view and look for the document
+		 * so I can also retrieve its position in the store (idx) and update the item.
+		 * Maybe I've missed something
+		 * @private
+		 */
+		onChange = function onChange(id) {
+			_transport.request(_channel,{
+				method: "GET",
+				path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + _syncInfo.view,
+				query: _syncInfo.query
+			}, function (view) {
+				var json = JSON.parse(view);
+
+				if (json.rows.length == this.getNbItems()) {
+					json.rows.some(function (value, idx) {
+						if (value.id == id) {
+							this.set(idx, value);
+						}
+					}, this);
+				} else {
+					this.actions.evenDocsInStore.call(this, json.rows, id);
+				}
+
+			}, this);
+
+		};
+
 	}
 
 	return function CouchDBViewFactory(data) {
