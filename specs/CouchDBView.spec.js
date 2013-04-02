@@ -480,14 +480,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			expect(couchDBView.set.mostRecentCall.args[0]).toEqual(0);
 			expect(couchDBView.set.mostRecentCall.args[1]).toBe(parsed.rows[0]);
 		});
-/**
-		it("shouldn't allow for database modification (a view is readonly)", function () {
-			spyOn(stateMachine, "event");
-			expect(couchDBView.remove()).toEqual(false);
-			expect(couchDBView.update()).toEqual(false);
-			expect(stateMachine.event.wasCalled).toEqual(false);
-		});
-*/
+
 	});
 
 });
