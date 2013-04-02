@@ -125,11 +125,15 @@ function CouchDBView(Store, CouchDBBase, Tools) {
 		 * Maybe I've missed something
 		 * @private
 		 */
-		onChange = function onChange(id) {
-			_transport.request(_channel,{
-				method: "GET",
-				path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + _syncInfo.view,
-				query: _syncInfo.query
+		this.onChange = function onChange(id) {
+
+			var _syncInfo = this.getSyncInfo();
+
+			this.getTransport().request(
+				this.getHandlerName(),{
+					method: "GET",
+					path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + _syncInfo.view,
+					query: _syncInfo.query
 			}, function (view) {
 				var json = JSON.parse(view);
 
@@ -140,7 +144,7 @@ function CouchDBView(Store, CouchDBBase, Tools) {
 						}
 					}, this);
 				} else {
-					this.actions.evenDocsInStore.call(this, json.rows, id);
+					//this.actions.evenDocsInStore.call(this, json.rows, id);
 				}
 
 			}, this);

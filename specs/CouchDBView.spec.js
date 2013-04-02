@@ -260,7 +260,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("updateReduced");
 			expect(stateMachine.event.mostRecentCall.args[1]).toBeUndefined();
 		});
-/**
+
 		it("should update the selected document", function () {
 			var reqData,
 				value,
@@ -275,7 +275,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 
 			spyOn(couchDBView, "set");
 
-			couchDBView.actions.updateDocInStore.call(couchDBView, "document3");
+			couchDBView.onChange("document3");
 			expect(transportMock.request.wasCalled).toEqual(true);
 			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
 
@@ -295,7 +295,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			expect(value.value.body).toEqual("a change for the example");
 
 		});
-
+/**
 		it("should have a function to even the number of items between the view and the store", function () {
 			expect(couchDBView.actions.evenDocsInStore).toBeInstanceOf(Function);
 		});
