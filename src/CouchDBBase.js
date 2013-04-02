@@ -191,7 +191,7 @@ function CouchDBBase(Store, StateMachine, Tools) {
 		 * @returns {Boolean} false if no configuration object given
 		 */
 		this.sync = function sync() {
-			if (this.setSyncInfo.apply(this, arguments)) {
+			if (_syncInfo = this.setSyncInfo.apply(this, arguments)) {
 				_stateMachine.event("sync");
 				return _promise;
 			} else {
@@ -256,7 +256,7 @@ function CouchDBBase(Store, StateMachine, Tools) {
 		 * @returns {Boolean} true
 		 */
 		this.setSyncInfo = function setSyncInfo(syncInfo) {
-			return !!(_syncInfo = syncInfo);
+			return _syncInfo = syncInfo;
 		};
 
 		/**

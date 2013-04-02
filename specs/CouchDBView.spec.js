@@ -27,7 +27,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 
 		it("should return a new promise", function () {
 			var couchDBView = new CouchDBView,
-				promise = couchDBView.sync({});
+				promise = couchDBView.sync("db", "design", "view");
 			expect(promise).toBeInstanceOf(Promise);
 		});
 
@@ -44,9 +44,22 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 		it("should only synchronize if a database, design doc and a view is given", function () {
 			expect(couchDBView.setSyncInfo({})).toBe(false);
 			expect(couchDBView.setSyncInfo("db", "design")).toBe(false);
-			expect(couchDBView.setSyncInfo("db", "design", "doc")).toBe(true);
+			expect(couchDBView.setSyncInfo("db", "design", "doc")).toBeTruthy();
+		});
+
+		it("can also accept a query object", function () {
 			expect(couchDBView.setSyncInfo("db", "design", "doc", "data")).toBe(false);
-			expect(couchDBView.setSyncInfo("db", "design", "doc", {}).toBe(true);
+			expect(couchDBView.setSyncInfo("db", "design", "doc", {})).toBeTruthy();
+		});
+
+		it("should return the syncInfo as an object", function () {
+			var query = {},
+				syncInfo = couchDBView.setSyncInfo("db", "design", "view", query);
+
+			expect(syncInfo["database"]).toBe("db");
+			expect(syncInfo["design"]).toBe("design");
+			expect(syncInfo["view"]).toBe("view");
+			expect(syncInfo["query"]).toBe(query);
 		});
 
 	});

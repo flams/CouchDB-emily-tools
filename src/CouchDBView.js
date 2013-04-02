@@ -22,14 +22,18 @@ function CouchDBView(Store, CouchDBBase, Promise) {
 		 */
 		var _promise = new Promise;
 
-
 		this.setSyncInfo = function setSyncInfo(database, designDocument, view, query) {
 			if (typeof database == "string" &&
 				typeof designDocument == "string" &&
 				typeof view == "string") {
 
 				if (!query || (typeof query == "object")) {
-					return true;
+					return {
+						"database": database,
+						"design": designDocument,
+						"view": view,
+						"query": query
+					};
 				} else {
 					return false;
 				}
@@ -37,6 +41,8 @@ function CouchDBView(Store, CouchDBBase, Promise) {
 				return false;
 			}
 		};
+
+
 
 		/**
 		 * Set the promise so it's returned on sync
