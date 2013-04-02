@@ -3,7 +3,9 @@ var emily = require("emily"),
 
 emily.handlers.set("CouchDB", tools.handler);
 
-tools.requirejs(["CouchDBStore", "Transport"], function (CouchDBStore, Transport) {
+tools.configuration.adminAuth = "couchdb:couchdb";
+
+tools.requirejs(["CouchDBStore", "CouchDBUser", "Transport"], function (CouchDBStore, CouchDBUser, Transport) {
 
 	var cdb = new CouchDBStore,
 		transport = new Transport(emily.handlers);
@@ -22,4 +24,17 @@ tools.requirejs(["CouchDBStore", "Transport"], function (CouchDBStore, Transport
 	}, function (error) {
 		console.log(error);
 	});
+
+	var user = new CouchDBUser;
+
+	user.setTransport(transport);
+	user.set("name", "test13");
+	user.set("password", "test10");
+
+	user.create().then(function () {
+		console.log("user created");
+	}, function (err) {
+		console.log("user not created", err);
+	});
+
 });
