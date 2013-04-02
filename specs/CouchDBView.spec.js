@@ -35,7 +35,19 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 
 	describe("CouchDBView can be synchronized with a CouchDB view", function () {
 
+		var couchDBView = null;
 
+		beforeEach(function () {
+			couchDBView = new CouchDBView;
+		});
+
+		it("should only synchronize if a database, design doc and a view is given", function () {
+			expect(couchDBView.setSyncInfo({})).toBe(false);
+			expect(couchDBView.setSyncInfo("db", "design")).toBe(false);
+			expect(couchDBView.setSyncInfo("db", "design", "doc")).toBe(true);
+			expect(couchDBView.setSyncInfo("db", "design", "doc", "data")).toBe(false);
+			expect(couchDBView.setSyncInfo("db", "design", "doc", {}).toBe(true);
+		});
 
 	});
 

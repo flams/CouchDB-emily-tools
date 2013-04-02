@@ -190,9 +190,8 @@ function CouchDBBase(Store, StateMachine, Tools) {
 		 * @param {Object} a configuration object
 		 * @returns {Boolean} false if no configuration object given
 		 */
-		this.sync = function sync(syncInfo) {
-			if (this.validateSyncInfo(syncInfo)) {
-				_syncInfo = syncInfo;
+		this.sync = function sync() {
+			if (this.setSyncInfo.apply(this, arguments)) {
 				_stateMachine.event("sync");
 				return _promise;
 			} else {
@@ -250,13 +249,14 @@ function CouchDBBase(Store, StateMachine, Tools) {
 		};
 
 		/**
-		 * This function can be overriden to validate the synchronization
-		 * information. By default, it only tests if the syncInfo is an object
-		 * @param {Object} syncInfo the synchronization information
-		 * @returns {Boolean} true if it's an object
+		 * This function must be overriden to validate the synchronization
+		 * information, and set the syncInfo object.
+		 * By default it only assigns the first arguments to syncInfo
+		 * @params {*} arguments all the arguments
+		 * @returns {Boolean} true
 		 */
-		this.validateSyncInfo = function validateSyncInfo(syncInfo) {
-			return (typeof syncInfo == "object");
+		this.setSyncInfo = function setSyncInfo(syncInfo) {
+			return !!(_syncInfo = syncInfo);
 		};
 
 		/**

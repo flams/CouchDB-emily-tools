@@ -23,6 +23,21 @@ function CouchDBView(Store, CouchDBBase, Promise) {
 		var _promise = new Promise;
 
 
+		this.setSyncInfo = function setSyncInfo(database, designDocument, view, query) {
+			if (typeof database == "string" &&
+				typeof designDocument == "string" &&
+				typeof view == "string") {
+
+				if (!query || (typeof query == "object")) {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		};
+
 		/**
 		 * Set the promise so it's returned on sync
 		 */

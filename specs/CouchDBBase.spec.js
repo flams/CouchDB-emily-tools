@@ -166,8 +166,8 @@ function (CouchDBBase, Store, Promise, StateMachine) {
 			var syncInfo = {};
 			couchDBBase.setPromise(promise);
 			expect(couchDBBase.sync).toBeInstanceOf(Function);
-			expect(couchDBBase.sync(syncInfo)).toBeTruthy();
 			expect(couchDBBase.sync()).toBe(false);
+			expect(couchDBBase.sync(syncInfo)).toBeTruthy();
 			expect(couchDBBase.getSyncInfo()).toBe(syncInfo);
 
 			expect(stateMachine.event.wasCalled).toBe(true);
@@ -188,25 +188,25 @@ function (CouchDBBase, Store, Promise, StateMachine) {
 			expect(stateMachine.event.mostRecentCall.args[0]).toBe("unsync");
 		});
 
-		it("should have a function for validating the sync info that can be overriden", function () {
-			expect(couchDBBase.validateSyncInfo).toBeInstanceOf(Function);
-			spyOn(couchDBBase, "validateSyncInfo");
+		it("should have a function for validating and setting the sync info that can be overriden", function () {
+			expect(couchDBBase.setSyncInfo).toBeInstanceOf(Function);
+			spyOn(couchDBBase, "setSyncInfo");
 
 			var syncInfo = {};
 
 			couchDBBase.sync(syncInfo);
 
-			expect(couchDBBase.validateSyncInfo.wasCalled).toBe(true);
-			expect(couchDBBase.validateSyncInfo.mostRecentCall.args[0]).toBe(syncInfo);
+			expect(couchDBBase.setSyncInfo.wasCalled).toBe(true);
+			expect(couchDBBase.setSyncInfo.mostRecentCall.args[0]).toBe(syncInfo);
 
-			var spyValidate = jasmine.createSpy();
+			var spySetInfo = jasmine.createSpy();
 
-			couchDBBase.validateSyncInfo = spyValidate;
+			couchDBBase.setSyncInfo = spySetInfo;
 
 			couchDBBase.sync(syncInfo);
 
-			expect(spyValidate.wasCalled).toBe(true);
-			expect(spyValidate.mostRecentCall.args[0]).toBe(syncInfo);
+			expect(spySetInfo.wasCalled).toBe(true);
+			expect(spySetInfo.mostRecentCall.args[0]).toBe(syncInfo);
 		});
 	});
 
