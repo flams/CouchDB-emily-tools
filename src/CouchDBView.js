@@ -144,10 +144,40 @@ function CouchDBView(Store, CouchDBBase, Tools) {
 						}
 					}, this);
 				} else {
-					//this.actions.evenDocsInStore.call(this, json.rows, id);
+					this.evenDocsInStore.call(this, json.rows, id);
 				}
 
 			}, this);
+
+		};
+
+		/**
+		 * When a doc is removed from the view even though it still exists
+		 * or when it's added to a view, though it wasn't just created
+		 * This function must be called to even the store
+		 * @private
+		 */
+		this.evenDocsInStore = function evenDocsInStore(view, id) {
+			var nbItems = this.getNbItems();
+
+			// If a document was removed from the view
+			if (view.length < nbItems) {
+				// Look for it in the store to remove it
+				this.loop(function (value, idx) {
+					if (value.id == id) {
+						this.del(idx);
+					}
+				}, this);
+
+			// If a document was added to the view
+			} else if (view.length > nbItems) {
+				// Look for it in the view and add it to the store at the same place
+				view.some(function (value, idx) {
+					if (value.id == id) {
+						return this.alter("splice", idx, 0, value);
+					}
+				}, this);
+			}
 
 		};
 

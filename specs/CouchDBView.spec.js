@@ -295,9 +295,9 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			expect(value.value.body).toEqual("a change for the example");
 
 		});
-/**
+
 		it("should have a function to even the number of items between the view and the store", function () {
-			expect(couchDBView.actions.evenDocsInStore).toBeInstanceOf(Function);
+			expect(couchDBView.evenDocsInStore).toBeInstanceOf(Function);
 		});
 
 		it("should add a document that is present in the view but missing in the store -it's not a new doc, rev!=1-", function () {
@@ -313,7 +313,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			couchDBView.reset(oldView);
 
 			spyOn(couchDBView, "alter");
-			couchDBView.actions.evenDocsInStore.call(couchDBView, newView, "document2");
+			couchDBView.evenDocsInStore(newView, "document2");
 
 			expect(couchDBView.alter.wasCalled).toEqual(true);
 			expect(couchDBView.alter.mostRecentCall.args[0]).toEqual("splice");
@@ -337,7 +337,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 
 			spyOn(couchDBView, "loop").andCallThrough();
 			spyOn(couchDBView, "del");
-			couchDBView.actions.evenDocsInStore.call(couchDBView, newView, "document2");
+			couchDBView.evenDocsInStore(newView, "document2");
 
 			expect(couchDBView.loop.wasCalled).toEqual(true);
 			expect(couchDBView.del.wasCalled).toEqual(true);
@@ -351,18 +351,18 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 				'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' +
 				'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"a change for the example"}}]}';
 
-			couchDBView.actions.updateDocInStore.call(couchDBView, "document2");
+			couchDBView.onChange("document2");
 			callback = transportMock.request.mostRecentCall.args[2];
 
-			spyOn(couchDBView.actions, "evenDocsInStore");
+			spyOn(couchDBView, "evenDocsInStore");
 			callback.call(couchDBView, listenRes);
 
-			expect(couchDBView.actions.evenDocsInStore.wasCalled).toEqual(true);
-			expect(couchDBView.actions.evenDocsInStore.mostRecentCall.args[0][1].id).toEqual("document3");
-			expect(couchDBView.actions.evenDocsInStore.mostRecentCall.args[1]).toEqual("document2");
+			expect(couchDBView.evenDocsInStore.wasCalled).toEqual(true);
+			expect(couchDBView.evenDocsInStore.mostRecentCall.args[0][1].id).toEqual("document3");
+			expect(couchDBView.evenDocsInStore.mostRecentCall.args[1]).toEqual("document2");
 
 		});
-
+/**
 		it("should add the new document", function () {
 			var reqData,
 				value,
