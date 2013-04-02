@@ -6,14 +6,14 @@
 
 define("CouchDBBase",
 
-["Store", "StateMachine", "Tools"],
+["Store", "StateMachine", "Tools", "Promise"],
 
 /**
  * @class
  * CouchDBBase is a subtype of an Emily Store
  * and is an abstract class for CouchDBViews, BulkViews, Documents, BulkDocuments
  */
-function CouchDBBase(Store, StateMachine, Tools) {
+function CouchDBBase(Store, StateMachine, Tools, Promise) {
 
 	/**
 	 * Duck typing.
@@ -93,7 +93,7 @@ function CouchDBBase(Store, StateMachine, Tools) {
 		 * A promise returned and resolved when the store is synched
 		 * @private
 		 */
-		_promise = null;
+		_promise = new Promise;
 
 		/**
 		 * Set the promise to be resolved when the store is synched

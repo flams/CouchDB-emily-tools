@@ -6,21 +6,15 @@
 
 define("CouchDBView",
 
-["Store", "CouchDBBase", "Promise"],
+["Store", "CouchDBBase"],
 
 /**
  * @class
  * CouchDBView synchronizes a Store with a CouchDB view
  */
-function CouchDBView(Store, CouchDBBase, Promise) {
+function CouchDBView(Store, CouchDBBase) {
 
 	function CouchDBViewConstructor() {
-
-		/**
-		 * It has a promise that is resolved when the store is synched
-		 * @private
-		 */
-		var _promise = new Promise;
 
 		/**
 		 * Set the synchronization data if valid data is supplied
@@ -68,20 +62,15 @@ function CouchDBView(Store, CouchDBBase, Promise) {
 					throw new Error("CouchDBStore [" + _syncInfo.database + ", " + _syncInfo.design + ", " + _syncInfo.view + "].sync() failed: " + results);
 				} else {
 					this.reset(json.rows);
-					_syncPromise.fulfill(this);
+					this.getPromise().fulfill(this);
 					if (typeof json.total_rows == "undefined") {
 						this.setReducedViewInfo(true);
 					}
 
-					_stateMachine.event("subscribeToViewChanges");
+					this.getStateMachine().event("subscribeToViewChanges");
 				}
 			}, this);
 		};
-
-		/**
-		 * Set the promise so it's returned on sync
-		 */
-		this.setPromise(_promise);
 
 	}
 
