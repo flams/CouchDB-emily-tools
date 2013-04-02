@@ -187,6 +187,27 @@ function (CouchDBBase, Store, Promise, StateMachine) {
 			expect(stateMachine.event.wasCalled).toBe(true);
 			expect(stateMachine.event.mostRecentCall.args[0]).toBe("unsync");
 		});
+
+		it("should have a function for validating the sync info that can be overriden", function () {
+			expect(couchDBBase.validateSyncInfo).toBeInstanceOf(Function);
+			spyOn(couchDBBase, "validateSyncInfo");
+
+			var syncInfo = {};
+
+			couchDBBase.sync(syncInfo);
+
+			expect(couchDBBase.validateSyncInfo.wasCalled).toBe(true);
+			expect(couchDBBase.validateSyncInfo.mostRecentCall.args[0]).toBe(syncInfo);
+
+			var spyValidate = jasmine.createSpy();
+
+			couchDBBase.validateSyncInfo = spyValidate;
+
+			couchDBBase.sync(syncInfo);
+
+			expect(spyValidate.wasCalled).toBe(true);
+			expect(spyValidate.mostRecentCall.args[0]).toBe(syncInfo);
+		});
 	});
 
 });
