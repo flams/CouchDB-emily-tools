@@ -133,6 +133,14 @@ function (CouchDBBase, Store, Promise, StateMachine) {
 			var change = Listening.get("change");
 			expect(change[0]).toBe(couchDBBase.onChange);
 			expect(change[1]).toBe(couchDBBase);
+
+			var add = Listening.get("add");
+			expect(add[0]).toBe(couchDBBase.onAdd);
+			expect(add[1]).toBe(couchDBBase);
+
+			var remove = Listening.get("remove");
+			expect(remove[0]).toBe(couchDBBase.onRemove);
+			expect(remove[1]).toBe(couchDBBase);
 		});
 
 	});

@@ -181,6 +181,31 @@ function CouchDBView(Store, CouchDBBase, Tools) {
 
 		};
 
+		/**
+		* Add in the Store a document that was added in CouchDB
+		* @private
+		*/
+		this.onAdd = function onAdd(id) {
+
+			var _syncInfo = this.getSyncInfo();
+
+			this.getTransport().request(
+				this.getHandlerName(), {
+					method: "GET",
+					path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + _syncInfo.view,
+					query: _syncInfo.query
+			}, function (view) {
+			var json = JSON.parse(view);
+
+				json.rows.some(function (value, idx) {
+					if (value.id == id) {
+						this.alter("splice", idx, 0, value);
+					}
+				}, this);
+
+			}, this);
+		};
+
 	}
 
 	return function CouchDBViewFactory(data) {

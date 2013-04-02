@@ -578,7 +578,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			    ["updateDatabaseWithBulkDoc", actions.updateDatabaseWithBulkDoc, this],
 			    ["removeFromDatabase", actions.removeFromDatabase, this],
 			    ["unsync", actions.unsync, this, "Unsynched"]
-			   ]
+			]
 
 		});
 

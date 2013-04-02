@@ -249,6 +249,22 @@ function CouchDBBase(Store, StateMachine, Tools, Promise) {
 		};
 
 		/**
+		 * This function will be called when the Store needs to add something
+		 * It's to be overriden in the sub Store
+		 */
+		this.onAdd = function onAdd() {
+
+		};
+
+		/**
+		 * This function will be called when the Store needs to remove something
+		 * It's to be overriden in the sub Store
+		 */
+		this.onRemove = function onRemove() {
+
+		};
+
+		/**
 		 * This function must be overriden to validate the synchronization
 		 * information, and set the syncInfo object.
 		 * By default it only assigns the first arguments to syncInfo
@@ -275,7 +291,9 @@ function CouchDBBase(Store, StateMachine, Tools, Promise) {
 
 			"Listening": [
 				["unsync", this.stopListening, this, "Unsynched"],
-				["change", this.onChange, this]
+				["change", this.onChange, this],
+				["add", this.onAdd, this],
+				["remove", this.onRemove, this]
 			]
 
 		}));

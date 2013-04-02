@@ -83,6 +83,8 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			couchDBView.sync("db", "design", "_view/view", query);
 		});
 
+		it("should add ")
+
 		it("should get a view's data", function () {
 			var reqData;
 
@@ -362,7 +364,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			expect(couchDBView.evenDocsInStore.mostRecentCall.args[1]).toEqual("document2");
 
 		});
-/**
+
 		it("should add the new document", function () {
 			var reqData,
 				value,
@@ -375,7 +377,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 
 			spyOn(couchDBView, "alter");
 
-			couchDBView.actions.addDocInStore.call(couchDBView, "document4");
+			couchDBView.onAdd("document4");
 			expect(transportMock.request.wasCalled).toEqual(true);
 			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
 
@@ -396,7 +398,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 
 			expect(value.value.body).toEqual("do you see me?");
 		});
-
+/**
 		it("should delete the removed document", function () {
 			couchDBView.reset([{
 				"id":"document1",
