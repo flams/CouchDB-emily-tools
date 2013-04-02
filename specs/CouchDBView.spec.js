@@ -69,13 +69,14 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 		var couchDBView = null,
 			transportMock = null,
 			stateMachine = null,
-			query = {};
+			query = {},
+			stopListening = jasmine.createSpy();
 
 		beforeEach(function () {
 			couchDBView = new CouchDBView;
 			transportMock = {
 				request: jasmine.createSpy(),
-				listen: jasmine.createSpy()
+				listen: jasmine.createSpy().andReturn(stopListening)
 			};
 			couchDBView.setTransport(transportMock);
 			stateMachine = couchDBView.getStateMachine();
@@ -158,12 +159,12 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 				cb.call(couchDBView, '{"error":""}');
 			}).toThrow('CouchDBStore [db, design, _view/view].sync() failed: {"error":""}');
 		});
-/**
+
 		it("should subscribe to view changes", function () {
 			var reqData;
 
-			expect(couchDBView.stopListening).toBeUndefined();
-			couchDBView.actions.subscribeToViewChanges.call(couchDBView);
+			expect(couchDBView.stopListening).not.toBe(stopListening);
+			couchDBView.onListen();
 			expect(couchDBView.stopListening).toBe(stopListening);
 			expect(transportMock.listen.wasCalled).toEqual(true);
 			expect(transportMock.listen.mostRecentCall.args[0]).toEqual("CouchDB");
@@ -176,7 +177,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			expect(transportMock.listen.mostRecentCall.args[3]).toBe(couchDBView);
 		});
-
+/**
 		it("should not fail with empty json from heartbeat", function () {
 			var callback;
 

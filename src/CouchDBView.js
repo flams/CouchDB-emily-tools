@@ -6,13 +6,13 @@
 
 define("CouchDBView",
 
-["Store", "CouchDBBase"],
+["Store", "CouchDBBase", "Tools"],
 
 /**
  * @class
  * CouchDBView synchronizes a Store with a CouchDB view
  */
-function CouchDBView(Store, CouchDBBase) {
+function CouchDBView(Store, CouchDBBase, Tools) {
 
 	function CouchDBViewConstructor() {
 
@@ -69,6 +69,52 @@ function CouchDBView(Store, CouchDBBase) {
 					this.getStateMachine().event("subscribeToViewChanges");
 				}
 			}, this);
+		};
+
+		/**
+         * Subscribe to changes when synchronized with a view
+         * @private
+         */
+        this.onListen = function onListen() {
+
+        	var _syncInfo = this.getSyncInfo();
+
+			Tools.mixin({
+				feed: "continuous",
+				heartbeat: 20000,
+				descending: true
+			}, _syncInfo.query);
+
+			this.stopListening = this.getTransport().listen(
+				this.getHandlerName(), {
+					path: "/" + _syncInfo.database + "/_changes",
+					query: _syncInfo.query
+				},
+				function (changes) {
+					// Should I test for this very special case (heartbeat?)
+					// Or do I have to try catch for any invalid json?
+					if (changes == "\n") {
+						return false;
+					}
+
+					var json = JSON.parse(changes),
+						action;
+
+					// reducedView is known on the first get view
+					if (_syncInfo.reducedView) {
+						action = "updateReduced";
+					} else {
+						if (json.deleted) {
+							action = "delete";
+						} else if (json.changes && json.changes[0].rev.search("1-") == 0) {
+							action = "add";
+						} else {
+							action = "change";
+						}
+					}
+
+					this.getStateMachine().event(action, json.id);
+				}, this);
 		};
 
 	}
