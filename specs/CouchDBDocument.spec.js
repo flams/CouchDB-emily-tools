@@ -97,13 +97,13 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(transportMock.request.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBDocument);
 		});
-/**
+
 		it("should reset the store on sync and ask for changes subscription", function () {
 			var res =  '{"_id":"document1","_rev":"1-7f5175756a7ab72660278c3c0aed2eee","date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}',
 				callback,
 				doc;
 
-			couchDBDocument.getDocument.call(couchDBDocument);
+			couchDBDocument.onSync();
 
 			callback = transportMock.request.mostRecentCall.args[2];
 			spyOn(stateMachine, "event");
@@ -122,7 +122,7 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 		});
 
 		it("should reject the callback if the document doesn't exist", function () {
-			couchDBDocument.getDocument.call(couchDBDocument);
+			couchDBDocument.onSync();
 			var promise = couchDBDocument.sync("db", "document2"),
 				callback = transportMock.request.mostRecentCall.args[2];
 
@@ -132,12 +132,12 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(promise.reject.wasCalled).toEqual(true);
 			expect(promise.reject.mostRecentCall.args[0]).toEqual("{}");
 		});
-
+/**
 		it("should fulfill the promise when the doc is synched", function () {
-			var promise = couchDBDocument.sync("db", "document2"),
+			var promise = couchDBDocument.getPromise(),
 				callback = transportMock.request.mostRecentCall.args[2];
 
-			couchDBDocument.getDocument.call(couchDBDocument);
+			couchDBDocument.onSync();
 
 			spyOn(promise, "fulfill");
 			callback.call(couchDBDocument, '{"_id": "id"}');
@@ -145,7 +145,7 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(promise.fulfill.wasCalled).toEqual(true);
 			expect(promise.fulfill.mostRecentCall.args[0]).toBe(couchDBDocument);
 		});
-
+/**
 		it("should subscribe to document changes", function () {
 			var reqData;
 			expect(couchDBDocument.stopListening).toBeUndefined();
