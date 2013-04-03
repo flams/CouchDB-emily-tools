@@ -25,6 +25,17 @@ tools.requirejs(["CouchDBStore", "CouchDBUser", "Transport"], function (CouchDBS
 		console.log(error);
 	});
 
+	var uploadDoc = new CouchDBStore;
+
+	uploadDoc.setTransport(transport);
+	uploadDoc.set("test", "olives");
+	uploadDoc.sync("test", "testUploadDocuments").then(function () {
+		console.log("testUploadDocument uploaded");
+		uploadDoc.upload();
+	}, function (err) {
+		console.log("testUploadDocument failed", err);
+	});
+
 	var user = new CouchDBUser;
 
 	user.setTransport(transport);
