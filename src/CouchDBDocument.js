@@ -41,6 +41,30 @@ function CouchDBDocument(Store, CouchDBBase, Tools) {
 			}
 		};
 
+		/**
+		 * Get a CouchDB document
+		 * @private
+		 */
+		this.onSync = function onSync() {
+
+			var _syncInfo = this.getSyncInfo();
+
+			this.getTransport().request(this.getHandlerName(), {
+				method: "GET",
+				path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+				query: _syncInfo.query
+			}, function (results) {
+				var json = JSON.parse(results);
+				if (json._id) {
+					this.reset(json);
+					this.getPromise().fulfill(this);
+					this.getStateMachine().event("subscribeToDocumentChanges");
+				} else {
+					this.getPromise().reject(results);
+				}
+			}, this);
+		};
+
 	}
 
 	return function CouchDBDocumentFactory(data) {

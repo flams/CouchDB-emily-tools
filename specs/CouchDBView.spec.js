@@ -70,10 +70,11 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			transportMock = null,
 			stateMachine = null,
 			query = {},
-			stopListening = jasmine.createSpy();
+			stopListening = null;
 
 		beforeEach(function () {
 			couchDBView = new CouchDBView;
+			stopListening = jasmine.createSpy();
 			transportMock = {
 				request: jasmine.createSpy(),
 				listen: jasmine.createSpy().andReturn(stopListening)
