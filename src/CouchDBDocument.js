@@ -107,8 +107,29 @@ function CouchDBDocument(Store, CouchDBBase, Tools) {
 							this.getStateMachine().event("change");
 						}
 					 }
-				}, this);
+				}, this
+			);
 		};
+
+		/**
+		 * Update the document when synchronized with a document.
+		 * @private
+		 */
+		this.onChange = function onChange() {
+
+			var _syncInfo = this.getSyncInfo();
+
+			this.getTransport().request(
+				this.getHandlerName(),
+				{
+					method: "GET",
+					path: "/"+_syncInfo.database+"/" + _syncInfo.document
+				},
+				function (doc) {
+					this.reset(JSON.parse(doc));
+				}, this
+			);
+	    };
 
 	}
 

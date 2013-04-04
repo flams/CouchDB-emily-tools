@@ -188,14 +188,14 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(stateMachine.event.wasCalled).toEqual(true);
 			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("change");
 		});
-/**
+
 		it("should not get changes when another document is updated", function () {
 			var listenRes = '{"seq":12,"id":"document5","changes":[{"rev":"2-0b77a81676739718c23c72a12a131986"}]}',
 				callback;
 
 			spyOn(stateMachine, "event");
 
-			couchDBDocument.subscribeToDocumentChanges.call(couchDBDocument);
+			couchDBDocument.onListen();
 			callback = transportMock.listen.mostRecentCall.args[2];
 
 			callback.call(couchDBDocument, listenRes);
@@ -211,7 +211,7 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 
 			spyOn(stateMachine, "event");
 
-			couchDBDocument.subscribeToDocumentChanges.call(couchDBDocument);
+			couchDBDocument.onListen();
 			callback = transportMock.listen.mostRecentCall.args[2];
 
 			callback.call(couchDBDocument, listenRes);
@@ -225,20 +225,20 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 
 			spyOn(stateMachine, "event");
 
-			couchDBDocument.subscribeToDocumentChanges.call(couchDBDocument);
+			couchDBDocument.onListen();
 			callback = transportMock.listen.mostRecentCall.args[2];
 
 			callback.call(couchDBDocument, listenRes);
 
 			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("deleteDoc");
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("remove");
 		});
 
 		it("should update store on call for update", function () {
 			var reqData,
 				callback;
 
-			couchDBDocument.updateDoc.call(couchDBDocument);
+			couchDBDocument.onChange();
 
 			expect(transportMock.request.wasCalled).toEqual(true);
 			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
@@ -257,7 +257,7 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 
 			expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBDocument);
 		});
-
+/**
 		it("should empty the store on document deletion", function () {
 			spyOn(couchDBDocument, "reset");
 			couchDBDocument.deleteDoc.call(couchDBDocument);
@@ -275,7 +275,7 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 
 
 	});
-
+/*
 	describe("CouchDBStoreDataBaseUpdate", function () {
 
 		var couchDBDocument = null,
