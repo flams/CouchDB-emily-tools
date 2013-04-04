@@ -234,13 +234,17 @@ function CouchDBDocument(Store, CouchDBBase, Tools, Promise) {
 	     * @private
 	     */
 	    this.databaseRemove = function removeFromDatabase() {
-	    	_transport.request(_channel, {
-        		method: "DELETE",
-        		path: "/" + _syncInfo.database + "/" + _syncInfo.document,
-        		query: {
-        			rev: this.get("_rev")
-        		}
-        	});
+
+	    	var _syncInfo = this.getSyncInfo();
+
+	    	this.getTransport().request(this.getHandlerName(),
+	    		{
+	        		method: "DELETE",
+	        		path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+	        		query: {
+	        			rev: this.get("_rev")
+	        		}
+        		});
 	    };
 
 		// Add the missing states

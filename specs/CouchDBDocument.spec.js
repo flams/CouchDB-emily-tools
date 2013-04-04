@@ -404,18 +404,18 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(promise.reject.wasCalled).toBe(true);
 			expect(promise.reject.mostRecentCall.args[0].ok).toBe(false);
 		});
-/**
+
 		it("should remove a document from the database", function () {
 			couchDBDocument.set("_rev", "10-hello");
 
-			couchDBDocument.removeFromDatabase.call(couchDBDocument);
+			couchDBDocument.databaseRemove();
 			expect(transportMock.request.wasCalled).toBe(true);
 			expect(transportMock.request.mostRecentCall.args[0]).toBe("CouchDB");
 			expect(transportMock.request.mostRecentCall.args[1].method).toBe("DELETE");
 			expect(transportMock.request.mostRecentCall.args[1].path).toBe("/db/document1");
 			expect(transportMock.request.mostRecentCall.args[1].query.rev).toBe("10-hello");
 		});
-**/
+
 	});
 
 });
