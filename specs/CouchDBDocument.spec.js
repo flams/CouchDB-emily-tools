@@ -363,11 +363,11 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(promise.reject.wasCalled).toBe(true);
 			expect(promise.reject.mostRecentCall.args[0].ok).toBe(false);
 		});
-/**
+
 		it("should add document on update if it's missing", function () {
 			var reqData;
 			couchDBDocument.set("fakeRev", "10-hello");
-			couchDBDocument.createDocument.call(couchDBDocument, new Promise);
+			couchDBDocument.databaseCreate(new Promise);
 			expect(transportMock.request.wasCalled).toBe(true);
 			expect(transportMock.request.mostRecentCall.args[0]).toBe("CouchDB");
 
@@ -380,7 +380,7 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 
 			spyOn(stateMachine, "event");
 			expect(transportMock.request.mostRecentCall.args[2]).toBeInstanceOf(Function);
-			transportMock.request.mostRecentCall.args[2]('{"ok":true}');
+			transportMock.request.mostRecentCall.args[2].call(couchDBDocument, '{"ok":true}');
 			expect(stateMachine.event.wasCalled).toBe(true);
 			expect(stateMachine.event.mostRecentCall.args[0]).toBe("subscribeToDocumentChanges");
 		});
@@ -389,8 +389,8 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			var promise = new Promise,
 				response = '{"ok":true}';
 			spyOn(promise, "fulfill");
-			couchDBDocument.createDocument.call(couchDBDocument, promise);
-			transportMock.request.mostRecentCall.args[2](response);
+			couchDBDocument.databaseCreate(promise);
+			transportMock.request.mostRecentCall.args[2].call(couchDBDocument, response);
 			expect(promise.fulfill.wasCalled).toBe(true);
 			expect(promise.fulfill.mostRecentCall.args[0].ok).toBe(true);
 		});
@@ -399,12 +399,12 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			var promise = new Promise,
 				response = '{"ok":false}';
 			spyOn(promise, "reject");
-			couchDBDocument.createDocument.call(couchDBDocument, promise);
-			transportMock.request.mostRecentCall.args[2](response);
+			couchDBDocument.databaseCreate(promise);
+			transportMock.request.mostRecentCall.args[2].call(couchDBDocument, response);
 			expect(promise.reject.wasCalled).toBe(true);
 			expect(promise.reject.mostRecentCall.args[0].ok).toBe(false);
 		});
-
+/**
 		it("should remove a document from the database", function () {
 			couchDBDocument.set("_rev", "10-hello");
 

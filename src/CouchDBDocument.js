@@ -195,7 +195,7 @@ function CouchDBDocument(Store, CouchDBBase, Tools, Promise) {
 	        		} else {
 	        			promise.reject(json);
 	        		}
-        		}
+        		}, this
         	);
         };
 
