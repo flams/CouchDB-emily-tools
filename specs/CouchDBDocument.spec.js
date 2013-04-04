@@ -69,7 +69,8 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 		var couchDBDocument = null,
 			stateMachine = null,
 			query = {},
-			stopListening = null;
+			stopListening = null,
+			transportMock = null;
 
 		beforeEach(function () {
 			couchDBDocument = new CouchDBDocument;
@@ -132,12 +133,14 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(promise.reject.wasCalled).toEqual(true);
 			expect(promise.reject.mostRecentCall.args[0]).toEqual("{}");
 		});
-/**
+
 		it("should fulfill the promise when the doc is synched", function () {
 			var promise = couchDBDocument.getPromise(),
-				callback = transportMock.request.mostRecentCall.args[2];
+				callback;
 
 			couchDBDocument.onSync();
+
+			callback = transportMock.request.mostRecentCall.args[2];
 
 			spyOn(promise, "fulfill");
 			callback.call(couchDBDocument, '{"_id": "id"}');
@@ -161,7 +164,7 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			expect(transportMock.listen.mostRecentCall.args[3]).toBe(couchDBDocument);
 		});
-
+/**
 		it("should not fail with empty json from heartbeat", function () {
 			couchDBDocument.subscribeToDocumentChanges.call(couchDBDocument);
 			callback = transportMock.listen.mostRecentCall.args[2];
