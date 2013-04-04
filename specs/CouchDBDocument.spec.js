@@ -331,23 +331,23 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(reqData["headers"]["Content-Type"]).toBe("application/json");
 			expect(JSON.parse(reqData.data).fakeRev).toBe("10-hello");
 		});
-/**
+
 		it("should fulfill the promise on update if update ok", function () {
 			var promise = new Promise,
 				response = '{"ok":true}';
 			spyOn(promise, "fulfill");
-			couchDBDocument.updateDatabase.call(couchDBDocument, promise);
+			couchDBDocument.databaseUpdate(promise);
 			transportMock.request.mostRecentCall.args[2].call(couchDBDocument, response);
 			expect(promise.fulfill.wasCalled).toBe(true);
 			expect(promise.fulfill.mostRecentCall.args[0].ok).toBe(true);
 		});
 
-		it("should update rev of update ok", function () {
+		it("should update rev on update ok", function () {
 			var response = '{"ok":true,"rev":7}',
 				promise = new Promise;
 
 			spyOn(couchDBDocument, "set");
-			couchDBDocument.updateDatabase.call(couchDBDocument, promise);
+			couchDBDocument.databaseUpdate(promise);
 			transportMock.request.mostRecentCall.args[2].call(couchDBDocument, response);
 			expect(couchDBDocument.set.wasCalled).toBe(true);
 			expect(couchDBDocument.set.mostRecentCall.args[0]).toBe("_rev");
@@ -358,12 +358,12 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			var promise = new Promise,
 				response = '{"ok":false}';
 			spyOn(promise, "reject");
-			couchDBDocument.updateDatabase.call(couchDBDocument, promise);
+			couchDBDocument.databaseUpdate(promise);
 			transportMock.request.mostRecentCall.args[2](response);
 			expect(promise.reject.wasCalled).toBe(true);
 			expect(promise.reject.mostRecentCall.args[0].ok).toBe(false);
 		});
-
+/**
 		it("should add document on update if it's missing", function () {
 			var reqData;
 			couchDBDocument.set("fakeRev", "10-hello");
