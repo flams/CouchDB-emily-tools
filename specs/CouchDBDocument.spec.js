@@ -257,14 +257,14 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 
 			expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBDocument);
 		});
-/**
+
 		it("should empty the store on document deletion", function () {
 			spyOn(couchDBDocument, "reset");
-			couchDBDocument.deleteDoc.call(couchDBDocument);
+			couchDBDocument.onRemove();
 			expect(couchDBDocument.reset.wasCalled).toEqual(true);
 			expect(couchDBDocument.getNbItems()).toEqual(0);
 		});
-
+/**
 		it("should unsync a document, ie. stop listening to changes", function () {
 			var spy = jasmine.createSpy();
 			couchDBDocument.stopListening = spy;

@@ -131,6 +131,14 @@ function CouchDBDocument(Store, CouchDBBase, Tools) {
 			);
 	    };
 
+	    /**
+	     * Delete all document's properties
+	     * @private
+	     */
+	    this.onRemove = function onRemove() {
+	    	this.reset({});
+	    };
+
 	}
 
 	return function CouchDBDocumentFactory(data) {
