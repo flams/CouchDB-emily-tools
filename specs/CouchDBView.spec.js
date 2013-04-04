@@ -91,12 +91,12 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 
 			couchDBView.onSync();
 			expect(transportMock.request).toHaveBeenCalled();
-			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
+			expect(transportMock.request.mostRecentCall.args[0]).toBe("CouchDB");
 
 			reqData = transportMock.request.mostRecentCall.args[1];
 			expect(reqData).toBeInstanceOf(Object);
-			expect(reqData["method"]).toEqual("GET");
-			expect(reqData["path"]).toEqual("/db/_design/design/_view/view");
+			expect(reqData["method"]).toBe("GET");
+			expect(reqData["path"]).toBe("/db/_design/design/_view/view");
 			expect(reqData["query"]).toBe(query);
 		});
 
@@ -113,13 +113,13 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			callback = transportMock.request.mostRecentCall.args[2];
 
 			callback.call(couchDBView, res);
-			expect(couchDBView.reset.wasCalled).toEqual(true);
+			expect(couchDBView.reset.wasCalled).toBe(true);
 			expect(couchDBView.reset.mostRecentCall.args[0]).toBeInstanceOf(Object);
-			expect(couchDBView.reset.mostRecentCall.args[0][0].value.date).toEqual("2012/01/13 12:45:56");
-			expect(couchDBView.reset.mostRecentCall.args[0][2].value.title).toEqual("the 3rd document");
+			expect(couchDBView.reset.mostRecentCall.args[0][0].value.date).toBe("2012/01/13 12:45:56");
+			expect(couchDBView.reset.mostRecentCall.args[0][2].value.title).toBe("the 3rd document");
 
-			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("listen");
+			expect(stateMachine.event.wasCalled).toBe(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toBe("listen");
 
 			expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBView);
 		});
@@ -137,7 +137,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			callback = transportMock.request.mostRecentCall.args[2];
 
 			callback.call(couchDBView, res);
-			expect(promise.fulfill.wasCalled).toEqual(true);
+			expect(promise.fulfill.wasCalled).toBe(true);
 			expect(promise.fulfill.mostRecentCall.args[0]).toBe(couchDBView);
 		});
 
@@ -149,7 +149,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			callback = transportMock.request.mostRecentCall.args[2];
 			callback.call(couchDBView, res);
 
-			expect(couchDBView.getSyncInfo().reducedView).toEqual(true);
+			expect(couchDBView.getSyncInfo().reducedView).toBe(true);
 
 		});
 
@@ -169,13 +169,13 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			expect(couchDBView.stopListening).toBeUndefined();
 			couchDBView.onListen();
 			expect(couchDBView.stopListening).toBe(stopListening);
-			expect(transportMock.listen.wasCalled).toEqual(true);
-			expect(transportMock.listen.mostRecentCall.args[0]).toEqual("CouchDB");
-			expect(transportMock.listen.mostRecentCall.args[1].path).toEqual("/db/_changes");
+			expect(transportMock.listen.wasCalled).toBe(true);
+			expect(transportMock.listen.mostRecentCall.args[0]).toBe("CouchDB");
+			expect(transportMock.listen.mostRecentCall.args[1].path).toBe("/db/_changes");
 			reqData = transportMock.listen.mostRecentCall.args[1].query;
-			expect(reqData.feed).toEqual("continuous");
-			expect(reqData.heartbeat).toEqual(20000);
-			expect(reqData.descending).toEqual(true);
+			expect(reqData.feed).toBe("continuous");
+			expect(reqData.heartbeat).toBe(20000);
+			expect(reqData.descending).toBe(true);
 			expect(reqData).toBe(query);
 			expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			expect(transportMock.listen.mostRecentCall.args[3]).toBe(couchDBView);
@@ -214,9 +214,9 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			callback = transportMock.listen.mostRecentCall.args[2];
 			callback.call(couchDBView, listenRes);
 
-			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("change");
-			expect(stateMachine.event.mostRecentCall.args[1]).toEqual("document3");
+			expect(stateMachine.event.wasCalled).toBe(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toBe("change");
+			expect(stateMachine.event.mostRecentCall.args[1]).toBe("document3");
 		});
 
 		it("should call for document addition if one of them was added", function () {
@@ -229,9 +229,9 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			callback = transportMock.listen.mostRecentCall.args[2];
 			callback.call(couchDBView, listenRes);
 
-			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("add");
-			expect(stateMachine.event.mostRecentCall.args[1]).toEqual("document4");
+			expect(stateMachine.event.wasCalled).toBe(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toBe("add");
+			expect(stateMachine.event.mostRecentCall.args[1]).toBe("document4");
 		});
 
 		it("should call for document removal if one of them was removed", function () {
@@ -244,9 +244,9 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			callback = transportMock.listen.mostRecentCall.args[2];
 			callback.call(couchDBView, listenRes);
 
-			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("delete");
-			expect(stateMachine.event.mostRecentCall.args[1]).toEqual("document4");
+			expect(stateMachine.event.wasCalled).toBe(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toBe("delete");
+			expect(stateMachine.event.mostRecentCall.args[1]).toBe("document4");
 		});
 
 		it("should call for update on reduced view modification", function () {
@@ -259,8 +259,8 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			callback = transportMock.listen.mostRecentCall.args[2];
 			callback.call(couchDBView, listenRes);
 
-			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("updateReduced");
+			expect(stateMachine.event.wasCalled).toBe(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toBe("updateReduced");
 			expect(stateMachine.event.mostRecentCall.args[1]).toBeUndefined();
 		});
 
@@ -279,23 +279,23 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			spyOn(couchDBView, "set");
 
 			couchDBView.onChange("document3");
-			expect(transportMock.request.wasCalled).toEqual(true);
-			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
+			expect(transportMock.request.wasCalled).toBe(true);
+			expect(transportMock.request.mostRecentCall.args[0]).toBe("CouchDB");
 
 			reqData = transportMock.request.mostRecentCall.args[1];
-			expect(reqData["method"]).toEqual("GET");
-			expect(reqData["path"]).toEqual("/db/_design/design/_view/view");
+			expect(reqData["method"]).toBe("GET");
+			expect(reqData["path"]).toBe("/db/_design/design/_view/view");
 			expect(reqData["query"]).toBe(query);
 
 			callback = transportMock.request.mostRecentCall.args[2];
 			expect(callback).toBeInstanceOf(Function);
 			callback.call(couchDBView, listenRes);
 
-			expect(couchDBView.set.wasCalled).toEqual(true);
-			expect(couchDBView.set.mostRecentCall.args[0]).toEqual(2);
+			expect(couchDBView.set.wasCalled).toBe(true);
+			expect(couchDBView.set.mostRecentCall.args[0]).toBe(2);
 			value = couchDBView.set.mostRecentCall.args[1];
 
-			expect(value.value.body).toEqual("a change for the example");
+			expect(value.value.body).toBe("a change for the example");
 
 		});
 
@@ -318,11 +318,11 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			spyOn(couchDBView, "alter");
 			couchDBView.evenDocsInStore(newView, "document2");
 
-			expect(couchDBView.alter.wasCalled).toEqual(true);
-			expect(couchDBView.alter.mostRecentCall.args[0]).toEqual("splice");
-			expect(couchDBView.alter.mostRecentCall.args[1]).toEqual(1);
-			expect(couchDBView.alter.mostRecentCall.args[2]).toEqual(0);
-			expect(couchDBView.alter.mostRecentCall.args[3].id).toEqual("document2");
+			expect(couchDBView.alter.wasCalled).toBe(true);
+			expect(couchDBView.alter.mostRecentCall.args[0]).toBe("splice");
+			expect(couchDBView.alter.mostRecentCall.args[1]).toBe(1);
+			expect(couchDBView.alter.mostRecentCall.args[2]).toBe(0);
+			expect(couchDBView.alter.mostRecentCall.args[3].id).toBe("document2");
 		});
 
 		it("should remove a document that is not present in the view anymore -it's not a removed doc!-", function () {
@@ -342,9 +342,9 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			spyOn(couchDBView, "del");
 			couchDBView.evenDocsInStore(newView, "document2");
 
-			expect(couchDBView.loop.wasCalled).toEqual(true);
-			expect(couchDBView.del.wasCalled).toEqual(true);
-			expect(couchDBView.del.mostRecentCall.args[0]).toEqual(1);
+			expect(couchDBView.loop.wasCalled).toBe(true);
+			expect(couchDBView.del.wasCalled).toBe(true);
+			expect(couchDBView.del.mostRecentCall.args[0]).toBe(1);
 
 		});
 
@@ -360,9 +360,9 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			spyOn(couchDBView, "evenDocsInStore");
 			callback.call(couchDBView, listenRes);
 
-			expect(couchDBView.evenDocsInStore.wasCalled).toEqual(true);
-			expect(couchDBView.evenDocsInStore.mostRecentCall.args[0][1].id).toEqual("document3");
-			expect(couchDBView.evenDocsInStore.mostRecentCall.args[1]).toEqual("document2");
+			expect(couchDBView.evenDocsInStore.wasCalled).toBe(true);
+			expect(couchDBView.evenDocsInStore.mostRecentCall.args[0][1].id).toBe("document3");
+			expect(couchDBView.evenDocsInStore.mostRecentCall.args[1]).toBe("document2");
 
 		});
 
@@ -379,25 +379,25 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			spyOn(couchDBView, "alter");
 
 			couchDBView.onAdd("document4");
-			expect(transportMock.request.wasCalled).toEqual(true);
-			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
+			expect(transportMock.request.wasCalled).toBe(true);
+			expect(transportMock.request.mostRecentCall.args[0]).toBe("CouchDB");
 
 			reqData = transportMock.request.mostRecentCall.args[1];
-			expect(reqData["method"]).toEqual("GET");
-			expect(reqData["path"]).toEqual("/db/_design/design/_view/view");
+			expect(reqData["method"]).toBe("GET");
+			expect(reqData["path"]).toBe("/db/_design/design/_view/view");
 			expect(reqData["query"]).toBe(query);
 
 			callback = transportMock.request.mostRecentCall.args[2];
 			expect(callback).toBeInstanceOf(Function);
 			callback.call(couchDBView, listenRes);
 
-			expect(couchDBView.alter.wasCalled).toEqual(true);
-			expect(couchDBView.alter.mostRecentCall.args[0]).toEqual("splice");
-			expect(couchDBView.alter.mostRecentCall.args[1]).toEqual(3);
-			expect(couchDBView.alter.mostRecentCall.args[2]).toEqual(0);
+			expect(couchDBView.alter.wasCalled).toBe(true);
+			expect(couchDBView.alter.mostRecentCall.args[0]).toBe("splice");
+			expect(couchDBView.alter.mostRecentCall.args[1]).toBe(3);
+			expect(couchDBView.alter.mostRecentCall.args[2]).toBe(0);
 			value = couchDBView.alter.mostRecentCall.args[3];
 
-			expect(value.value.body).toEqual("do you see me?");
+			expect(value.value.body).toBe("do you see me?");
 		});
 
 		it("should delete the removed document", function () {
@@ -440,8 +440,8 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 
 			spyOn(couchDBView, "del");
 			couchDBView.onRemove("document4");
-			expect(couchDBView.del.wasCalled).toEqual(true);
-			expect(couchDBView.del.mostRecentCall.args[0]).toEqual(3);
+			expect(couchDBView.del.wasCalled).toBe(true);
+			expect(couchDBView.del.mostRecentCall.args[0]).toBe(3);
 		});
 
 		it("should add a transition for updating a reduced view", function () {
@@ -462,23 +462,23 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			spyOn(JSON, "parse").andReturn(parsed);
 
 			couchDBView.updateReduced();
-			expect(transportMock.request.wasCalled).toEqual(true);
-			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
+			expect(transportMock.request.wasCalled).toBe(true);
+			expect(transportMock.request.mostRecentCall.args[0]).toBe("CouchDB");
 
 			reqData = transportMock.request.mostRecentCall.args[1];
-			expect(reqData["method"]).toEqual("GET");
-			expect(reqData["path"]).toEqual("/db/_design/design/_view/view");
+			expect(reqData["method"]).toBe("GET");
+			expect(reqData["path"]).toBe("/db/_design/design/_view/view");
 			expect(reqData["query"]).toBe(query);
 
 			callback = transportMock.request.mostRecentCall.args[2];
 			expect(callback).toBeInstanceOf(Function);
 			callback.call(couchDBView, listenRes);
 
-			expect(JSON.parse.wasCalled).toEqual(true);
-			expect(JSON.parse.mostRecentCall.args[0]).toEqual(listenRes);
+			expect(JSON.parse.wasCalled).toBe(true);
+			expect(JSON.parse.mostRecentCall.args[0]).toBe(listenRes);
 
-			expect(couchDBView.set.wasCalled).toEqual(true);
-			expect(couchDBView.set.mostRecentCall.args[0]).toEqual(0);
+			expect(couchDBView.set.wasCalled).toBe(true);
+			expect(couchDBView.set.mostRecentCall.args[0]).toBe(0);
 			expect(couchDBView.set.mostRecentCall.args[1]).toBe(parsed.rows[0]);
 		});
 
