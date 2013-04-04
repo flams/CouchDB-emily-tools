@@ -308,7 +308,7 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			var promise = couchDBDocument.upload();
 			expect(stateMachine.event.mostRecentCall.args[1]).toBe(promise);
 		});
-/**
+
 		it("should have a function to remove a document", function () {
 			expect(couchDBDocument.remove).toBeInstanceOf(Function);
 			spyOn(stateMachine, "event");
@@ -316,7 +316,7 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(stateMachine.event.wasCalled).toBe(true);
 			expect(stateMachine.event.mostRecentCall.args[0]).toBe("removeFromDatabase");
 		});
-
+/**
 		it("should update the database on update", function () {
 			var reqData;
 			couchDBDocument.set("fakeRev", "10-hello");

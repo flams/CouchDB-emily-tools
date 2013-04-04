@@ -156,6 +156,20 @@ function CouchDBDocument(Store, CouchDBBase, Tools, Promise) {
 		};
 
 		/**
+		 * Remove the document from the database
+		 * @returns true if remove called
+		 */
+		this.remove = function remove() {
+
+			var _syncInfo = this.getSyncInfo();
+
+			if (_syncInfo.document) {
+				return this.getStateMachine().event("removeFromDatabase");
+			}
+			return false;
+		};
+
+		/**
 		 * Put a new document in CouchDB
 		 * @private
 		 */
