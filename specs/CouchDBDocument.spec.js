@@ -302,13 +302,13 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(createDocument[0]).toBe(couchDBDocument.databaseCreate);
 			expect(createDocument[1]).toBe(couchDBDocument);
 		});
-/**
-		it("should fulfill the promise on upload", function () {
+
+		it("should pass the promise to the upload function so it can fulfill or reject it", function () {
 			spyOn(stateMachine, "event");
 			var promise = couchDBDocument.upload();
 			expect(stateMachine.event.mostRecentCall.args[1]).toBe(promise);
 		});
-
+/**
 		it("should have a function to remove a document", function () {
 			expect(couchDBDocument.remove).toBeInstanceOf(Function);
 			spyOn(stateMachine, "event");
