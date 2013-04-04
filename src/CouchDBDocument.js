@@ -141,22 +141,17 @@ function CouchDBDocument(Store, CouchDBBase, Tools, Promise) {
 
 	    /**
 		 * Upload the document to the database
-		 * Works for CouchDBStore that are synchronized with documents or bulk of documents.
-		 * If synchronized with a bulk of documents, you can set the documents to delete _deleted property to true.
-		 * No modification can be done on views.
-		 * @returns true if upload called
+		 * @returns true if synched
 		 */
 		this.upload = function upload() {
 			var promise = new Promise,
 				_syncInfo = this.getSyncInfo();
 
 			if (_syncInfo.document) {
-				this.getStateMachine().event("updateDatabase", promise);
-				return promise;
-			} else if (!_syncInfo.view){
-				this.getStateMachine().event("updateDatabaseWithBulkDoc", promise);
+				this.getStateMachine().event("upload", promise);
 				return promise;
 			}
+
 			return false;
 		};
 

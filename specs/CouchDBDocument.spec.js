@@ -93,11 +93,11 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 
 			couchDBDocument.onSync();
 
-			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
+			expect(transportMock.request.mostRecentCall.args[0]).toBe("CouchDB");
 			reqData = transportMock.request.mostRecentCall.args[1];
 			expect(reqData).toBeInstanceOf(Object);
-			expect(reqData["method"]).toEqual("GET");
-			expect(reqData["path"]).toEqual("/db/document1");
+			expect(reqData["method"]).toBe("GET");
+			expect(reqData["path"]).toBe("/db/document1");
 			expect(reqData["query"]).toBe(query);
 			expect(transportMock.request.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBDocument);
@@ -116,14 +116,14 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 
 			callback.call(couchDBDocument, res);
 
-			expect(couchDBDocument.reset.wasCalled).toEqual(true);
+			expect(couchDBDocument.reset.wasCalled).toBe(true);
 			doc = couchDBDocument.reset.mostRecentCall.args[0];
 			expect(doc).toBeInstanceOf(Object);
 
-			expect(doc["_rev"]).toEqual("1-7f5175756a7ab72660278c3c0aed2eee")
+			expect(doc["_rev"]).toBe("1-7f5175756a7ab72660278c3c0aed2eee")
 
-			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("onListen");
+			expect(stateMachine.event.wasCalled).toBe(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toBe("onListen");
 		});
 
 		it("should reject the callback if the document doesn't exist", function () {
@@ -134,8 +134,8 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			spyOn(promise, "reject");
 			callback.call(couchDBDocument, "{}");
 
-			expect(promise.reject.wasCalled).toEqual(true);
-			expect(promise.reject.mostRecentCall.args[0]).toEqual("{}");
+			expect(promise.reject.wasCalled).toBe(true);
+			expect(promise.reject.mostRecentCall.args[0]).toBe("{}");
 		});
 
 		it("should fulfill the promise when the doc is synched", function () {
@@ -149,7 +149,7 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			spyOn(promise, "fulfill");
 			callback.call(couchDBDocument, '{"_id": "id"}');
 
-			expect(promise.fulfill.wasCalled).toEqual(true);
+			expect(promise.fulfill.wasCalled).toBe(true);
 			expect(promise.fulfill.mostRecentCall.args[0]).toBe(couchDBDocument);
 		});
 
@@ -158,13 +158,13 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(couchDBDocument.stopListening).toBeUndefined();
 			couchDBDocument.onListen();
 			expect(couchDBDocument.stopListening).toBe(stopListening);
-			expect(transportMock.listen.wasCalled).toEqual(true);
-			expect(transportMock.listen.mostRecentCall.args[0]).toEqual("CouchDB");
-			expect(transportMock.listen.mostRecentCall.args[1].path).toEqual("/db/_changes");
+			expect(transportMock.listen.wasCalled).toBe(true);
+			expect(transportMock.listen.mostRecentCall.args[0]).toBe("CouchDB");
+			expect(transportMock.listen.mostRecentCall.args[1].path).toBe("/db/_changes");
 			reqData = transportMock.listen.mostRecentCall.args[1].query;
-			expect(reqData.feed).toEqual("continuous");
-			expect(reqData.heartbeat).toEqual(20000);
-			expect(reqData.descending).toEqual(true);
+			expect(reqData.feed).toBe("continuous");
+			expect(reqData.heartbeat).toBe(20000);
+			expect(reqData.descending).toBe(true);
 			expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			expect(transportMock.listen.mostRecentCall.args[3]).toBe(couchDBDocument);
 		});
@@ -189,8 +189,8 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 
 			callback.call(couchDBDocument, listenRes);
 
-			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("change");
+			expect(stateMachine.event.wasCalled).toBe(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toBe("change");
 		});
 
 		it("should not get changes when another document is updated", function () {
@@ -204,7 +204,7 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 
 			callback.call(couchDBDocument, listenRes);
 
-			expect(stateMachine.event.wasCalled).toEqual(false);
+			expect(stateMachine.event.wasCalled).toBe(false);
 		});
 
 		it("should not get changes if the rev is the same", function () {
@@ -220,7 +220,7 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 
 			callback.call(couchDBDocument, listenRes);
 
-			expect(stateMachine.event.wasCalled).toEqual(false);
+			expect(stateMachine.event.wasCalled).toBe(false);
 		});
 
 		it("should call for document deletion when the document is removed", function () {
@@ -234,8 +234,8 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 
 			callback.call(couchDBDocument, listenRes);
 
-			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("remove");
+			expect(stateMachine.event.wasCalled).toBe(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toBe("remove");
 		});
 
 		it("should update store on call for update", function () {
@@ -244,20 +244,20 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 
 			couchDBDocument.onChange();
 
-			expect(transportMock.request.wasCalled).toEqual(true);
-			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
+			expect(transportMock.request.wasCalled).toBe(true);
+			expect(transportMock.request.mostRecentCall.args[0]).toBe("CouchDB");
 
 			reqData = transportMock.request.mostRecentCall.args[1];
 			expect(reqData).toBeInstanceOf(Object);
-			expect(reqData["method"]).toEqual("GET");
-			expect(reqData["path"]).toEqual("/db/document1");
+			expect(reqData["method"]).toBe("GET");
+			expect(reqData["path"]).toBe("/db/document1");
 
 			spyOn(couchDBDocument, "reset");
 			callback = transportMock.request.mostRecentCall.args[2];
 			expect(transportMock.request.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			callback.call(couchDBDocument, '{"_id":"document1","_rev":"2-0b77a81676739718c23c72a12a131986","date":"2012/01/13 12:45:56","title":"was my first document","body":"in this database","newfield":"safe"}');
-			expect(couchDBDocument.reset.wasCalled).toEqual(true);
-			expect(couchDBDocument.reset.mostRecentCall.args[0]._rev).toEqual("2-0b77a81676739718c23c72a12a131986");
+			expect(couchDBDocument.reset.wasCalled).toBe(true);
+			expect(couchDBDocument.reset.mostRecentCall.args[0]._rev).toBe("2-0b77a81676739718c23c72a12a131986");
 
 			expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBDocument);
 		});
@@ -265,8 +265,8 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 		it("should empty the store on document deletion", function () {
 			spyOn(couchDBDocument, "reset");
 			couchDBDocument.onRemove();
-			expect(couchDBDocument.reset.wasCalled).toEqual(true);
-			expect(couchDBDocument.getNbItems()).toEqual(0);
+			expect(couchDBDocument.reset.wasCalled).toBe(true);
+			expect(couchDBDocument.getNbItems()).toBe(0);
 		});
 
 	});
@@ -287,14 +287,14 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(couchDBDocument.upload).toBeInstanceOf(Function);
 			spyOn(stateMachine, "event");
 			couchDBDocument.upload();
-			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("updateDatabase");
+			expect(stateMachine.event.wasCalled).toBe(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toBe("upload");
 		});
-/**
+
 		it("should return a promise", function () {
 			expect(couchDBDocument.upload()).toBeInstanceOf(Promise);
 		});
-
+/**
 		it("should fulfill the promise on upload", function () {
 			spyOn(stateMachine, "event");
 			var promise = couchDBDocument.upload();
@@ -305,23 +305,23 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(couchDBDocument.remove).toBeInstanceOf(Function);
 			spyOn(stateMachine, "event");
 			couchDBDocument.remove();
-			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("removeFromDatabase");
+			expect(stateMachine.event.wasCalled).toBe(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toBe("removeFromDatabase");
 		});
 
 		it("should update the database on update", function () {
 			var reqData;
 			couchDBDocument.set("fakeRev", "10-hello");
 			couchDBDocument.updateDatabase.call(couchDBDocument);
-			expect(transportMock.request.wasCalled).toEqual(true);
-			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
+			expect(transportMock.request.wasCalled).toBe(true);
+			expect(transportMock.request.mostRecentCall.args[0]).toBe("CouchDB");
 
 			reqData = transportMock.request.mostRecentCall.args[1];
 			expect(reqData).toBeInstanceOf(Object);
-			expect(reqData["method"]).toEqual("PUT");
-			expect(reqData["path"]).toEqual("/db/document1");
-			expect(reqData["headers"]["Content-Type"]).toEqual("application/json");
-			expect(JSON.parse(reqData.data).fakeRev).toEqual("10-hello");
+			expect(reqData["method"]).toBe("PUT");
+			expect(reqData["path"]).toBe("/db/document1");
+			expect(reqData["headers"]["Content-Type"]).toBe("application/json");
+			expect(JSON.parse(reqData.data).fakeRev).toBe("10-hello");
 		});
 
 		it("should fulfill the promise on update if update ok", function () {
@@ -330,8 +330,8 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			spyOn(promise, "fulfill");
 			couchDBDocument.updateDatabase.call(couchDBDocument, promise);
 			transportMock.request.mostRecentCall.args[2].call(couchDBDocument, response);
-			expect(promise.fulfill.wasCalled).toEqual(true);
-			expect(promise.fulfill.mostRecentCall.args[0].ok).toEqual(true);
+			expect(promise.fulfill.wasCalled).toBe(true);
+			expect(promise.fulfill.mostRecentCall.args[0].ok).toBe(true);
 		});
 
 		it("should update rev of update ok", function () {
@@ -341,9 +341,9 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			spyOn(couchDBDocument, "set");
 			couchDBDocument.updateDatabase.call(couchDBDocument, promise);
 			transportMock.request.mostRecentCall.args[2].call(couchDBDocument, response);
-			expect(couchDBDocument.set.wasCalled).toEqual(true);
-			expect(couchDBDocument.set.mostRecentCall.args[0]).toEqual("_rev");
-			expect(couchDBDocument.set.mostRecentCall.args[1]).toEqual(7);
+			expect(couchDBDocument.set.wasCalled).toBe(true);
+			expect(couchDBDocument.set.mostRecentCall.args[0]).toBe("_rev");
+			expect(couchDBDocument.set.mostRecentCall.args[1]).toBe(7);
 		});
 
 		it("should reject the promise on update if update failed", function () {
@@ -352,29 +352,29 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			spyOn(promise, "reject");
 			couchDBDocument.updateDatabase.call(couchDBDocument, promise);
 			transportMock.request.mostRecentCall.args[2](response);
-			expect(promise.reject.wasCalled).toEqual(true);
-			expect(promise.reject.mostRecentCall.args[0].ok).toEqual(false);
+			expect(promise.reject.wasCalled).toBe(true);
+			expect(promise.reject.mostRecentCall.args[0].ok).toBe(false);
 		});
 
 		it("should add document on update if it's missing", function () {
 			var reqData;
 			couchDBDocument.set("fakeRev", "10-hello");
 			couchDBDocument.createDocument.call(couchDBDocument, new Promise);
-			expect(transportMock.request.wasCalled).toEqual(true);
-			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
+			expect(transportMock.request.wasCalled).toBe(true);
+			expect(transportMock.request.mostRecentCall.args[0]).toBe("CouchDB");
 
 			reqData = transportMock.request.mostRecentCall.args[1];
 			expect(reqData).toBeInstanceOf(Object);
-			expect(reqData["method"]).toEqual("PUT");
-			expect(reqData["path"]).toEqual("/db/document1");
-			expect(reqData["headers"]["Content-Type"]).toEqual("application/json");
-			expect(JSON.parse(reqData.data).fakeRev).toEqual("10-hello");
+			expect(reqData["method"]).toBe("PUT");
+			expect(reqData["path"]).toBe("/db/document1");
+			expect(reqData["headers"]["Content-Type"]).toBe("application/json");
+			expect(JSON.parse(reqData.data).fakeRev).toBe("10-hello");
 
 			spyOn(stateMachine, "event");
 			expect(transportMock.request.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			transportMock.request.mostRecentCall.args[2]('{"ok":true}');
-			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("subscribeToDocumentChanges");
+			expect(stateMachine.event.wasCalled).toBe(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toBe("subscribeToDocumentChanges");
 		});
 
 		it("should fulfill the promise on doc create if update ok", function () {
@@ -383,8 +383,8 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			spyOn(promise, "fulfill");
 			couchDBDocument.createDocument.call(couchDBDocument, promise);
 			transportMock.request.mostRecentCall.args[2](response);
-			expect(promise.fulfill.wasCalled).toEqual(true);
-			expect(promise.fulfill.mostRecentCall.args[0].ok).toEqual(true);
+			expect(promise.fulfill.wasCalled).toBe(true);
+			expect(promise.fulfill.mostRecentCall.args[0].ok).toBe(true);
 		});
 
 		it("should reject the promise on doc create if update failed", function () {
@@ -393,19 +393,19 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			spyOn(promise, "reject");
 			couchDBDocument.createDocument.call(couchDBDocument, promise);
 			transportMock.request.mostRecentCall.args[2](response);
-			expect(promise.reject.wasCalled).toEqual(true);
-			expect(promise.reject.mostRecentCall.args[0].ok).toEqual(false);
+			expect(promise.reject.wasCalled).toBe(true);
+			expect(promise.reject.mostRecentCall.args[0].ok).toBe(false);
 		});
 
 		it("should remove a document from the database", function () {
 			couchDBDocument.set("_rev", "10-hello");
 
 			couchDBDocument.removeFromDatabase.call(couchDBDocument);
-			expect(transportMock.request.wasCalled).toEqual(true);
-			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
-			expect(transportMock.request.mostRecentCall.args[1].method).toEqual("DELETE");
-			expect(transportMock.request.mostRecentCall.args[1].path).toEqual("/db/document1");
-			expect(transportMock.request.mostRecentCall.args[1].query.rev).toEqual("10-hello");
+			expect(transportMock.request.wasCalled).toBe(true);
+			expect(transportMock.request.mostRecentCall.args[0]).toBe("CouchDB");
+			expect(transportMock.request.mostRecentCall.args[1].method).toBe("DELETE");
+			expect(transportMock.request.mostRecentCall.args[1].path).toBe("/db/document1");
+			expect(transportMock.request.mostRecentCall.args[1].query.rev).toBe("10-hello");
 		});
 **/
 	});
