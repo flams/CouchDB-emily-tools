@@ -155,6 +155,76 @@ function CouchDBDocument(Store, CouchDBBase, Tools, Promise) {
 			return false;
 		};
 
+		/**
+		 * Put a new document in CouchDB
+		 * @private
+		 */
+		this.databaseCreate = function createDocument(promise) {
+        	_transport.request(_channel, {
+        		method: "PUT",
+        		path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+        		headers: {
+        			"Content-Type": "application/json"
+        		},
+        		data: this.toJSON()
+        	}, function (result) {
+        		var json = JSON.parse(result);
+        		if (json.ok) {
+        			promise.fulfill(json);
+            		_stateMachine.event("subscribeToDocumentChanges");
+        		} else {
+        			promise.reject(json);
+        		}
+        	});
+        };
+
+    	/**
+	     * Update a document in CouchDB through a PUT request
+	     * @private
+	     */
+	    this.databaseUpdate = function updateDatabase(promise) {
+
+	    	_transport.request(_channel, {
+        		method: "PUT",
+        		path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+        		headers: {
+        			"Content-Type": "application/json"
+        		},
+        		data: this.toJSON()
+        	}, function (response) {
+        		var json = JSON.parse(response);
+        		if (json.ok) {
+        			this.set("_rev", json.rev);
+        			promise.fulfill(json);
+        		} else {
+        			promise.reject(json);
+        		}
+        	}, this);
+	    };
+
+    	/**
+	     * Remove a document from CouchDB through a DELETE request
+	     * @private
+	     */
+	    this.databaseRemove = function removeFromDatabase() {
+	    	_transport.request(_channel, {
+        		method: "DELETE",
+        		path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+        		query: {
+        			rev: this.get("_rev")
+        		}
+        	});
+	    };
+
+		// Add the missing states
+		var stateMachine = this.getStateMachine(),
+			Synched = stateMachine.get("Synched"),
+			Listening = stateMachine.get("Listening");
+
+		Synched.add("upload", this.databaseCreate, this);
+		Listening.add("upload", this.databaseUpdate, this);
+		Listening.add("removeFromDatabase", this.databaseRemove, this);
+
 	}
 
 	return function CouchDBDocumentFactory(data) {

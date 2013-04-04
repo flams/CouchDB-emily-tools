@@ -292,7 +292,15 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 		});
 
 		it("should return a promise", function () {
+			spyOn(stateMachine, "event");
 			expect(couchDBDocument.upload()).toBeInstanceOf(Promise);
+		});
+
+		it("should add a transition for creating a document", function () {
+			var Synched = stateMachine.get("Synched");
+			var createDocument = Synched.get("upload");
+			expect(createDocument[0]).toBe(couchDBDocument.databaseCreate);
+			expect(createDocument[1]).toBe(couchDBDocument);
 		});
 /**
 		it("should fulfill the promise on upload", function () {
