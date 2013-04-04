@@ -66,7 +66,7 @@ function CouchDBView(Store, CouchDBBase, Tools) {
 						_syncInfo.reducedView = true;
 					}
 
-					this.getStateMachine().event("subscribeToViewChanges");
+					this.getStateMachine().event("listen");
 				}
 			}, this);
 		};

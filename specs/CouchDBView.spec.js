@@ -119,7 +119,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 			expect(couchDBView.reset.mostRecentCall.args[0][2].value.title).toEqual("the 3rd document");
 
 			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("subscribeToViewChanges");
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("listen");
 
 			expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBView);
 		});
