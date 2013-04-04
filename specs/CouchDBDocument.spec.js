@@ -119,7 +119,7 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(doc["_rev"]).toEqual("1-7f5175756a7ab72660278c3c0aed2eee")
 
 			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("subscribeToDocumentChanges");
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("onListen");
 		});
 
 		it("should reject the callback if the document doesn't exist", function () {
@@ -148,11 +148,11 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(promise.fulfill.wasCalled).toEqual(true);
 			expect(promise.fulfill.mostRecentCall.args[0]).toBe(couchDBDocument);
 		});
-/**
+
 		it("should subscribe to document changes", function () {
 			var reqData;
 			expect(couchDBDocument.stopListening).toBeUndefined();
-			couchDBDocument.subscribeToDocumentChanges.call(couchDBDocument);
+			couchDBDocument.onListen();
 			expect(couchDBDocument.stopListening).toBe(stopListening);
 			expect(transportMock.listen.wasCalled).toEqual(true);
 			expect(transportMock.listen.mostRecentCall.args[0]).toEqual("CouchDB");
@@ -164,9 +164,9 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			expect(transportMock.listen.mostRecentCall.args[3]).toBe(couchDBDocument);
 		});
-/**
+
 		it("should not fail with empty json from heartbeat", function () {
-			couchDBDocument.subscribeToDocumentChanges.call(couchDBDocument);
+			couchDBDocument.onListen();
 			callback = transportMock.listen.mostRecentCall.args[2];
 
 			expect(function() {
@@ -180,15 +180,15 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 
 			spyOn(stateMachine, "event");
 
-			couchDBDocument.subscribeToDocumentChanges.call(couchDBDocument);
+			couchDBDocument.onListen();
 			callback = transportMock.listen.mostRecentCall.args[2];
 
 			callback.call(couchDBDocument, listenRes);
 
 			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("updateDoc");
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("change");
 		});
-
+/**
 		it("should not get changes when another document is updated", function () {
 			var listenRes = '{"seq":12,"id":"document5","changes":[{"rev":"2-0b77a81676739718c23c72a12a131986"}]}',
 				callback;

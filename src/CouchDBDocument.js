@@ -49,20 +49,65 @@ function CouchDBDocument(Store, CouchDBBase, Tools) {
 
 			var _syncInfo = this.getSyncInfo();
 
-			this.getTransport().request(this.getHandlerName(), {
-				method: "GET",
-				path: "/" + _syncInfo.database + "/" + _syncInfo.document,
-				query: _syncInfo.query
-			}, function (results) {
-				var json = JSON.parse(results);
-				if (json._id) {
-					this.reset(json);
-					this.getPromise().fulfill(this);
-					this.getStateMachine().event("subscribeToDocumentChanges");
-				} else {
-					this.getPromise().reject(results);
-				}
-			}, this);
+			this.getTransport().request(
+				this.getHandlerName(),
+				{
+					method: "GET",
+					path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+					query: _syncInfo.query
+				},
+				function (results) {
+					var json = JSON.parse(results);
+					if (json._id) {
+						this.reset(json);
+						this.getPromise().fulfill(this);
+						this.getStateMachine().event("onListen");
+					} else {
+						this.getPromise().reject(results);
+					}
+				}, this);
+		};
+
+		/**
+		 * Subscribe to changes when synchronized with a document
+		 * @private
+		 */
+		this.onListen = function onListen() {
+
+			var _syncInfo = this.getSyncInfo();
+
+			this.stopListening = this.getTransport().listen(
+				this.getHandlerName(),
+				{
+					path: "/" + _syncInfo.database + "/_changes",
+					query: {
+						feed: "continuous",
+						heartbeat: 20000,
+						descending: true
+					}
+				},
+				function (changes) {
+					var json;
+					// Should I test for this very special case (heartbeat?)
+					// Or do I have to try catch for any invalid json?
+					if (changes == "\n") {
+						return false;
+					}
+
+					json = JSON.parse(changes);
+
+					// The document is the modified document is the current one
+					if (json.id == _syncInfo.document &&
+						// And if it has a new revision
+						json.changes.pop().rev != this.get("_rev")) {
+
+						if (json.deleted) {
+							this.getStateMachine().event("remove");
+						} else {
+							this.getStateMachine().event("change");
+						}
+					 }
+				}, this);
 		};
 
 	}
