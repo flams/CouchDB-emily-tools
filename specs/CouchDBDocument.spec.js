@@ -264,15 +264,6 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(couchDBDocument.reset.wasCalled).toEqual(true);
 			expect(couchDBDocument.getNbItems()).toEqual(0);
 		});
-/**
-		it("should unsync a document, ie. stop listening to changes", function () {
-			var spy = jasmine.createSpy();
-			couchDBDocument.stopListening = spy;
-			couchDBDocument.unsync.call(couchDBDocument);
-			expect(spy.wasCalled).toEqual(true);
-			expect(couchDBDocument.stopListening).toBeUndefined();
-		});
-
 
 	});
 /*
