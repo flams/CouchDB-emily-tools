@@ -8,6 +8,17 @@ require(["CouchDBBase", "CouchDBDocument", "Store", "Promise"],
 
 function (CouchDBBase, CouchDBDocument, Store, Promise) {
 
+	var transportMock = null,
+		stopListening = null;
+
+	beforeEach(function () {
+		stopListening = jasmine.createSpy();
+		transportMock = {
+			request: jasmine.createSpy(),
+			listen: jasmine.createSpy().andReturn(stopListening)
+		};
+	});
+
 	describe("CouchDBDocument inherits from CouchDBBase", function () {
 
 		it("should be a constructor function", function () {
@@ -68,17 +79,10 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 
 		var couchDBDocument = null,
 			stateMachine = null,
-			query = {},
-			stopListening = null,
-			transportMock = null;
+			query = {};
 
 		beforeEach(function () {
 			couchDBDocument = new CouchDBDocument;
-			stopListening = jasmine.createSpy();
-			transportMock = {
-				request: jasmine.createSpy(),
-				listen: jasmine.createSpy().andReturn(stopListening)
-			};
 			couchDBDocument.setTransport(transportMock);
 			couchDBDocument.sync("db", "document1", query);
 			stateMachine = couchDBDocument.getStateMachine();
@@ -267,15 +271,15 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 
 	});
 
-	describe("CouchDBStoreDataBaseUpdate", function () {
-/*
+	describe("CouchDBDocument can also update the database", function () {
+
 		var couchDBDocument = null,
 			stateMachine = null;
 
 		beforeEach(function () {
 			couchDBDocument = new CouchDBDocument;
 			couchDBDocument.setTransport(transportMock);
-			couchDBDocument.setSyncInfo("db", "document1");
+			couchDBDocument.sync("db", "document1");
 			stateMachine = couchDBDocument.getStateMachine();
 		});
 
@@ -286,7 +290,7 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(stateMachine.event.wasCalled).toEqual(true);
 			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("updateDatabase");
 		});
-
+/**
 		it("should return a promise", function () {
 			expect(couchDBDocument.upload()).toBeInstanceOf(Promise);
 		});
@@ -403,7 +407,7 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(transportMock.request.mostRecentCall.args[1].path).toEqual("/db/document1");
 			expect(transportMock.request.mostRecentCall.args[1].query.rev).toEqual("10-hello");
 		});
-/**
+**/
 	});
 
 });

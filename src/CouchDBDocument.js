@@ -6,13 +6,13 @@
 
 define("CouchDBDocument",
 
-["Store", "CouchDBBase", "Tools"],
+["Store", "CouchDBBase", "Tools", "Promise"],
 
 /**
  * @class
  * CouchDBDocument synchronizes a Store with a CouchDB document
  */
-function CouchDBDocument(Store, CouchDBBase, Tools) {
+function CouchDBDocument(Store, CouchDBBase, Tools, Promise) {
 
 	function CouchDBDocumentConstructor() {
 
@@ -138,6 +138,27 @@ function CouchDBDocument(Store, CouchDBBase, Tools) {
 	    this.onRemove = function onRemove() {
 	    	this.reset({});
 	    };
+
+	    /**
+		 * Upload the document to the database
+		 * Works for CouchDBStore that are synchronized with documents or bulk of documents.
+		 * If synchronized with a bulk of documents, you can set the documents to delete _deleted property to true.
+		 * No modification can be done on views.
+		 * @returns true if upload called
+		 */
+		this.upload = function upload() {
+			var promise = new Promise,
+				_syncInfo = this.getSyncInfo();
+
+			if (_syncInfo.document) {
+				this.getStateMachine().event("updateDatabase", promise);
+				return promise;
+			} else if (!_syncInfo.view){
+				this.getStateMachine().event("updateDatabaseWithBulkDoc", promise);
+				return promise;
+			}
+			return false;
+		};
 
 	}
 
