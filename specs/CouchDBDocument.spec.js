@@ -316,11 +316,11 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(stateMachine.event.wasCalled).toBe(true);
 			expect(stateMachine.event.mostRecentCall.args[0]).toBe("removeFromDatabase");
 		});
-/**
+
 		it("should update the database on update", function () {
 			var reqData;
 			couchDBDocument.set("fakeRev", "10-hello");
-			couchDBDocument.updateDatabase.call(couchDBDocument);
+			couchDBDocument.databaseCreate();
 			expect(transportMock.request.wasCalled).toBe(true);
 			expect(transportMock.request.mostRecentCall.args[0]).toBe("CouchDB");
 
@@ -331,7 +331,7 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(reqData["headers"]["Content-Type"]).toBe("application/json");
 			expect(JSON.parse(reqData.data).fakeRev).toBe("10-hello");
 		});
-
+/**
 		it("should fulfill the promise on update if update ok", function () {
 			var promise = new Promise,
 				response = '{"ok":true}';

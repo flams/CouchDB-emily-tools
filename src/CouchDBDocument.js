@@ -174,22 +174,29 @@ function CouchDBDocument(Store, CouchDBBase, Tools, Promise) {
 		 * @private
 		 */
 		this.databaseCreate = function createDocument(promise) {
-        	_transport.request(_channel, {
-        		method: "PUT",
-        		path: "/" + _syncInfo.database + "/" + _syncInfo.document,
-        		headers: {
-        			"Content-Type": "application/json"
+
+			var _syncInfo = this.getSyncInfo();
+
+        	this.getTransport().request(
+        		this.getHandlerName(),
+        		{
+	        		method: "PUT",
+	        		path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+	        		headers: {
+	        			"Content-Type": "application/json"
+	        		},
+	        		data: this.toJSON()
         		},
-        		data: this.toJSON()
-        	}, function (result) {
-        		var json = JSON.parse(result);
-        		if (json.ok) {
-        			promise.fulfill(json);
-            		_stateMachine.event("subscribeToDocumentChanges");
-        		} else {
-        			promise.reject(json);
+        		function (result) {
+	        		var json = JSON.parse(result);
+	        		if (json.ok) {
+	        			promise.fulfill(json);
+	            		_stateMachine.event("subscribeToDocumentChanges");
+	        		} else {
+	        			promise.reject(json);
+	        		}
         		}
-        	});
+        	);
         };
 
     	/**
