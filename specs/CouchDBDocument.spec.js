@@ -266,9 +266,9 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 		});
 
 	});
-/*
-	describe("CouchDBStoreDataBaseUpdate", function () {
 
+	describe("CouchDBStoreDataBaseUpdate", function () {
+/*
 		var couchDBDocument = null,
 			stateMachine = null;
 
@@ -403,7 +403,7 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			expect(transportMock.request.mostRecentCall.args[1].path).toEqual("/db/document1");
 			expect(transportMock.request.mostRecentCall.args[1].query.rev).toEqual("10-hello");
 		});
-*/
+/**
 	});
 
 });
