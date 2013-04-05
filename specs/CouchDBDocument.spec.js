@@ -53,7 +53,7 @@ function (CouchDBBase, CouchDBDocument, Store, Promise) {
 			couchDBDocument = new CouchDBDocument;
 		});
 
-		it("should only synchronize if a database, design doc and a view is given", function () {
+		it("should only synchronize if a database and a document is given", function () {
 			expect(couchDBDocument.setSyncInfo({})).toBe(false);
 			expect(couchDBDocument.setSyncInfo("db")).toBe(false);
 			expect(couchDBDocument.setSyncInfo("db", "document")).toBeTruthy();
