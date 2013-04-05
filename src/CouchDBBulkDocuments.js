@@ -16,6 +16,29 @@ function CouchDBBulkDocuments(Store, CouchDBBase, Tools, Promise) {
 
 	function CouchDBBulkDocumentsConstructor() {
 
+		/**
+		 * Set the synchronization data if valid data is supplied
+		 * @param {String} database the database to sync with
+		 * @param {Object} query an object with queryparams
+		 * @returns {Object} syncInfo if valid, false if not
+		 */
+		this.setSyncInfo = function setSyncInfo(database,  query) {
+			if (typeof database == "string" &&
+				typeof query == "object") {
+
+				if (!query || (typeof query == "object")) {
+					return {
+						"database": database,
+						"query": query || {}
+					};
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		};
+
 	}
 
 	return function CouchDBBulkDocumentsFactory(data) {
