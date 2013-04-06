@@ -68,6 +68,19 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 			expect(syncInfo["query"]).toBe(query);
 		});
 
+		it("should bring up keys one level up", function () {
+			var query = {},
+				keys = [];
+
+			query.keys = keys;
+			syncInfo = couchDBBulkDocuments.setSyncInfo("db", query);
+
+			expect(syncInfo["database"]).toBe("db");
+			expect(syncInfo["query"]).toBe(query);
+			expect(syncInfo["keys"]).toBe(keys);
+			expect(syncInfo["query"].keys).toBeUndefined();
+		});
+
 	});
 
 
@@ -83,17 +96,17 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 			keys = ["document1", "document2"];
 
 		beforeEach(function () {
-			couchDBBulkDocuments = new CouchDBStore;
+			couchDBBulkDocuments = new CouchDBBulkDocuments;
 			couchDBBulkDocuments.setTransport(transportMock);
 			query.keys = keys;
-			couchDBBulkDocuments.setSyncInfo("db", query);
+			couchDBBulkDocuments.sync("db", query);
 			stateMachine = couchDBBulkDocuments.getStateMachine();
 		});
-/**
+
 		it("get a bulk of documents' data", function () {
 			var reqData;
 
-			couchDBBulkDocuments.actions.getBulkDocuments.call(couchDBBulkDocuments);
+			couchDBBulkDocuments.onSync();
 
 			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
 			reqData = transportMock.request.mostRecentCall.args[1];
@@ -105,10 +118,10 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 			expect(reqData["query"].include_docs).toEqual(true);
 			expect(JSON.parse(reqData["data"]).keys[0]).toEqual("document1");
 			expect(JSON.parse(reqData["data"]).keys[1]).toEqual("document2");
-			expect(transportMock.request.mostRecentCall.args[2]).to BeInstanceOf(Function);
+			expect(transportMock.request.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBBulkDocuments);
 		});
-
+/**
 		it("should reset the store on sync and ask for changes subscription", function () {
 
 			var res = '{"total_rows":2,"update_seq":2,"offset":0,"rows":['+
@@ -143,7 +156,7 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 
 			expect(function () {
 				cb.call(couchDBBulkDocuments, '{"error":""}');
-			}).toThrow('CouchDBStore.sync("db", {"keys":["document1","document2"]}) failed: {"error":""}');
+			}).toThrow('CouchDBBulkDocuments.sync("db", {"keys":["document1","document2"]}) failed: {"error":""}');
 		});
 
 		it("should fulfill the promise when the bulk of docs is synched", function () {
@@ -186,7 +199,7 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 		it("should not fail with empty json from heartbeat", function () {
 			var callback;
 
-			couchDBBulkDocuments.actions.subscribeToBulkChanges.call(CouchDBStore, 2);
+			couchDBBulkDocuments.actions.subscribeToBulkChanges.call(CouchDBBulkDocuments, 2);
 			callback = transportMock.listen.mostRecentCall.args[2];
 
 			expect(function() {
@@ -321,7 +334,7 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 			stateMachine = null;
 
 		beforeEach(function () {
-			couchDBBulkDocuments = new CouchDBStore;
+			couchDBBulkDocuments = new CouchDBBulkDocuments;
 			couchDBBulkDocuments.setTransport(transportMock);
 			couchDBBulkDocuments.setSyncInfo("db", {keys: ["document1", "document2"]});
 			stateMachine = couchDBBulkDocuments.getStateMachine();

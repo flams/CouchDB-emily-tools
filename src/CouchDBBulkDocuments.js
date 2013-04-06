@@ -26,17 +26,69 @@ function CouchDBBulkDocuments(Store, CouchDBBase, Tools, Promise) {
 			if (typeof database == "string" &&
 				typeof query == "object") {
 
-				if (!query || (typeof query == "object")) {
-					return {
-						"database": database,
-						"query": query || {}
-					};
-				} else {
-					return false;
+				var _syncInfo = {
+					"database": database,
+					"query": query || {}
+				};
+
+				// Bring keys one level up
+				if (Array.isArray(_syncInfo["query"].keys)) {
+					_syncInfo["keys"] = _syncInfo["query"].keys;
+					delete _syncInfo["query"].keys;
 				}
+
+				return _syncInfo;
+
 			} else {
 				return false;
 			}
+		};
+
+		/**
+		 * Get a bulk of documents
+		 * @private
+		 */
+		this.onSync = function onSync() {
+
+			var _syncInfo = this.getSyncInfo(),
+				reqData = {
+					path: "/" + _syncInfo.database + "/_all_docs",
+					query: _syncInfo.query
+				},
+				errorString;
+
+			// If an array of keys is defined, we POST it to _all_docs to get arbitrary docs.
+			if (Array.isArray(_syncInfo["keys"])) {
+				reqData.method = "POST";
+				reqData.data = JSON.stringify({keys:_syncInfo.keys});
+				reqData.headers = {
+					"Content-Type": "application/json"
+				};
+				errorString = reqData.data;
+
+			// Else, we just GET the documents using startkey/endkey
+			} else {
+				reqData.method = "GET";
+				errorString = JSON.stringify(_syncInfo.query);
+			}
+
+			_syncInfo.query.include_docs = true;
+
+			this.getTransport().request(
+				this.getHandlerName(),
+				reqData,
+				function (results) {
+
+					var json = JSON.parse(results);
+
+					if (!json.rows) {
+						throw new Error("CouchDBStore.sync(\"" + _syncInfo.database + "\", " + errorString + ") failed: " + results);
+					} else {
+						this.reset(json.rows);
+						this.getPromise().fulfill(this);
+						this.getStateMachine().event("subscribeToBulkChanges");
+					}
+				}, this);
 		};
 
 	}
