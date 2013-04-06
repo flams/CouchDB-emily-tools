@@ -251,7 +251,7 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("remove");
 			expect(stateMachine.event.mostRecentCall.args[1]).toEqual("document2");
 		});
-/**
+
 		it("should add the new document (only works with range)", function () {
 
 			var query = {starkey: "document1", endkey: "document5"},
@@ -262,11 +262,11 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 
 			spyOn(couchDBBulkDocuments, "alter");
 
-			expect(couchDBBulkDocuments.actions.addBulkDocInStore()).toEqual(false);
+			expect(couchDBBulkDocuments.onAdd()).toEqual(false);
 
-			couchDBBulkDocuments.setSyncInfo("db", query);
+			couchDBBulkDocuments.sync("db", query);
 
-			couchDBBulkDocuments.actions.addBulkDocInStore.call(couchDBBulkDocuments, "document4");
+			couchDBBulkDocuments.onAdd("document4");
 			expect(transportMock.request.wasCalled).toEqual(true);
 			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
 
@@ -289,7 +289,7 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 			expect(couchDBBulkDocuments.alter.mostRecentCall.args[2]).toEqual(0);
 			expect(couchDBBulkDocuments.alter.mostRecentCall.args[3]._rev).toEqual("1-5b629f97e2298a911cce75d01bd6c65e");
 		});
-
+/**
 		it("should update the selected document", function () {
 			var doc = {
 						"_id":"document2",

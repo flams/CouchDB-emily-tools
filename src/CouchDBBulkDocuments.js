@@ -136,6 +136,41 @@ function CouchDBBulkDocuments(Store, CouchDBBase, Tools, Promise) {
 				}, this);
 		};
 
+		/**
+		 * Add in the Store a document that was added in CouchDB
+		 * @private
+		 */
+		this.onAdd = function onAdd(id) {
+
+			var _syncInfo = this.getSyncInfo();
+
+			if (_syncInfo["query"].startkey || _syncInfo["query"].endkey) {
+				_syncInfo.query.include_docs = true;
+				_syncInfo.query.update_seq = true;
+
+				this.getTransport().request(
+					this.getHandlerName(),
+					{
+						method: "GET",
+						path: "/" + _syncInfo.database + "/_all_docs",
+						query: _syncInfo.query
+					},
+					function (results) {
+
+						var json = JSON.parse(results);
+
+						json.rows.forEach(function (value, idx) {
+							if (value.id == id) {
+								this.alter("splice", idx, 0, value.doc);
+							}
+						}, this);
+
+					}, this);
+			} else {
+				return false;
+			}
+		};
+
 	}
 
 	return function CouchDBBulkDocumentsFactory(data) {
