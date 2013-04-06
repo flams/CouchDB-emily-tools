@@ -365,14 +365,14 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 	});
 
 	describe("CouchDBStoreDataBaseUpdateWithBulkDocuments", function () {
-/**
+
 		var couchDBBulkDocuments = null,
 			stateMachine = null;
 
 		beforeEach(function () {
 			couchDBBulkDocuments = new CouchDBBulkDocuments;
 			couchDBBulkDocuments.setTransport(transportMock);
-			couchDBBulkDocuments.setSyncInfo("db", {keys: ["document1", "document2"]});
+			couchDBBulkDocuments.sync("db", {keys: ["document1", "document2"]});
 			stateMachine = couchDBBulkDocuments.getStateMachine();
 		});
 
@@ -381,7 +381,7 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 			spyOn(stateMachine, "event");
 			couchDBBulkDocuments.upload();
 			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("updateDatabaseWithBulkDoc");
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("upload");
 		});
 
 		it("should return a promise", function () {
@@ -392,14 +392,10 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 			var promise = new Promise,
 				response = '{}';
 			spyOn(promise, "fulfill");
-			couchDBBulkDocuments.actions.updateDatabaseWithBulkDoc.call(couchDBBulkDocuments, promise);
+			couchDBBulkDocuments.databaseUpdate(promise);
 			transportMock.request.mostRecentCall.args[2](response);
 			expect(promise.fulfill.wasCalled).toEqual(true);
 			expect(promise.fulfill.mostRecentCall.args[0]).toBeInstanceOf(Object);
-		});
-
-		it("shouldn't allow for removing a document (a doc to delete should have a _deleted property set to true)", function () {
-			expect(couchDBBulkDocuments.remove()).toEqual(false);
 		});
 
 		it("should update the database on update", function () {
@@ -410,7 +406,7 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 				{"id":"document1","key":"document1","value":{"rev":"1-793111e6af0ccddb08147c0be1f49843"},"doc":{"_id":"document1","_rev":"1-793111e6af0ccddb08147c0be1f49843","desc":"my first doc"}},
 				{"id":"document2","key":"document2","value":{"rev":"2-a071048ce217ff1341fb224b83417003"},"doc":{"_id":"document2","_rev":"2-a071048ce217ff1341fb224b83417003","desc":"my second document"}}
 			]);
-			couchDBBulkDocuments.actions.updateDatabaseWithBulkDoc.call(couchDBBulkDocuments);
+			couchDBBulkDocuments.databaseUpdate();
 
 			expect(transportMock.request.wasCalled).toEqual(true);
 			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
@@ -426,7 +422,7 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 			expect(data.docs[1]._id).toEqual("document2");
 
 		});
-*/
+
 	});
 
 });

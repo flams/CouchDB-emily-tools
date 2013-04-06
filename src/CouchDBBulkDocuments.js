@@ -195,6 +195,50 @@ function CouchDBBulkDocuments(Store, CouchDBBase, Tools, Promise) {
 			}, this);
 		};
 
+		/**
+	     * Update the database with bulk documents
+	     * @private
+	     */
+	    this.databaseUpdate = function databaseUpdate(promise) {
+
+	    	var docs = [],
+	    		_syncInfo = this.getSyncInfo();
+
+	    	this.loop(function (value) {
+	    		docs.push(value.doc);
+	    	});
+
+	    	this.getTransport().request(
+	    		this.getHandlerName(),
+	    		{
+		    		method: "POST",
+		    		path: "/" + _syncInfo.database + "/_bulk_docs",
+		    		headers: {
+		    			"Content-Type": "application/json"
+		    		},
+		    		data: JSON.stringify({"docs": docs})
+		    	},
+		    	function (response) {
+		    		promise.fulfill(JSON.parse(response));
+	        	});
+	    };
+
+		/**
+		 * Upload the document to the database
+		 * @returns {Promise}
+		 */
+		this.upload = function upload() {
+			var promise = new Promise;
+			this.getStateMachine().event("upload", promise);
+			return promise;
+		};
+
+		// Add the missing states
+		var stateMachine = this.getStateMachine(),
+			Listening = stateMachine.get("Listening");
+
+		Listening.add("upload", this.databaseUpdate, this);
+
 	}
 
 	return function CouchDBBulkDocumentsFactory(data) {
