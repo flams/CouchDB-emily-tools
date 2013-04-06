@@ -316,7 +316,50 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 			expect(couchDBBulkDocuments.set.wasCalled).toEqual(true);
 			expect(couchDBBulkDocuments.set.mostRecentCall.args[0]).toEqual(1);
 			expect(couchDBBulkDocuments.set.mostRecentCall.args[1]._rev).toEqual("2-a071048ce217ff1341fb224b83417003");
+		});
 
+		it("should delete the removed document", function () {
+			couchDBBulkDocuments.reset([{
+				"id":"document1",
+				"key":"2012/01/13 12:45:56",
+				"value":{
+					"date":"2012/01/13 12:45:56",
+					"title":"my first document",
+					"body":"in this database"
+				}
+			},
+			{
+				"id":"document2",
+				"key":"2012/01/13 13:45:21",
+				"value":{
+					"date":"2012/01/13 13:45:21",
+					"title":"this is a new document",
+					"body":"in the database"
+				}
+			},
+			{
+				"id":"document3",
+				"key":"2012/01/13 21:45:12",
+				"value":{
+					"date":"2012/01/13 21:45:12",
+					"title":"the 3rd document",
+					"body":"a change for the example"
+				}
+			},
+			{
+				"id":"document4",
+				"key":"2012/01/13 23:37:12",
+				"value":{
+					"date":"2012/01/13 23:37:12",
+					"title":"the 4th\'s just been added",
+					"body":"do you see me?"
+				}
+			}]);
+
+			spyOn(couchDBBulkDocuments, "del");
+			couchDBBulkDocuments.onRemove("document4");
+			expect(couchDBBulkDocuments.del.wasCalled).toBe(true);
+			expect(couchDBBulkDocuments.del.mostRecentCall.args[0]).toBe(3);
 		});
 
 	});

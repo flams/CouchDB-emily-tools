@@ -183,6 +183,18 @@ function CouchDBBulkDocuments(Store, CouchDBBase, Tools, Promise) {
 			}, this);
 		};
 
+		/**
+		 * Remove from the Store a document that was removed in CouchDB
+		 * @private
+		 */
+		this.onRemove = function onRemove(id) {
+			this.loop(function (value, idx) {
+				if (value.id == id) {
+					this.del(idx);
+				}
+			}, this);
+		};
+
 	}
 
 	return function CouchDBBulkDocumentsFactory(data) {
