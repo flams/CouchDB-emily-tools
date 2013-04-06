@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - CouchDBUsers</title>
+		<title>JsDoc Reference - _global_</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -191,11 +191,19 @@ ul.inheritsList
 	
 	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
+	<li><a href="../symbols/CouchDBBase.html">CouchDBBase</a></li>
+	
+	<li><a href="../symbols/CouchDBBulkDocuments.html">CouchDBBulkDocuments</a></li>
+	
+	<li><a href="../symbols/CouchDBDocument.html">CouchDBDocument</a></li>
+	
 	<li><a href="../symbols/CouchDBSecurity.html">CouchDBSecurity</a></li>
+	
+	<li><a href="../symbols/CouchDBStore.html">CouchDBStore</a></li>
 	
 	<li><a href="../symbols/CouchDBUser.html">CouchDBUser</a></li>
 	
-	<li><a href="../symbols/CouchDBUsers.html">CouchDBUsers</a></li>
+	<li><a href="../symbols/CouchDBView.html">CouchDBView</a></li>
 	
 </ul>
 <hr />
@@ -206,7 +214,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class CouchDBUsers
+				Built-In Namespace _global_
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -214,36 +222,12 @@ ul.inheritsList
 				
 				
 			
-				CouchDBUsers is a library with utility tools to manage users.
-It helps with the creation of users and login
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_CouchDBUsers.js.html">CouchDBUsers.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
-			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class CouchDBUsers.">
-				<caption>Class Summary</caption>
-				<thead>
-					<tr>
-						<th scope="col">Constructor Attributes</th>
-						<th scope="col">Constructor Name and Description</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td class="attributes">&nbsp;</td>
-						<td class="nameDescription" >
-							<div class="fixedFont">
-								<b><a href="../symbols/CouchDBUsers.html#constructor">CouchDBUsers</a></b>(Promise)
-							</div>
-							<div class="description"></div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
 			
 
 <!-- ============================== properties summary ===================== -->
@@ -251,189 +235,16 @@ It helps with the creation of users and login
 
 <!-- ============================== methods summary ======================== -->
 			
-				
-				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class CouchDBUsers.">
-					<caption>Method Summary</caption>
-					<thead>
-						<tr>
-							<th scope="col">Method Attributes</th>
-							<th scope="col">Method Name and Description</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBUsers.html#login">login</a></b>(name, password)
-								</div>
-								<div class="description">User login.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBUsers.html#setTransport">setTransport</a></b>(transport)
-								</div>
-								<div class="description">Set the transport to be used, must be an Emily Transport</div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
-				
-				
-				
-			
 <!-- ============================== events summary ======================== -->
 			
 
 <!-- ============================== constructor details ==================== -->		
-			
-			<div class="details"><a name="constructor"> </a>
-				<div class="sectionTitle">
-					Class Detail
-				</div>
-				
-				<div class="fixedFont">
-						<b>CouchDBUsers</b>(Promise)
-				</div>
-				
-				<div class="description">
-					
-					
-				</div>
-				
-				
-				
-				
-					
-						<dl class="detailList">
-						<dt class="heading">Parameters:</dt>
-						
-							<dt>
-								 <b>Promise</b>
-								
-							</dt>
-								<dd></dd>
-						
-						</dl>
-					
-					
-					
-					
-					
-					
-					
-
-			</div>
 			
 
 <!-- ============================== field details ========================== -->		
 			
 
 <!-- ============================== method details ========================= -->		
-			
-				<div class="sectionTitle">
-					Method Detail
-				</div>
-				
-					<a name="login"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Promise}</span>
-					<b>login</b>(name, password)
-					
-					</div>
-					<div class="description">
-						User login. It fetches the user document
-the corresponds to the given name.
-It will only work if the credentials are correct.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
-									
-								</dt>
-								<dd>the name of the user</dd>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>password</b>
-									
-								</dt>
-								<dd>the password of the user</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Promise}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="setTransport"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>setTransport</b>(transport)
-					
-					</div>
-					<div class="description">
-						Set the transport to be used, must be an Emily Transport
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>transport</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>true if Transport is from Emily</dd>
-							
-							</dl>
-						
-						
-						
-
-					
-				
 			
 			
 <!-- ============================== event details ========================= -->		
@@ -446,7 +257,7 @@ It will only work if the credentials are correct.
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Fri Aug 10 2012 00:22:35 GMT+0200 (CEST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sat Apr 06 2013 17:46:30 GMT+0100 (BST)
 		</div>
 	</body>
 </html>

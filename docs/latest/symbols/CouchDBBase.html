@@ -1,0 +1,1070 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="generator" content="JsDoc Toolkit" />
+		
+		<title>JsDoc Reference - CouchDBBase</title>
+
+		<style type="text/css">
+			/* default.css */
+body
+{
+	font: 12px "Lucida Grande", Tahoma, Arial, Helvetica, sans-serif;
+	width: 800px;
+}
+
+.header
+{
+	clear: both;
+	background-color: #ccc;
+	padding: 8px;
+}
+
+h1
+{
+	font-size: 150%;
+	font-weight: bold;
+	padding: 0;
+	margin: 1em 0 0 .3em;
+}
+
+hr
+{
+	border: none 0;
+	border-top: 1px solid #7F8FB1;
+	height: 1px;
+}
+
+pre.code
+{
+	display: block;
+	padding: 8px;
+	border: 1px dashed #ccc;
+}
+
+#index
+{
+	margin-top: 24px;
+	float: left;
+	width: 160px;
+	position: absolute;
+	left: 8px;
+	background-color: #F3F3F3;
+	padding: 8px;
+}
+
+#content
+{
+	margin-left: 190px;
+	width: 600px;
+}
+
+.classList
+{
+	list-style-type: none;
+	padding: 0;
+	margin: 0 0 0 8px;
+	font-family: arial, sans-serif;
+	font-size: 1em;
+	overflow: auto;
+}
+
+.classList li
+{
+	padding: 0;
+	margin: 0 0 8px 0;
+}
+
+.summaryTable { width: 100%; }
+
+h1.classTitle
+{
+	font-size:170%;
+	line-height:130%;
+}
+
+h2 { font-size: 110%; }
+caption, div.sectionTitle
+{
+	background-color: #7F8FB1;
+	color: #fff;
+	font-size:130%;
+	text-align: left;
+	padding: 2px 6px 2px 6px;
+	border: 1px #7F8FB1 solid;
+}
+
+div.sectionTitle { margin-bottom: 8px; }
+.summaryTable thead { display: none; }
+
+.summaryTable td
+{
+	vertical-align: top;
+	padding: 4px;
+	border-bottom: 1px #7F8FB1 solid;
+	border-right: 1px #7F8FB1 solid;
+}
+
+/*col#summaryAttributes {}*/
+.summaryTable td.attributes
+{
+	border-left: 1px #7F8FB1 solid;
+	width: 140px;
+	text-align: right;
+}
+
+td.attributes, .fixedFont
+{
+	line-height: 15px;
+	color: #002EBE;
+	font-family: "Courier New",Courier,monospace;
+	font-size: 13px;
+}
+
+.summaryTable td.nameDescription
+{
+	text-align: left;
+	font-size: 13px;
+	line-height: 15px;
+}
+
+.summaryTable td.nameDescription, .description
+{
+	line-height: 15px;
+	padding: 4px;
+	padding-left: 4px;
+}
+
+.summaryTable { margin-bottom: 8px; }
+
+ul.inheritsList
+{
+	list-style: square;
+	margin-left: 20px;
+	padding-left: 0;
+}
+
+.detailList {
+	margin-left: 20px; 
+	line-height: 15px;
+}
+.detailList dt { margin-left: 20px; }
+
+.detailList .heading
+{
+	font-weight: bold;
+	padding-bottom: 6px;
+	margin-left: 0;
+}
+
+.light, td.attributes, .light a:link, .light a:visited
+{
+	color: #777;
+	font-style: italic;
+}
+
+.fineprint
+{
+	text-align: right;
+	font-size: 10px;
+}
+		</style>
+	</head>
+
+	<body>
+<!-- ============================== header ================================= -->	
+		<!-- begin static/header.html -->
+		<div id="header">
+</div>
+		<!-- end static/header.html -->
+
+<!-- ============================== classes index ============================ -->
+		<div id="index">
+			<!-- begin publish.classesIndex -->
+			<div align="center"><a href="../index.html">Class Index</a>
+| <a href="../files.html">File Index</a></div>
+<hr />
+<h2>Classes</h2>
+<ul class="classList">
+	
+	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
+	
+	<li><a href="../symbols/CouchDBBase.html">CouchDBBase</a></li>
+	
+	<li><a href="../symbols/CouchDBBulkDocuments.html">CouchDBBulkDocuments</a></li>
+	
+	<li><a href="../symbols/CouchDBDocument.html">CouchDBDocument</a></li>
+	
+	<li><a href="../symbols/CouchDBSecurity.html">CouchDBSecurity</a></li>
+	
+	<li><a href="../symbols/CouchDBStore.html">CouchDBStore</a></li>
+	
+	<li><a href="../symbols/CouchDBUser.html">CouchDBUser</a></li>
+	
+	<li><a href="../symbols/CouchDBView.html">CouchDBView</a></li>
+	
+</ul>
+<hr />
+			<!-- end publish.classesIndex -->
+		</div>
+		
+		<div id="content">
+<!-- ============================== class title ============================ -->
+			<h1 class="classTitle">
+				
+				Class CouchDBBase
+			</h1>
+
+<!-- ============================== class summary ========================== -->			
+			<p class="description">
+				
+				
+			
+				CouchDBBase is a subtype of an Emily Store
+and is an abstract class for CouchDBViews, BulkViews, Documents, BulkDocuments
+				
+				
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_CouchDBBase.js.html">CouchDBBase.js</a>.
+				
+			</p>
+
+<!-- ============================== constructor summary ==================== -->			
+			
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class CouchDBBase.">
+				<caption>Class Summary</caption>
+				<thead>
+					<tr>
+						<th scope="col">Constructor Attributes</th>
+						<th scope="col">Constructor Name and Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="attributes">&nbsp;</td>
+						<td class="nameDescription" >
+							<div class="fixedFont">
+								<b><a href="../symbols/CouchDBBase.html#constructor">CouchDBBase</a></b>(Store, StateMachine, Tools, Promise)
+							</div>
+							<div class="description"></div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+
+<!-- ============================== properties summary ===================== -->
+			
+
+<!-- ============================== methods summary ======================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class CouchDBBase.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/CouchDBBase.html#getHandlerName">getHandlerName</a></b>()
+								</div>
+								<div class="description">Get the current CouchDB handler name</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/CouchDBBase.html#getPromise">getPromise</a></b>()
+								</div>
+								<div class="description">Get the promise to be resolved when the store is synched</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/CouchDBBase.html#getStateMachine">getStateMachine</a></b>()
+								</div>
+								<div class="description">Get the current state machine</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/CouchDBBase.html#getTransport">getTransport</a></b>()
+								</div>
+								<div class="description">Get the current transport</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/CouchDBBase.html#onAdd">onAdd</a></b>()
+								</div>
+								<div class="description">This function will be called when the Store needs to add something
+It's to be overriden in the sub Store</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/CouchDBBase.html#onChange">onChange</a></b>()
+								</div>
+								<div class="description">This function will be called when the Store needs to be subscribe to changes
+It's to be overriden in the sub Store</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/CouchDBBase.html#onListen">onListen</a></b>()
+								</div>
+								<div class="description">This function will be called when the Store needs to subscribe to changes
+It's to be overriden in the sub Store</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/CouchDBBase.html#onRemove">onRemove</a></b>()
+								</div>
+								<div class="description">This function will be called when the Store needs to remove something
+It's to be overriden in the sub Store</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/CouchDBBase.html#onSync">onSync</a></b>()
+								</div>
+								<div class="description">This function will be called when the Store needs to be synchronized
+It's to be overriden in the sub Store</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/CouchDBBase.html#setHandlerName">setHandlerName</a></b>(handlerName)
+								</div>
+								<div class="description">Set the current CouchDB handler name</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/CouchDBBase.html#setPromise">setPromise</a></b>(promise)
+								</div>
+								<div class="description">Set the promise to be resolved when the store is synched</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/CouchDBBase.html#setStateMachine">setStateMachine</a></b>(stateMachine)
+								</div>
+								<div class="description">Set the state machine</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/CouchDBBase.html#setSyncInfo">setSyncInfo</a></b>(syncInfo)
+								</div>
+								<div class="description">This function must be overriden to validate the synchronization
+information, and set the syncInfo object.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/CouchDBBase.html#setTransport">setTransport</a></b>(transport)
+								</div>
+								<div class="description">Set the current transport</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/CouchDBBase.html#sync">sync</a></b>(a)
+								</div>
+								<div class="description">Synchronize the store with CouchDB
+depending on the provided sync info</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/CouchDBBase.html#unsync">unsync</a></b>()
+								</div>
+								<div class="description">Unsync the store</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
+<!-- ============================== events summary ======================== -->
+			
+
+<!-- ============================== constructor details ==================== -->		
+			
+			<div class="details"><a name="constructor"> </a>
+				<div class="sectionTitle">
+					Class Detail
+				</div>
+				
+				<div class="fixedFont">
+						<b>CouchDBBase</b>(Store, StateMachine, Tools, Promise)
+				</div>
+				
+				<div class="description">
+					
+					
+				</div>
+				
+				
+				
+				
+					
+						<dl class="detailList">
+						<dt class="heading">Parameters:</dt>
+						
+							<dt>
+								 <b>Store</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								 <b>StateMachine</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								 <b>Tools</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								 <b>Promise</b>
+								
+							</dt>
+								<dd></dd>
+						
+						</dl>
+					
+					
+					
+					
+					
+					
+					
+
+			</div>
+			
+
+<!-- ============================== field details ========================== -->		
+			
+
+<!-- ============================== method details ========================= -->		
+			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name="getHandlerName"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{String}</span>
+					<b>getHandlerName</b>()
+					
+					</div>
+					<div class="description">
+						Get the current CouchDB handler name
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{String}</span> the current handler name</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="getPromise"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Promise}</span>
+					<b>getPromise</b>()
+					
+					</div>
+					<div class="description">
+						Get the promise to be resolved when the store is synched
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Promise}</span> the promise</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="getStateMachine"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{StateMachine}</span>
+					<b>getStateMachine</b>()
+					
+					</div>
+					<div class="description">
+						Get the current state machine
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{StateMachine}</span> the current state machine</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="getTransport"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Transport}</span>
+					<b>getTransport</b>()
+					
+					</div>
+					<div class="description">
+						Get the current transport
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Transport}</span> the current transport</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="onAdd"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>onAdd</b>()
+					
+					</div>
+					<div class="description">
+						This function will be called when the Store needs to add something
+It's to be overriden in the sub Store
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="onChange"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>onChange</b>()
+					
+					</div>
+					<div class="description">
+						This function will be called when the Store needs to be subscribe to changes
+It's to be overriden in the sub Store
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="onListen"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>onListen</b>()
+					
+					</div>
+					<div class="description">
+						This function will be called when the Store needs to subscribe to changes
+It's to be overriden in the sub Store
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="onRemove"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>onRemove</b>()
+					
+					</div>
+					<div class="description">
+						This function will be called when the Store needs to remove something
+It's to be overriden in the sub Store
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="onSync"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>onSync</b>()
+					
+					</div>
+					<div class="description">
+						This function will be called when the Store needs to be synchronized
+It's to be overriden in the sub Store
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="setHandlerName"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Boolean}</span>
+					<b>setHandlerName</b>(handlerName)
+					
+					</div>
+					<div class="description">
+						Set the current CouchDB handler name
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>handlerName</b>
+									
+								</dt>
+								<dd>the name of the handler
+The name must be a string that matches with the handler
+as it's been added in Emily/Olives handlers</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Boolean}</span> true if it's a string</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="setPromise"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Boolean}</span>
+					<b>setPromise</b>(promise)
+					
+					</div>
+					<div class="description">
+						Set the promise to be resolved when the store is synched
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>promise</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Boolean}</span> true if it's a promise</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="setStateMachine"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Boolean}</span>
+					<b>setStateMachine</b>(stateMachine)
+					
+					</div>
+					<div class="description">
+						Set the state machine
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{StateMachine}</span> <b>stateMachine</b>
+									
+								</dt>
+								<dd>the state machine to set</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Boolean}</span> true if it's an accepted state Machine</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="setSyncInfo"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Boolean}</span>
+					<b>setSyncInfo</b>(syncInfo)
+					
+					</div>
+					<div class="description">
+						This function must be overriden to validate the synchronization
+information, and set the syncInfo object.
+By default it only assigns the first arguments to syncInfo
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>syncInfo</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Boolean}</span> true</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="setTransport"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Boolean}</span>
+					<b>setTransport</b>(transport)
+					
+					</div>
+					<div class="description">
+						Set the current transport
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Transport}</span> <b>transport</b>
+									
+								</dt>
+								<dd>the transport to use</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Boolean}</span> true if its an accepted transport</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="sync"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Boolean}</span>
+					<b>sync</b>(a)
+					
+					</div>
+					<div class="description">
+						Synchronize the store with CouchDB
+depending on the provided sync info
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>a</b>
+									
+								</dt>
+								<dd>configuration object</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Boolean}</span> false if no configuration object given</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="unsync"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Boolean}</span>
+					<b>unsync</b>()
+					
+					</div>
+					<div class="description">
+						Unsync the store
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Boolean}</span> true if unsynched</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+				
+			
+			
+<!-- ============================== event details ========================= -->		
+			
+			
+			<hr />
+		</div>
+
+		
+<!-- ============================== footer ================================= -->
+		<div class="fineprint" style="clear:both">
+			
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sat Apr 06 2013 17:46:30 GMT+0100 (BST)
+		</div>
+	</body>
+</html>

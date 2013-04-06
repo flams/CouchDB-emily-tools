@@ -1,43 +1,2091 @@
-/*
- https://github.com/flams/CouchDB-emily-tools
- The MIT License (MIT)
- Copyright (c) 2012 Olivier Scherrer <pode.fr@gmail.com>
-*/
-define("CouchDBBase",["Store","StateMachine","Tools","Promise"],function(k,f,j,g){function c(){}function b(){var a=null,b="CouchDB",d=null,h,i=new g;this.setPromise=function(a){return typeof a=="object"&&typeof a.fulfill=="function"&&typeof a.reject=="function"&&typeof a.then=="function"?(i=a,true):false};this.getPromise=function(){return i};this.getStateMachine=function(){return a};this.setStateMachine=function(b){return typeof b=="object"&&typeof b.event=="function"?(a=b,true):false};this.getTransport=
-function(){return d};this.setTransport=function(a){return typeof a=="object"&&typeof a.request=="function"&&typeof a.listen=="function"?(d=a,true):false};this.getHandlerName=function(){return b};this.setHandlerName=function(a){return typeof a=="string"?(b=a,true):false};this.sync=function(){return(h=this.setSyncInfo.apply(this,arguments))?(a.event("sync"),i):false};this.unsync=function(){return a.event("unsync")};this.getSyncInfo=function(){return h};this.onSync=function(){};this.onListen=function(){};
-this.unsync=function(){this.stopListening();delete this.stopListening};this.onChange=function(){};this.onAdd=function(){};this.onRemove=function(){};this.setSyncInfo=function(a){return h=a};this.setStateMachine(new f("Unsynched",{Unsynched:[["sync",this.onSync,this,"Synched"]],Synched:[["listen",this.onListen,this,"Listening"],["unsync",c,"Unsynched"]],Listening:[["unsync",this.unsync,this,"Unsynched"],["change",this.onChange,this],["add",this.onAdd,this],["remove",this.onRemove,this]]}))}return function(a){b.prototype=
-new k(a);return new b}});
-define("CouchDBBulkDocuments",["Store","CouchDBBase","Tools","Promise"],function(k,f,j,g){function c(){this.setSyncInfo=function(b,a){if(typeof b=="string"&&typeof a=="object"){var e={database:b,query:a||{}};if(Array.isArray(e.query.keys))e.keys=e.query.keys,delete e.query.keys;return e}else return false};this.onSync=function(){var b=this.getSyncInfo(),a={path:"/"+b.database+"/_all_docs",query:b.query},e;Array.isArray(b.keys)?(a.method="POST",a.data=JSON.stringify({keys:b.keys}),a.headers={"Content-Type":"application/json"},
-e=a.data):(a.method="GET",e=JSON.stringify(b.query));b.query.include_docs=true;this.getTransport().request(this.getHandlerName(),a,function(a){var c=JSON.parse(a);if(c.rows)this.reset(c.rows),this.getPromise().fulfill(this),this.getStateMachine().event("listen");else throw Error('CouchDBBulkDocuments.sync("'+b.database+'", '+e+") failed: "+a);},this)};this.onListen=function(){var b=this.getSyncInfo();j.mixin({feed:"continuous",heartbeat:2E4,descending:true,include_docs:true},b.query);this.stopListening=
-this.getTransport().listen(this.getHandlerName(),{path:"/"+b.database+"/_changes",query:b.query},function(a){if(a=="\n")return false;var a=JSON.parse(a),b;b=a.changes[0].rev.search("1-")==0?"add":a.deleted?"remove":"change";this.getStateMachine().event(b,a.id,a.doc)},this)};this.onAdd=function(b){var a=this.getSyncInfo();if(a.query.startkey||a.query.endkey)a.query.include_docs=true,a.query.update_seq=true,this.getTransport().request(this.getHandlerName(),{method:"GET",path:"/"+a.database+"/_all_docs",
-query:a.query},function(a){JSON.parse(a).rows.forEach(function(a,e){a.id==b&&this.alter("splice",e,0,a.doc)},this)},this);else return false};this.onChange=function(b,a){this.loop(function(e,d){e.id==b&&this.set(d,a)},this)};this.onRemove=function(b){this.loop(function(a,e){a.id==b&&this.del(e)},this)};this.databaseUpdate=function(b){var a=[],e=this.getSyncInfo();this.loop(function(b){a.push(b.doc)});this.getTransport().request(this.getHandlerName(),{method:"POST",path:"/"+e.database+"/_bulk_docs",
-headers:{"Content-Type":"application/json"},data:JSON.stringify({docs:a})},function(a){b.fulfill(JSON.parse(a))})};this.upload=function(){var b=new g;this.getStateMachine().event("upload",b);return b};this.getStateMachine().get("Listening").add("upload",this.databaseUpdate,this)}return function(b){c.prototype=new f(b);return new c}});
-define("CouchDBDocument",["Store","CouchDBBase","Tools","Promise"],function(k,f,j,g){function c(){this.setSyncInfo=function(a,b,c){return typeof a=="string"&&typeof b=="string"?!c||typeof c=="object"?{database:a,document:b,query:c||{}}:false:false};this.onSync=function(){var a=this.getSyncInfo();this.getTransport().request(this.getHandlerName(),{method:"GET",path:"/"+a.database+"/"+a.document,query:a.query},function(a){var b=JSON.parse(a);b._id?(this.reset(b),this.getPromise().fulfill(this),this.getStateMachine().event("onListen")):
-this.getPromise().reject(a)},this)};this.onListen=function(){var a=this.getSyncInfo();this.stopListening=this.getTransport().listen(this.getHandlerName(),{path:"/"+a.database+"/_changes",query:{feed:"continuous",heartbeat:2E4,descending:true}},function(b){if(b=="\n")return false;b=JSON.parse(b);b.id==a.document&&b.changes.pop().rev!=this.get("_rev")&&(b.deleted?this.getStateMachine().event("remove"):this.getStateMachine().event("change"))},this)};this.onChange=function(){var a=this.getSyncInfo();
-this.getTransport().request(this.getHandlerName(),{method:"GET",path:"/"+a.database+"/"+a.document},function(a){this.reset(JSON.parse(a))},this)};this.onRemove=function(){this.reset({})};this.upload=function(){var a=new g;return this.getSyncInfo().document?(this.getStateMachine().event("upload",a),a):false};this.remove=function(){return this.getSyncInfo().document?this.getStateMachine().event("removeFromDatabase"):false};this.databaseCreate=function(a){var b=this.getSyncInfo();this.getTransport().request(this.getHandlerName(),
-{method:"PUT",path:"/"+b.database+"/"+b.document,headers:{"Content-Type":"application/json"},data:this.toJSON()},function(b){b=JSON.parse(b);b.ok?(a.fulfill(b),this.getStateMachine().event("subscribeToDocumentChanges")):a.reject(b)},this)};this.databaseUpdate=function(a){var b=this.getSyncInfo();this.getTransport().request(this.getHandlerName(),{method:"PUT",path:"/"+b.database+"/"+b.document,headers:{"Content-Type":"application/json"},data:this.toJSON()},function(b){b=JSON.parse(b);b.ok?(this.set("_rev",
-b.rev),a.fulfill(b)):a.reject(b)},this)};this.databaseRemove=function(){var a=this.getSyncInfo();this.getTransport().request(this.getHandlerName(),{method:"DELETE",path:"/"+a.database+"/"+a.document,query:{rev:this.get("_rev")}})};var b=this.getStateMachine(),a=b.get("Synched"),b=b.get("Listening");a.add("upload",this.databaseCreate,this);b.add("upload",this.databaseUpdate,this);b.add("removeFromDatabase",this.databaseRemove,this)}return function(b){c.prototype=new f(b);return new c}});
-define("CouchDBSecurity",["CouchDBStore"],function(k){function f(){var f="_security";this.setName=function(g){return g?(f=g,true):false};this.getName=function(){return f};this.load=function(g){return this.sync(g,f)}}return function(){f.prototype=new k;return new f}});
-define("CouchDBStore",["Store","StateMachine","Tools","Promise"],function(k,f,j,g){function c(){var b=null,a={},c=new g,d={getView:function(){a.query=a.query||{};b.request("CouchDB",{method:"GET",path:"/"+a.database+"/_design/"+a.design+"/"+a.view,query:a.query},function(b){var l=JSON.parse(b);if(l.rows)this.reset(l.rows),c.fulfill(this),typeof l.total_rows=="undefined"&&this.setReducedViewInfo(true),h.event("subscribeToViewChanges");else throw Error("CouchDBStore ["+a.database+", "+a.design+", "+
-a.view+"].sync() failed: "+b);},this)},getDocument:function(){b.request("CouchDB",{method:"GET",path:"/"+a.database+"/"+a.document,query:a.query},function(a){var b=JSON.parse(a);b._id?(this.reset(b),c.fulfill(this),h.event("subscribeToDocumentChanges")):c.reject(a)},this)},getBulkDocuments:function(){var i={path:"/"+a.database+"/_all_docs",query:a.query},l;a.keys instanceof Array?(i.method="POST",i.data=JSON.stringify({keys:a.keys}),i.headers={"Content-Type":"application/json"},l=i.data):(i.method=
-"GET",l=JSON.stringify(a.query));a.query.include_docs=true;b.request("CouchDB",i,function(b){var i=JSON.parse(b);if(i.rows)this.reset(i.rows),c.fulfill(this),h.event("subscribeToBulkChanges");else throw Error('CouchDBStore.sync("'+a.database+'", '+l+") failed: "+b);},this)},createDocument:function(i){b.request("CouchDB",{method:"PUT",path:"/"+a.database+"/"+a.document,headers:{"Content-Type":"application/json"},data:this.toJSON()},function(a){a=JSON.parse(a);a.ok?(i.fulfill(a),h.event("subscribeToDocumentChanges")):
-i.reject(a)})},subscribeToViewChanges:function(){j.mixin({feed:"continuous",heartbeat:2E4,descending:true},a.query);this.stopListening=b.listen("CouchDB",{path:"/"+a.database+"/_changes",query:a.query},function(b){if(b=="\n")return false;var b=JSON.parse(b),c;c=a.reducedView?"updateReduced":b.deleted?"delete":b.changes&&b.changes[0].rev.search("1-")==0?"add":"change";h.event(c,b.id)},this)},subscribeToDocumentChanges:function(){this.stopListening=b.listen("CouchDB",{path:"/"+a.database+"/_changes",
-query:{feed:"continuous",heartbeat:2E4,descending:true}},function(b){if(b=="\n")return false;b=JSON.parse(b);b.id==a.document&&b.changes.pop().rev!=this.get("_rev")&&(b.deleted?h.event("deleteDoc"):h.event("updateDoc"))},this)},subscribeToBulkChanges:function(){j.mixin({feed:"continuous",heartbeat:2E4,descending:true,include_docs:true},a.query);this.stopListening=b.listen("CouchDB",{path:"/"+a.database+"/_changes",query:a.query},function(a){if(a=="\n")return false;var a=JSON.parse(a),b;b=a.changes[0].rev.search("1-")==
-0?"bulkAdd":a.deleted?"delete":"bulkChange";h.event(b,a.id,a.doc)},this)},updateDocInStore:function(c){b.request("CouchDB",{method:"GET",path:"/"+a.database+"/_design/"+a.design+"/"+a.view,query:a.query},function(a){a=JSON.parse(a);a.rows.length==this.getNbItems()?a.rows.some(function(a,b){a.id==c&&this.set(b,a)},this):this.actions.evenDocsInStore.call(this,a.rows,c)},this)},evenDocsInStore:function(a,b){var c=this.getNbItems();a.length<c?this.loop(function(a,c){a.id==b&&this.del(c)},this):a.length>
-c&&a.some(function(a,c){if(a.id==b)return this.alter("splice",c,0,a)},this)},addBulkDocInStore:function(c){if(a.query.startkey||a.query.endkey)a.query.include_docs=true,a.query.update_seq=true,b.request("CouchDB",{method:"GET",path:"/"+a.database+"/_all_docs",query:a.query},function(a){JSON.parse(a).rows.forEach(function(a,b){a.id==c&&this.alter("splice",b,0,a.doc)},this)},this);else return false},updateBulkDocInStore:function(a,b){this.loop(function(c,e){c.id==a&&this.set(e,b)},this)},removeDocInStore:function(a){this.loop(function(b,
-c){b.id==a&&this.del(c)},this)},addDocInStore:function(c){b.request("CouchDB",{method:"GET",path:"/"+a.database+"/_design/"+a.design+"/"+a.view,query:a.query},function(a){JSON.parse(a).rows.some(function(a,b){a.id==c&&this.alter("splice",b,0,a)},this)},this)},updateReduced:function(){b.request("CouchDB",{method:"GET",path:"/"+a.database+"/_design/"+a.design+"/"+a.view,query:a.query},function(a){this.set(0,JSON.parse(a).rows[0])},this)},updateDoc:function(){b.request("CouchDB",{method:"GET",path:"/"+
-a.database+"/"+a.document},function(a){this.reset(JSON.parse(a))},this)},deleteDoc:function(){this.reset({})},updateDatabase:function(c){b.request("CouchDB",{method:"PUT",path:"/"+a.database+"/"+a.document,headers:{"Content-Type":"application/json"},data:this.toJSON()},function(a){a=JSON.parse(a);a.ok?(this.set("_rev",a.rev),c.fulfill(a)):c.reject(a)},this)},updateDatabaseWithBulkDoc:function(c){var e=[];this.loop(function(a){e.push(a.doc)});b.request("CouchDB",{method:"POST",path:"/"+a.database+
-"/_bulk_docs",headers:{"Content-Type":"application/json"},data:JSON.stringify({docs:e})},function(a){c.fulfill(JSON.parse(a))})},removeFromDatabase:function(){b.request("CouchDB",{method:"DELETE",path:"/"+a.database+"/"+a.document,query:{rev:this.get("_rev")}})},unsync:function(){this.stopListening();delete this.stopListening}},h=new f("Unsynched",{Unsynched:[["getView",d.getView,this,"Synched"],["getDocument",d.getDocument,this,"Synched"],["getBulkDocuments",d.getBulkDocuments,this,"Synched"]],Synched:[["updateDatabase",
-d.createDocument,this],["subscribeToViewChanges",d.subscribeToViewChanges,this,"Listening"],["subscribeToDocumentChanges",d.subscribeToDocumentChanges,this,"Listening"],["subscribeToBulkChanges",d.subscribeToBulkChanges,this,"Listening"],["unsync",function(){},"Unsynched"]],Listening:[["change",d.updateDocInStore,this],["bulkAdd",d.addBulkDocInStore,this],["bulkChange",d.updateBulkDocInStore,this],["delete",d.removeDocInStore,this],["add",d.addDocInStore,this],["updateReduced",d.updateReduced,this],
-["updateDoc",d.updateDoc,this],["deleteDoc",d.deleteDoc,this],["updateDatabase",d.updateDatabase,this],["updateDatabaseWithBulkDoc",d.updateDatabaseWithBulkDoc,this],["removeFromDatabase",d.removeFromDatabase,this],["unsync",d.unsync,this,"Unsynched"]]});this.sync=function(a,b,d,f){c=new g;if(typeof a=="string"&&typeof b=="string"&&typeof d=="string")return this.setSyncInfo(a,b,d,f),h.event("getView"),c;else if(typeof a=="string"&&typeof b=="string"&&typeof d!="string")return this.setSyncInfo(a,b,
-d),h.event("getDocument"),c;else if(typeof a=="string"&&b instanceof Object)return this.setSyncInfo(a,b),h.event("getBulkDocuments"),c;return false};this.setSyncInfo=function(b,c,e,d){this.clearSyncInfo();if(typeof b=="string"&&typeof c=="string"&&typeof e=="string")return a.database=b,a.design=c,a.view=e,a.query=d,true;else if(typeof b=="string"&&typeof c=="string"&&typeof e!="string")return a.database=b,a.document=c,a.query=e,true;else if(typeof b=="string"&&c instanceof Object){a.database=b;a.query=
-c;if(a.query.keys instanceof Array)a.keys=a.query.keys,delete a.query.keys;return true}return false};this.clearSyncInfo=function(){a={};return true};this.setReducedViewInfo=function(b){return typeof b=="boolean"?(a.reducedView=b,true):false};this.getSyncInfo=function(){return a};this.unsync=function(){return h.event("unsync")};this.upload=function(){var b=new g;if(a.document)return h.event("updateDatabase",b),b;else if(!a.view)return h.event("updateDatabaseWithBulkDoc",b),b;return false};this.remove=
-function(){return a.document?h.event("removeFromDatabase"):false};this.setTransport=function(a){return a&&typeof a.listen=="function"&&typeof a.request=="function"?(b=a,true):false};this.getStateMachine=function(){return h};this.getTransport=function(){return b};this.actions=d}return function(b){c.prototype=new k(b);return new c}});
-define("CouchDBUser",["CouchDBStore","Promise"],function(k,f){function j(){var g="_users",c="org.couchdb.user:";this.getUserDB=function(){return g};this.setUserDB=function(b){return b?(g=b,true):false};this.getIdPrefix=function(){return c};this.setIdPrefix=function(b){return b?(c=b,true):false};this.setId=function(b){return b?(this.set("_id",c+b),true):false};this.getId=function(){return this.get("_id")};this.load=function(b){return this.sync(g,c+b)};this.login=function(){var b=new f,a=this.get("name"),
-c=this.get("password");a&&typeof a=="string"&&typeof c=="string"?this.getTransport().request("CouchDB",{method:"GET",path:"/_users/org.couchdb.user:"+a,auth:a+":"+c},b.fulfill,b):b.reject({error:"name & password must be strings"});return b};this.create=function(){var b=new f;this.get("type")||this.set("type","user");this.get("roles")||this.set("roles",[]);this.load(this.get("name")).then(function(){b.reject({error:"Failed to create user. The user already exists"})},function(){this.upload().then(function(a){b.fulfill(a)},
-function(a){b.reject(a)})},this);return b}}return function(){j.prototype=new k;return new j}});
-define("CouchDBView",["Store","CouchDBBase","Tools"],function(k,f,j){function g(){this.setSyncInfo=function(c,b,a,e){return typeof c=="string"&&typeof b=="string"&&typeof a=="string"?!e||typeof e=="object"?{database:c,design:b,view:a,query:e||{}}:false:false};this.onSync=function(){var c=this.getSyncInfo();this.getTransport().request(this.getHandlerName(),{method:"GET",path:"/"+c.database+"/_design/"+c.design+"/"+c.view,query:c.query},function(b){var a=JSON.parse(b);if(a.rows){this.reset(a.rows);
-this.getPromise().fulfill(this);if(typeof a.total_rows=="undefined")c.reducedView=true;this.getStateMachine().event("listen")}else throw Error("CouchDBStore ["+c.database+", "+c.design+", "+c.view+"].sync() failed: "+b);},this)};this.onListen=function(){var c=this.getSyncInfo();j.mixin({feed:"continuous",heartbeat:2E4,descending:true},c.query);this.stopListening=this.getTransport().listen(this.getHandlerName(),{path:"/"+c.database+"/_changes",query:c.query},function(b){if(b=="\n")return false;var b=
-JSON.parse(b),a;a=c.reducedView?"updateReduced":b.deleted?"delete":b.changes&&b.changes[0].rev.search("1-")==0?"add":"change";this.getStateMachine().event(a,b.id)},this)};this.onChange=function(c){var b=this.getSyncInfo();this.getTransport().request(this.getHandlerName(),{method:"GET",path:"/"+b.database+"/_design/"+b.design+"/"+b.view,query:b.query},function(a){a=JSON.parse(a);a.rows.length==this.getNbItems()?a.rows.some(function(a,b){a.id==c&&this.set(b,a)},this):this.evenDocsInStore.call(this,
-a.rows,c)},this)};this.evenDocsInStore=function(c,b){var a=this.getNbItems();c.length<a?this.loop(function(a,c){a.id==b&&this.del(c)},this):c.length>a&&c.some(function(a,c){if(a.id==b)return this.alter("splice",c,0,a)},this)};this.onAdd=function(c){var b=this.getSyncInfo();this.getTransport().request(this.getHandlerName(),{method:"GET",path:"/"+b.database+"/_design/"+b.design+"/"+b.view,query:b.query},function(a){JSON.parse(a).rows.some(function(a,b){a.id==c&&this.alter("splice",b,0,a)},this)},this)};
-this.onRemove=function(c){this.loop(function(b,a){b.id==c&&this.del(a)},this)};this.updateReduced=function(){var c=this.getSyncInfo();this.getTransport().request(this.getHandlerName(),{method:"GET",path:"/"+c.database+"/_design/"+c.design+"/"+c.view,query:c.query},function(b){this.set(0,JSON.parse(b).rows[0])},this)};this.getStateMachine().get("Listening").add("updateReduced",this.updateReduced,this)}return function(c){g.prototype=new f(c);return new g}});
+/**
+ * @license https://github.com/flams/CouchDB-emily-tools
+ * The MIT License (MIT)
+ * Copyright (c) 2012 Olivier Scherrer <pode.fr@gmail.com>
+ */
+
+/**
+ * https://github.com/flams/CouchDB-emily-tools
+ * The MIT License (MIT)
+ * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
+ */
+define('CouchDBBase',["Store", "StateMachine", "Tools", "Promise"],
+
+/**
+ * @class
+ * CouchDBBase is a subtype of an Emily Store
+ * and is an abstract class for CouchDBViews, BulkViews, Documents, BulkDocuments
+ */
+function CouchDBBase(Store, StateMachine, Tools, Promise) {
+
+	/**
+	 * Duck typing.
+	 * @private
+	 */
+	function _isStateMachine(stateMachine) {
+		if (typeof stateMachine == "object" &&
+			typeof stateMachine.event == "function" ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Double duck typing
+	 * @private
+	 */
+	function _isTransport(transport) {
+		if (typeof transport == "object" &&
+			typeof transport.request == "function" &&
+			typeof transport.listen == "function") {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Triple duck typing
+	 * @private
+	 */
+	function _isPromise(promise) {
+		if (typeof promise == "object" &&
+			typeof promise.fulfill == "function" &&
+			typeof promise.reject == "function" &&
+			typeof promise.then == "function") {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * A noop function
+	 * @private
+	 */
+	function NOOP() {}
+
+	function CouchDBBaseConstructor() {
+
+		/**
+		 * It has a default state Machine
+		 * @private
+		 */
+		var _stateMachine = null,
+
+		/**
+		 * The default handler name
+		 * @private
+		 */
+		_handlerName = "CouchDB",
+
+		/**
+		 * The transport to use to issue the requests
+		 * @private
+		 */
+		_transport = null,
+
+		/**
+		 * The current synchronization informations
+		 * @private
+		 */
+		_syncInfo,
+
+		/**
+		 * A promise returned and resolved when the store is synched
+		 * @private
+		 */
+		_promise = new Promise;
+
+		/**
+		 * Set the promise to be resolved when the store is synched
+		 * @return {Boolean} true if it's a promise
+		 */
+		this.setPromise = function setPromise(promise) {
+			if (_isPromise(promise)) {
+				_promise = promise;
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Get the promise to be resolved when the store is synched
+		 * @return {Promise} the promise
+		 */
+		this.getPromise = function getPromise() {
+			return _promise;
+		};
+
+		/**
+		 * Get the current state machine
+		 * @returns {StateMachine} the current state machine
+		 */
+		this.getStateMachine = function getStateMachine() {
+			return _stateMachine;
+		};
+
+		/**
+		 * Set the state machine
+		 * @param {StateMachine} stateMachine the state machine to set
+		 * @returns {Boolean} true if it's an accepted state Machine
+		 */
+		this.setStateMachine = function setStateMachine(stateMachine) {
+			if (_isStateMachine(stateMachine)) {
+				_stateMachine = stateMachine;
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Get the current transport
+		 * @returns {Transport} the current transport
+		 */
+		this.getTransport = function getTransport() {
+			return _transport;
+		};
+
+		/**
+		 * Set the current transport
+		 * @param {Transport} transport the transport to use
+		 * @returns {Boolean} true if its an accepted transport
+		 */
+		this.setTransport = function setTransport(transport) {
+			if (_isTransport(transport)) {
+				_transport = transport;
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Get the current CouchDB handler name
+		 * @returns {String} the current handler name
+		 */
+		this.getHandlerName = function getHandlerName() {
+			return _handlerName;
+		};
+
+		/**
+		 * Set the current CouchDB handler name
+		 * @param {String} handlerName the name of the handler
+		 * The name must be a string that matches with the handler
+		 * as it's been added in Emily/Olives handlers
+		 * @returns {Boolean} true if it's a string
+		 */
+		this.setHandlerName = function setHandlerName(handlerName) {
+			if (typeof handlerName == "string") {
+				_handlerName = handlerName;
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Synchronize the store with CouchDB
+		 * depending on the provided sync info
+		 * @param {Object} a configuration object
+		 * @returns {Boolean} false if no configuration object given
+		 */
+		this.sync = function sync() {
+			if (_syncInfo = this.setSyncInfo.apply(this, arguments)) {
+				_stateMachine.event("sync");
+				return _promise;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Unsync the store
+		 * @returns {Boolean} true if unsynched
+		 */
+		this.unsync = function unsync() {
+			return _stateMachine.event("unsync");
+		};
+
+		/**
+		 * Returns the current synchronization info
+		 * For debugging purpose
+		 * @private
+		 */
+		this.getSyncInfo = function getSyncInfo() {
+			return _syncInfo;
+		};
+
+		/**
+		 * This function will be called when the Store needs to be synchronized
+		 * It's to be overriden in the sub Store
+		 */
+		this.onSync = function onSync() {
+
+		};
+
+		/**
+		 * This function will be called when the Store needs to subscribe to changes
+		 * It's to be overriden in the sub Store
+		 */
+		this.onListen = function onListen() {
+
+		};
+
+		/**
+		 * This function will be called when the Store is unsynched
+		 * It's to be overriden in the sub Store
+		 */
+		this.unsync = function unsync() {
+			this.stopListening();
+			delete this.stopListening;
+		};
+
+		/**
+		 * This function will be called when the Store needs to be subscribe to changes
+		 * It's to be overriden in the sub Store
+		 */
+		this.onChange = function onChange() {
+
+		};
+
+		/**
+		 * This function will be called when the Store needs to add something
+		 * It's to be overriden in the sub Store
+		 */
+		this.onAdd = function onAdd() {
+
+		};
+
+		/**
+		 * This function will be called when the Store needs to remove something
+		 * It's to be overriden in the sub Store
+		 */
+		this.onRemove = function onRemove() {
+
+		};
+
+		/**
+		 * This function must be overriden to validate the synchronization
+		 * information, and set the syncInfo object.
+		 * By default it only assigns the first arguments to syncInfo
+		 * @params {*} arguments all the arguments
+		 * @returns {Boolean} true
+		 */
+		this.setSyncInfo = function setSyncInfo(syncInfo) {
+			return _syncInfo = syncInfo;
+		};
+
+		/**
+		 * Create the state machine with the default states
+		 */
+		this.setStateMachine(new StateMachine("Unsynched", {
+
+			"Unsynched": [
+				["sync", this.onSync, this, "Synched"]
+			],
+
+			"Synched": [
+				["listen", this.onListen, this, "Listening"],
+				["unsync", NOOP, "Unsynched"]
+			],
+
+			"Listening": [
+				["unsync", this.unsync, this, "Unsynched"],
+				["change", this.onChange, this],
+				["add", this.onAdd, this],
+				["remove", this.onRemove, this]
+			]
+
+		}));
+
+	}
+
+	return function CouchDBSBaseFactory(data) {
+		CouchDBBaseConstructor.prototype = new Store(data);
+		return new CouchDBBaseConstructor;
+	};
+
+});
+
+/**
+ * https://github.com/flams/CouchDB-emily-tools
+ * The MIT License (MIT)
+ * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
+ */
+define('CouchDBDocument',["Store", "CouchDBBase", "Tools", "Promise"],
+
+/**
+ * @class
+ * CouchDBDocument synchronizes a Store with a CouchDB document
+ */
+ function CouchDBDocument(Store, CouchDBBase, Tools, Promise) {
+
+	function CouchDBDocumentConstructor() {
+
+		/**
+		 * Set the synchronization data if valid data is supplied
+		 * @param {String} database the database to sync with
+		 * @param {String} document the document to request
+		 * @param {Object} [optional] query an object with queryparams
+		 * @returns {Object} syncInfo if valid, false if not
+		 */
+		 this.setSyncInfo = function setSyncInfo(database, doc, query) {
+			if (typeof database == "string" &&
+				typeof doc == "string") {
+
+			if (!query || (typeof query == "object")) {
+					return {
+						"database": database,
+						"document": doc,
+						"query": query || {}
+					};
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		 };
+
+		/**
+		 * Get a CouchDB document
+		 * @private
+		 */
+		 this.onSync = function onSync() {
+
+			var _syncInfo = this.getSyncInfo();
+
+			this.getTransport().request(
+				this.getHandlerName(),
+				{
+					method: "GET",
+					path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+					query: _syncInfo.query
+				},
+				function (results) {
+					var json = JSON.parse(results);
+					if (json._id) {
+						this.reset(json);
+						this.getPromise().fulfill(this);
+						this.getStateMachine().event("onListen");
+					} else {
+						this.getPromise().reject(results);
+					}
+				}, this);
+		 };
+
+		/**
+		 * Subscribe to changes when synchronized with a document
+		 * @private
+		 */
+		 this.onListen = function onListen() {
+
+			var _syncInfo = this.getSyncInfo();
+
+			this.stopListening = this.getTransport().listen(
+				this.getHandlerName(),
+				{
+					path: "/" + _syncInfo.database + "/_changes",
+					query: {
+						feed: "continuous",
+						heartbeat: 20000,
+						descending: true
+					}
+				},
+				function (changes) {
+					var json;
+					// Should I test for this very special case (heartbeat?)
+					// Or do I have to try catch for any invalid json?
+					if (changes == "\n") {
+						return false;
+					}
+
+					json = JSON.parse(changes);
+
+					// The document is the modified document is the current one
+					if (json.id == _syncInfo.document &&
+						// And if it has a new revision
+						json.changes.pop().rev != this.get("_rev")) {
+
+						if (json.deleted) {
+							this.getStateMachine().event("remove");
+						} else {
+							this.getStateMachine().event("change");
+						}
+					}
+				}, this
+				);
+		 };
+
+		/**
+		 * Update the document when synchronized with a document.
+		 * @private
+		 */
+		 this.onChange = function onChange() {
+
+			var _syncInfo = this.getSyncInfo();
+
+			this.getTransport().request(
+				this.getHandlerName(),
+				{
+					method: "GET",
+					path: "/"+_syncInfo.database+"/" + _syncInfo.document
+				},
+				function (doc) {
+					this.reset(JSON.parse(doc));
+				}, this
+				);
+		 };
+
+		/**
+		 * Delete all document's properties
+		 * @private
+		 */
+		 this.onRemove = function onRemove() {
+			this.reset({});
+		 };
+
+		/**
+		 * Upload the document to the database
+		 * @returns true if synched
+		 */
+		 this.upload = function upload() {
+			var promise = new Promise,
+			_syncInfo = this.getSyncInfo();
+
+			if (_syncInfo.document) {
+				this.getStateMachine().event("upload", promise);
+				return promise;
+			}
+
+			return false;
+		 };
+
+		/**
+		 * Remove the document from the database
+		 * @returns true if remove called
+		 */
+		 this.remove = function remove() {
+
+			var _syncInfo = this.getSyncInfo();
+
+			if (_syncInfo.document) {
+				return this.getStateMachine().event("removeFromDatabase");
+			}
+			return false;
+		 };
+
+		/**
+		 * Put a new document in CouchDB
+		 * @private
+		 */
+		 this.databaseCreate = function createDocument(promise) {
+
+			var _syncInfo = this.getSyncInfo();
+
+			this.getTransport().request(
+				this.getHandlerName(),
+				{
+					method: "PUT",
+					path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+					headers: {
+						"Content-Type": "application/json"
+					},
+					data: this.toJSON()
+				},
+				function (result) {
+					var json = JSON.parse(result);
+					if (json.ok) {
+						promise.fulfill(json);
+						this.getStateMachine().event("subscribeToDocumentChanges");
+					} else {
+						promise.reject(json);
+					}
+				}, this
+				);
+		 };
+
+		/**
+		 * Update a document in CouchDB through a PUT request
+		 * @private
+		 */
+		 this.databaseUpdate = function updateDatabase(promise) {
+
+			var _syncInfo = this.getSyncInfo();
+
+			this.getTransport().request(
+				this.getHandlerName(),
+				{
+					method: "PUT",
+					path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+					headers: {
+						"Content-Type": "application/json"
+					},
+					data: this.toJSON()
+				},
+				function (response) {
+					var json = JSON.parse(response);
+					if (json.ok) {
+						this.set("_rev", json.rev);
+						promise.fulfill(json);
+					} else {
+						promise.reject(json);
+					}
+				},
+				this);
+		 };
+
+		/**
+		 * Remove a document from CouchDB through a DELETE request
+		 * @private
+		 */
+		 this.databaseRemove = function removeFromDatabase() {
+
+			var _syncInfo = this.getSyncInfo();
+
+			this.getTransport().request(this.getHandlerName(),
+			{
+				method: "DELETE",
+				path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+				query: {
+					rev: this.get("_rev")
+				}
+			});
+		 };
+
+		// Add the missing states
+		var stateMachine = this.getStateMachine(),
+		Synched = stateMachine.get("Synched"),
+		Listening = stateMachine.get("Listening");
+
+		Synched.add("upload", this.databaseCreate, this);
+		Listening.add("upload", this.databaseUpdate, this);
+		Listening.add("removeFromDatabase", this.databaseRemove, this);
+
+	}
+
+	return function CouchDBDocumentFactory(data) {
+		CouchDBDocumentConstructor.prototype = new CouchDBBase(data);
+		return new CouchDBDocumentConstructor;
+	};
+
+});
+
+/**
+ * https://github.com/flams/CouchDB-emily-tools
+ * The MIT License (MIT)
+ * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
+ */
+define('CouchDBView',["Store", "CouchDBBase", "Tools"],
+
+/**
+ * @class
+ * CouchDBView synchronizes a Store with a CouchDB view
+ */
+function CouchDBView(Store, CouchDBBase, Tools) {
+
+	function CouchDBViewConstructor() {
+
+		/**
+		 * Set the synchronization data if valid data is supplied
+		 * @param {String} database the database to sync with
+		 * @param {String} designDocument the design document to be used
+		 * @param {String} view the name of the view to request
+		 * @param {Object} [optional] query an object with queryparams
+		 * @returns {Object} syncInfo if valid, false if not
+		 */
+		this.setSyncInfo = function setSyncInfo(database, designDocument, view, query) {
+			if (typeof database == "string" &&
+				typeof designDocument == "string" &&
+				typeof view == "string") {
+
+				if (!query || (typeof query == "object")) {
+					return {
+						"database": database,
+						"design": designDocument,
+						"view": view,
+						"query": query || {}
+					};
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Get a CouchDB view
+		 * @private
+		 */
+		this.onSync = function onSync() {
+			var _syncInfo = this.getSyncInfo();
+
+			this.getTransport().request(this.getHandlerName(), {
+				method: "GET",
+				path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + _syncInfo.view,
+				query: _syncInfo.query
+			}, function (results) {
+				var json = JSON.parse(results);
+				if (!json.rows) {
+					throw new Error("CouchDBStore [" + _syncInfo.database + ", " + _syncInfo.design + ", " + _syncInfo.view + "].sync() failed: " + results);
+				} else {
+					this.reset(json.rows);
+					this.getPromise().fulfill(this);
+					if (typeof json.total_rows == "undefined") {
+						_syncInfo.reducedView = true;
+					}
+
+					this.getStateMachine().event("listen");
+				}
+			}, this);
+		};
+
+		/**
+		 * Subscribe to changes when synchronized with a view
+		 * @private
+		 */
+		this.onListen = function onListen() {
+
+			var _syncInfo = this.getSyncInfo();
+
+			Tools.mixin({
+				feed: "continuous",
+				heartbeat: 20000,
+				descending: true
+			}, _syncInfo.query);
+
+			this.stopListening = this.getTransport().listen(
+				this.getHandlerName(), {
+					path: "/" + _syncInfo.database + "/_changes",
+					query: _syncInfo.query
+				},
+				function (changes) {
+					// Should I test for this very special case (heartbeat?)
+					// Or do I have to try catch for any invalid json?
+					if (changes == "\n") {
+						return false;
+					}
+
+					var json = JSON.parse(changes),
+						action;
+
+					// reducedView is known on the first get view
+					if (_syncInfo.reducedView) {
+						action = "updateReduced";
+					} else {
+						if (json.deleted) {
+							action = "delete";
+						} else if (json.changes && json.changes[0].rev.search("1-") == 0) {
+							action = "add";
+						} else {
+							action = "change";
+						}
+					}
+
+					this.getStateMachine().event(action, json.id);
+				}, this);
+		};
+
+		/**
+		 * Update in the Store a document that was updated in CouchDB
+		 * Get the whole view :(, then get the modified document and update it.
+		 * I have no choice but to request the whole view and look for the document
+		 * so I can also retrieve its position in the store (idx) and update the item.
+		 * Maybe I've missed something
+		 * @private
+		 */
+		this.onChange = function onChange(id) {
+
+			var _syncInfo = this.getSyncInfo();
+
+			this.getTransport().request(
+				this.getHandlerName(),{
+					method: "GET",
+					path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + _syncInfo.view,
+					query: _syncInfo.query
+			}, function (view) {
+				var json = JSON.parse(view);
+
+				if (json.rows.length == this.getNbItems()) {
+					json.rows.some(function (value, idx) {
+						if (value.id == id) {
+							this.set(idx, value);
+						}
+					}, this);
+				} else {
+					this.evenDocsInStore.call(this, json.rows, id);
+				}
+
+			}, this);
+
+		};
+
+		/**
+		 * When a doc is removed from the view even though it still exists
+		 * or when it's added to a view, though it wasn't just created
+		 * This function must be called to even the store
+		 * @private
+		 */
+		this.evenDocsInStore = function evenDocsInStore(view, id) {
+			var nbItems = this.getNbItems();
+
+			// If a document was removed from the view
+			if (view.length < nbItems) {
+				// Look for it in the store to remove it
+				this.loop(function (value, idx) {
+					if (value.id == id) {
+						this.del(idx);
+					}
+				}, this);
+
+			// If a document was added to the view
+			} else if (view.length > nbItems) {
+				// Look for it in the view and add it to the store at the same place
+				view.some(function (value, idx) {
+					if (value.id == id) {
+						return this.alter("splice", idx, 0, value);
+					}
+				}, this);
+			}
+
+		};
+
+		/**
+		* Add in the Store a document that was added in CouchDB
+		* @private
+		*/
+		this.onAdd = function onAdd(id) {
+
+			var _syncInfo = this.getSyncInfo();
+
+			this.getTransport().request(
+				this.getHandlerName(), {
+					method: "GET",
+					path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + _syncInfo.view,
+					query: _syncInfo.query
+			}, function (view) {
+			var json = JSON.parse(view);
+
+				json.rows.some(function (value, idx) {
+					if (value.id == id) {
+						this.alter("splice", idx, 0, value);
+					}
+				}, this);
+
+			}, this);
+		};
+
+		/**
+		 * Remove from the Store a document that was removed in CouchDB
+		 * @private
+		 */
+		this.onRemove = function onRemove(id) {
+			this.loop(function (value, idx) {
+				if (value.id == id) {
+					this.del(idx);
+				}
+			}, this);
+		};
+
+		/**
+		 * Update a reduced view (it has one row with no id)
+		 * @private
+		 */
+		this.updateReduced = function updateReduced() {
+
+			var _syncInfo = this.getSyncInfo();
+
+			this.getTransport().request(
+				this.getHandlerName(),{
+					method: "GET",
+					path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + _syncInfo.view,
+					query: _syncInfo.query
+			}, function (view) {
+				var json = JSON.parse(view);
+
+				this.set(0, json.rows[0]);
+
+			}, this);
+		};
+
+		// Add the missing states
+		var stateMachine = this.getStateMachine(),
+			Listening = stateMachine.get("Listening");
+
+		Listening.add("updateReduced", this.updateReduced, this);
+
+	}
+
+	return function CouchDBViewFactory(data) {
+		CouchDBViewConstructor.prototype = new CouchDBBase(data);
+		return new CouchDBViewConstructor;
+	};
+
+});
+
+/**
+ * https://github.com/flams/CouchDB-emily-tools
+ * The MIT License (MIT)
+ * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
+ */
+define('CouchDBBulkDocuments',["Store", "CouchDBBase", "Tools", "Promise"],
+
+/**
+ * @class
+ * CouchDBBulkDocuments synchronizes a Store with a bulk of CouchDB documents
+ */
+ function CouchDBBulkDocuments(Store, CouchDBBase, Tools, Promise) {
+
+	function CouchDBBulkDocumentsConstructor() {
+
+		/**
+		 * Set the synchronization data if valid data is supplied
+		 * @param {String} database the database to sync with
+		 * @param {Object} query an object with queryparams
+		 * @returns {Object} syncInfo if valid, false if not
+		 */
+		 this.setSyncInfo = function setSyncInfo(database,  query) {
+			if (typeof database == "string" &&
+				typeof query == "object") {
+
+				var _syncInfo = {
+					"database": database,
+					"query": query || {}
+				};
+
+				// Bring keys one level up
+				if (Array.isArray(_syncInfo["query"].keys)) {
+					_syncInfo["keys"] = _syncInfo["query"].keys;
+					delete _syncInfo["query"].keys;
+				}
+
+				return _syncInfo;
+
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Get a bulk of documents
+		 * @private
+		 */
+		 this.onSync = function onSync() {
+
+			var _syncInfo = this.getSyncInfo(),
+			reqData = {
+				path: "/" + _syncInfo.database + "/_all_docs",
+				query: _syncInfo.query
+			},
+			errorString;
+
+			// If an array of keys is defined, we POST it to _all_docs to get arbitrary docs.
+			if (Array.isArray(_syncInfo["keys"])) {
+				reqData.method = "POST";
+				reqData.data = JSON.stringify({keys:_syncInfo.keys});
+				reqData.headers = {
+					"Content-Type": "application/json"
+				};
+				errorString = reqData.data;
+
+			// Else, we just GET the documents using startkey/endkey
+		} else {
+			reqData.method = "GET";
+			errorString = JSON.stringify(_syncInfo.query);
+		}
+
+		_syncInfo.query.include_docs = true;
+
+		this.getTransport().request(
+			this.getHandlerName(),
+			reqData,
+			function (results) {
+
+				var json = JSON.parse(results);
+
+				if (!json.rows) {
+					throw new Error("CouchDBBulkDocuments.sync(\"" + _syncInfo.database + "\", " + errorString + ") failed: " + results);
+				} else {
+					this.reset(json.rows);
+					this.getPromise().fulfill(this);
+					this.getStateMachine().event("listen");
+				}
+			}, this);
+	};
+
+		/**
+		 * Subscribe to changes when synchronized with a bulk of documents
+		 * @private
+		 */
+		 this.onListen = function onListen() {
+
+			var _syncInfo = this.getSyncInfo();
+
+			Tools.mixin({
+				feed: "continuous",
+				heartbeat: 20000,
+				descending: true,
+				include_docs: true
+			}, _syncInfo.query);
+
+			this.stopListening = this.getTransport().listen(
+				this.getHandlerName(),
+				{
+					path: "/" + _syncInfo.database + "/_changes",
+					query: _syncInfo.query
+				},
+				function (changes) {
+					var json;
+					// Should I test for this very special case (heartbeat?)
+					// Or do I have to try catch for any invalid json?
+					if (changes == "\n") {
+						return false;
+					}
+
+					var json = JSON.parse(changes),
+					action;
+
+					if (json.changes[0].rev.search("1-") == 0) {
+						action = "add";
+					} else if (json.deleted) {
+						action = "remove";
+					} else {
+						action = "change";
+					}
+
+					this.getStateMachine().event(action, json.id, json.doc);
+
+				}, this);
+		 };
+
+		/**
+		 * Add in the Store a document that was added in CouchDB
+		 * @private
+		 */
+		 this.onAdd = function onAdd(id) {
+
+			var _syncInfo = this.getSyncInfo();
+
+			if (_syncInfo["query"].startkey || _syncInfo["query"].endkey) {
+				_syncInfo.query.include_docs = true;
+				_syncInfo.query.update_seq = true;
+
+				this.getTransport().request(
+					this.getHandlerName(),
+					{
+						method: "GET",
+						path: "/" + _syncInfo.database + "/_all_docs",
+						query: _syncInfo.query
+					},
+					function (results) {
+
+						var json = JSON.parse(results);
+
+						json.rows.forEach(function (value, idx) {
+							if (value.id == id) {
+								this.alter("splice", idx, 0, value.doc);
+							}
+						}, this);
+
+					}, this);
+			} else {
+				return false;
+			}
+		 };
+
+		/**
+		 * Update in the Store a document that was updated in CouchDB
+		 * @private
+		 */
+		 this.onChange = function onChange(id, doc) {
+			this.loop(function (value, idx) {
+				if (value.id == id) {
+					this.set(idx, doc);
+				}
+			}, this);
+		 };
+
+		/**
+		 * Remove from the Store a document that was removed in CouchDB
+		 * @private
+		 */
+		 this.onRemove = function onRemove(id) {
+			this.loop(function (value, idx) {
+				if (value.id == id) {
+					this.del(idx);
+				}
+			}, this);
+		 };
+
+		/**
+		 * Update the database with bulk documents
+		 * @private
+		 */
+		 this.databaseUpdate = function databaseUpdate(promise) {
+
+			var docs = [],
+			_syncInfo = this.getSyncInfo();
+
+			this.loop(function (value) {
+				docs.push(value.doc);
+			});
+
+			this.getTransport().request(
+				this.getHandlerName(),
+				{
+					method: "POST",
+					path: "/" + _syncInfo.database + "/_bulk_docs",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					data: JSON.stringify({"docs": docs})
+				},
+				function (response) {
+					promise.fulfill(JSON.parse(response));
+				});
+		 };
+
+		/**
+		 * Upload the document to the database
+		 * @returns {Promise}
+		 */
+		 this.upload = function upload() {
+			var promise = new Promise;
+			this.getStateMachine().event("upload", promise);
+			return promise;
+		 };
+
+		// Add the missing states
+		var stateMachine = this.getStateMachine(),
+		Listening = stateMachine.get("Listening");
+
+		Listening.add("upload", this.databaseUpdate, this);
+
+	}
+
+	return function CouchDBBulkDocumentsFactory(data) {
+		CouchDBBulkDocumentsConstructor.prototype = new CouchDBBase(data);
+		return new CouchDBBulkDocumentsConstructor;
+	};
+
+});
+
+/**
+ * https://github.com/flams/CouchDB-emily-tools
+ * The MIT License (MIT)
+ * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
+ */
+define('CouchDBStore',["Store", "StateMachine", "Tools", "Promise"],
+
+/**
+ * @class
+ * CouchDBStore synchronises a Store with a CouchDB view or document
+ * It subscribes to _changes to keep its data up to date.
+ */
+function CouchDBStore(Store, StateMachine, Tools, Promise) {
+
+	/**
+	 * Defines the CouchDBStore
+	 * @returns {CouchDBStoreConstructor}
+	 */
+	function CouchDBStoreConstructor() {
+
+		/**
+		 * The name of the channel on which to run the requests
+		 * @private
+		 */
+		var _channel = "CouchDB",
+
+		/**
+		 * The transport used to run the requests
+		 * @private
+		 */
+		_transport = null,
+
+		/**
+		 * That will store the synchronization info
+		 * @private
+		 */
+		_syncInfo = {},
+
+		/**
+		 * The promise that is returned by sync
+		 * It's resolved when entering listening state
+		 * It's rejected when no such document to sync to
+		 * The promise is initialized here for testing purpose
+		 * but it's initialized again in sync
+		 * @private
+		 */
+		_syncPromise = new Promise,
+
+		/**
+		 * All the actions performed by the couchDBStore
+		 * They'll feed the stateMachine
+		 * @private
+		 */
+		actions = {
+
+			/**
+			 * Get a CouchDB view
+			 * @private
+			 */
+			getView: function () {
+
+				_syncInfo.query = _syncInfo.query || {};
+
+				_transport.request(_channel, {
+					method: "GET",
+					path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + _syncInfo.view,
+					query: _syncInfo.query
+				}, function (results) {
+					var json = JSON.parse(results);
+					if (!json.rows) {
+						throw new Error("CouchDBStore [" + _syncInfo.database + ", " + _syncInfo.design + ", " + _syncInfo.view + "].sync() failed: " + results);
+					} else {
+						this.reset(json.rows);
+						_syncPromise.fulfill(this);
+						if (typeof json.total_rows == "undefined") {
+							this.setReducedViewInfo(true);
+						}
+
+						_stateMachine.event("subscribeToViewChanges");
+					}
+				}, this);
+			},
+
+			/**
+			 * Get a CouchDB document
+			 * @private
+			 */
+			getDocument: function () {
+
+				_transport.request(_channel, {
+					method: "GET",
+					path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+					query: _syncInfo.query
+				}, function (results) {
+					var json = JSON.parse(results);
+					if (json._id) {
+						this.reset(json);
+						_syncPromise.fulfill(this);
+						_stateMachine.event("subscribeToDocumentChanges");
+					} else {
+						_syncPromise.reject(results);
+					}
+				}, this);
+			},
+
+			/**
+			 * Get a bulk of documents
+			 * @private
+			 */
+			getBulkDocuments: function () {
+
+				var reqData = {
+							path: "/" + _syncInfo.database + "/_all_docs",
+							query: _syncInfo.query
+						},
+						errorString;
+
+				// If an array of keys is defined, we POST it to _all_docs to get arbitrary docs.
+				if (_syncInfo["keys"] instanceof Array) {
+					reqData.method = "POST";
+					reqData.data = JSON.stringify({keys:_syncInfo.keys});
+					reqData.headers = {
+						"Content-Type": "application/json"
+					};
+					errorString = reqData.data;
+
+				// Else, we just GET the documents using startkey/endkey
+				} else {
+					reqData.method = "GET";
+					errorString = JSON.stringify(_syncInfo.query);
+				}
+
+				_syncInfo.query.include_docs = true;
+
+				_transport.request(_channel,
+					reqData,
+					function (results) {
+
+					var json = JSON.parse(results);
+
+					if (!json.rows) {
+						throw new Error("CouchDBStore.sync(\"" + _syncInfo.database + "\", " + errorString + ") failed: " + results);
+					} else {
+						this.reset(json.rows);
+						_syncPromise.fulfill(this);
+						_stateMachine.event("subscribeToBulkChanges");
+					}
+				}, this);
+
+			},
+
+			/**
+			 * Put a new document in CouchDB
+			 * @private
+			 */
+			createDocument: function (promise) {
+				_transport.request(_channel, {
+					method: "PUT",
+					path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+					headers: {
+						"Content-Type": "application/json"
+					},
+					data: this.toJSON()
+				}, function (result) {
+					var json = JSON.parse(result);
+					if (json.ok) {
+						promise.fulfill(json);
+						_stateMachine.event("subscribeToDocumentChanges");
+					} else {
+						promise.reject(json);
+					}
+				});
+			},
+
+			/**
+			 * Subscribe to changes when synchronized with a view
+			 * @private
+			 */
+			subscribeToViewChanges: function () {
+
+				Tools.mixin({
+					feed: "continuous",
+					heartbeat: 20000,
+					descending: true
+				}, _syncInfo.query);
+
+				this.stopListening = _transport.listen(_channel, {
+						path: "/" + _syncInfo.database + "/_changes",
+						query: _syncInfo.query
+					},
+					function (changes) {
+						// Should I test for this very special case (heartbeat?)
+						// Or do I have to try catch for any invalid json?
+						if (changes == "\n") {
+							return false;
+						}
+
+						var json = JSON.parse(changes),
+							action;
+
+						// reducedView is known on the first get view
+						if (_syncInfo.reducedView) {
+							action = "updateReduced";
+						} else {
+							if (json.deleted) {
+								action = "delete";
+							} else if (json.changes && json.changes[0].rev.search("1-") == 0) {
+								action = "add";
+							} else {
+								action = "change";
+							}
+						}
+
+						_stateMachine.event(action, json.id);
+					}, this);
+			},
+
+			/**
+			 * Subscribe to changes when synchronized with a document
+			 * @private
+			 */
+			subscribeToDocumentChanges: function () {
+
+				this.stopListening = _transport.listen(_channel, {
+					path: "/" + _syncInfo.database + "/_changes",
+					query: {
+						 feed: "continuous",
+						 heartbeat: 20000,
+						 descending: true
+						}
+					},
+				function (changes) {
+					var json;
+					// Should I test for this very special case (heartbeat?)
+					// Or do I have to try catch for any invalid json?
+					if (changes == "\n") {
+						return false;
+					}
+
+					json = JSON.parse(changes);
+
+					// The document is the modified document is the current one
+					if (json.id == _syncInfo.document &&
+						// And if it has a new revision
+						json.changes.pop().rev != this.get("_rev")) {
+
+						if (json.deleted) {
+							_stateMachine.event("deleteDoc");
+						} else {
+							_stateMachine.event("updateDoc");
+						}
+					 }
+				}, this);
+			},
+
+			/**
+			 * Subscribe to changes when synchronized with a bulk of documents
+			 * @private
+			 */
+			subscribeToBulkChanges: function () {
+				Tools.mixin({
+					feed: "continuous",
+					heartbeat: 20000,
+					descending: true,
+					include_docs: true
+				}, _syncInfo.query);
+
+				this.stopListening = _transport.listen(_channel, {
+						path: "/" + _syncInfo.database + "/_changes",
+						query: _syncInfo.query
+					},
+					function (changes) {
+						var json;
+						// Should I test for this very special case (heartbeat?)
+						// Or do I have to try catch for any invalid json?
+						if (changes == "\n") {
+							return false;
+						}
+
+						var json = JSON.parse(changes),
+							action;
+
+						if (json.changes[0].rev.search("1-") == 0) {
+							action = "bulkAdd";
+						} else if (json.deleted) {
+							action = "delete";
+						} else {
+							action = "bulkChange";
+						}
+
+						_stateMachine.event(action, json.id, json.doc);
+
+
+					}, this);
+			},
+
+			/**
+			 * Update in the Store a document that was updated in CouchDB
+			 * Get the whole view :(, then get the modified document and update it.
+			 * I have no choice but to request the whole view and look for the document
+			 * so I can also retrieve its position in the store (idx) and update the item.
+			 * Maybe I've missed something
+			 * @private
+			 */
+			updateDocInStore: function (id) {
+				_transport.request(_channel,{
+					method: "GET",
+					path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + _syncInfo.view,
+					query: _syncInfo.query
+				}, function (view) {
+					var json = JSON.parse(view);
+
+					if (json.rows.length == this.getNbItems()) {
+						json.rows.some(function (value, idx) {
+							if (value.id == id) {
+								this.set(idx, value);
+							}
+						}, this);
+					} else {
+						this.actions.evenDocsInStore.call(this, json.rows, id);
+					}
+
+				}, this);
+
+			},
+
+			/**
+			 * When a doc is removed from the view even though it still exists
+			 * or when it's added to a view, though it wasn't just created
+			 * This function must be called to even the store
+			 * @private
+			 */
+			evenDocsInStore: function (view, id) {
+				var nbItems = this.getNbItems();
+
+				// If a document was removed from the view
+				if (view.length < nbItems) {
+
+					// Look for it in the store to remove it
+					this.loop(function (value, idx) {
+						if (value.id == id) {
+							this.del(idx);
+						}
+					}, this);
+
+				// If a document was added to the view
+				} else if (view.length > nbItems) {
+
+					// Look for it in the view and add it to the store at the same place
+					view.some(function (value, idx) {
+						if (value.id == id) {
+							return this.alter("splice", idx, 0, value);
+						}
+					}, this);
+
+				}
+
+			},
+
+			/**
+			 * Add in the Store a document that was added in CouchDB
+			 * @private
+			 */
+			addBulkDocInStore: function (id) {
+				if (_syncInfo["query"].startkey || _syncInfo["query"].endkey) {
+					_syncInfo.query.include_docs = true;
+					_syncInfo.query.update_seq = true;
+
+					_transport.request(_channel, {
+						method: "GET",
+						path: "/" + _syncInfo.database + "/_all_docs",
+						query: _syncInfo.query
+					},
+					function (results) {
+
+						var json = JSON.parse(results);
+
+						json.rows.forEach(function (value, idx) {
+							if (value.id == id) {
+								this.alter("splice", idx, 0, value.doc);
+							}
+						}, this);
+
+					}, this);
+				} else {
+					return false;
+				}
+			},
+
+			/**
+			 * Update in the Store a document that was updated in CouchDB
+			 * @private
+			 */
+			updateBulkDocInStore: function (id, doc) {
+				this.loop(function (value, idx) {
+						if (value.id == id) {
+							this.set(idx, doc);
+						}
+					}, this);
+			},
+
+			/**
+			 * Remove from the Store a document that was removed in CouchDB
+			 * @private
+			 */
+			removeDocInStore: function (id) {
+				this.loop(function (value, idx) {
+					if (value.id == id) {
+						this.del(idx);
+					}
+				}, this);
+			},
+
+			/**
+			 * Add in the Store a document that was added in CouchDB
+			 * @private
+			 */
+			addDocInStore: function (id) {
+				_transport.request(_channel,{
+					method: "GET",
+					path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + _syncInfo.view,
+					query: _syncInfo.query
+				}, function (view) {
+					var json = JSON.parse(view);
+
+					json.rows.some(function (value, idx) {
+						if (value.id == id) {
+							this.alter("splice", idx, 0, value);
+						}
+					}, this);
+
+				}, this);
+			},
+
+			/**
+			 * Update a reduced view (it has one row with no id)
+			 * @private
+			 */
+			updateReduced: function () {
+				_transport.request(_channel,{
+					method: "GET",
+					path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + _syncInfo.view,
+					query: _syncInfo.query
+				}, function (view) {
+					var json = JSON.parse(view);
+
+					this.set(0, json.rows[0]);
+
+				}, this);
+			},
+
+			/**
+			 * Update the document when synchronized with a document.
+			 * This differs than updating a document in a View
+			 * @private
+			 */
+			updateDoc: function () {
+				_transport.request(_channel, {
+					method: "GET",
+					path: "/"+_syncInfo.database+"/" + _syncInfo.document
+				}, function (doc) {
+					this.reset(JSON.parse(doc));
+				}, this);
+			},
+
+			/**
+			 * Delete all document's properties
+			 * @private
+			 */
+			deleteDoc: function () {
+				this.reset({});
+			},
+
+			/**
+			 * Update a document in CouchDB through a PUT request
+			 * @private
+			 */
+			updateDatabase: function (promise) {
+
+				_transport.request(_channel, {
+					method: "PUT",
+					path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+					headers: {
+						"Content-Type": "application/json"
+					},
+					data: this.toJSON()
+				}, function (response) {
+					var json = JSON.parse(response);
+					if (json.ok) {
+						this.set("_rev", json.rev);
+						promise.fulfill(json);
+					} else {
+						promise.reject(json);
+					}
+				}, this);
+			},
+
+			/**
+			 * Update the database with bulk documents
+			 * @private
+			 */
+			updateDatabaseWithBulkDoc: function (promise) {
+
+				var docs = [];
+				this.loop(function (value) {
+					docs.push(value.doc);
+				});
+
+				_transport.request(_channel, {
+					method: "POST",
+					path: "/" + _syncInfo.database + "/_bulk_docs",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					data: JSON.stringify({"docs": docs})
+				}, function (response) {
+					promise.fulfill(JSON.parse(response));
+				});
+			},
+
+			/**
+			 * Remove a document from CouchDB through a DELETE request
+			 * @private
+			 */
+			removeFromDatabase: function () {
+				_transport.request(_channel, {
+					method: "DELETE",
+					path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+					query: {
+						rev: this.get("_rev")
+					}
+				});
+			},
+
+			 /**
+			  * The function call to unsync the store
+			  * @private
+			  */
+			 unsync: function () {
+				 this.stopListening();
+				 delete this.stopListening;
+			 }
+		},
+
+		/**
+		 * The state machine
+		 * @private
+		 * it concentrates almost the whole logic.
+		 */
+		_stateMachine = new StateMachine("Unsynched", {
+			"Unsynched": [
+				["getView", actions.getView, this, "Synched"],
+				["getDocument", actions.getDocument, this, "Synched"],
+				["getBulkDocuments", actions.getBulkDocuments, this, "Synched"]
+			 ],
+
+			"Synched": [
+				["updateDatabase", actions.createDocument, this],
+				["subscribeToViewChanges", actions.subscribeToViewChanges, this, "Listening"],
+				["subscribeToDocumentChanges", actions.subscribeToDocumentChanges, this, "Listening"],
+				["subscribeToBulkChanges", actions.subscribeToBulkChanges, this, "Listening"],
+				["unsync", function noop(){}, "Unsynched"]
+			 ],
+
+			"Listening": [
+				["change", actions.updateDocInStore, this],
+				["bulkAdd", actions.addBulkDocInStore, this],
+				["bulkChange", actions.updateBulkDocInStore, this],
+				["delete", actions.removeDocInStore, this],
+				["add", actions.addDocInStore, this],
+				["updateReduced", actions.updateReduced, this],
+				["updateDoc", actions.updateDoc, this],
+				["deleteDoc", actions.deleteDoc, this],
+				["updateDatabase", actions.updateDatabase, this],
+				["updateDatabaseWithBulkDoc", actions.updateDatabaseWithBulkDoc, this],
+				["removeFromDatabase", actions.removeFromDatabase, this],
+				["unsync", actions.unsync, this, "Unsynched"]
+			]
+
+		});
+
+		/**
+		 * Synchronize the store with a view
+		 * @param {String} database the name of the database where to get...
+		 * @param {String} ...design the design document, in which...
+		 * @param {String} view ...the view is.
+		 * @returns {Boolean}
+		 */
+		this.sync = function sync() {
+
+			_syncPromise = new Promise;
+
+			if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] == "string") {
+				this.setSyncInfo(arguments[0], arguments[1], arguments[2], arguments[3]);
+				_stateMachine.event("getView");
+				return _syncPromise;
+			} else if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] != "string") {
+				this.setSyncInfo(arguments[0], arguments[1], arguments[2]);
+				_stateMachine.event("getDocument");
+				return _syncPromise;
+			} else if (typeof arguments[0] == "string" && arguments[1] instanceof Object) {
+				this.setSyncInfo(arguments[0], arguments[1]);
+				_stateMachine.event("getBulkDocuments");
+				return _syncPromise;
+			}
+			return false;
+		};
+
+		/**
+		 * Set the synchronization information
+		 * @private
+		 * @returns {Boolean}
+		 */
+		this.setSyncInfo = function setSyncInfo() {
+			this.clearSyncInfo();
+			if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] == "string") {
+				_syncInfo["database"] = arguments[0];
+				_syncInfo["design"] = arguments[1];
+				_syncInfo["view"] = arguments[2];
+				_syncInfo["query"] = arguments[3];
+				return true;
+			} else if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] != "string") {
+				_syncInfo["database"] = arguments[0];
+				_syncInfo["document"] = arguments[1];
+				_syncInfo["query"] = arguments[2];
+				return true;
+			} else if (typeof arguments[0] == "string" && arguments[1] instanceof Object) {
+				_syncInfo["database"] = arguments[0];
+				_syncInfo["query"] = arguments[1];
+				if (_syncInfo["query"].keys instanceof Array) {
+					_syncInfo["keys"] = _syncInfo["query"].keys;
+					delete _syncInfo["query"].keys;
+				}
+				return true;
+			}
+			return false;
+		};
+
+		/**
+		 * Between two synchs, the previous info must be cleared up
+		 * @private
+		 */
+		this.clearSyncInfo = function clearSyncInfo() {
+			_syncInfo = {};
+			return true;
+		};
+
+		/**
+		 * Set a flag to tell that a synchronized view is reduced
+		 * @private
+		 */
+		this.setReducedViewInfo = function setReducedViewInfo(reduced) {
+			if (typeof reduced == "boolean") {
+				_syncInfo.reducedView = reduced;
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Get the synchronization information
+		 * @private
+		 * @returns
+		 */
+		this.getSyncInfo = function getSyncInfo() {
+			return _syncInfo;
+		};
+
+		/**
+		 * Unsync a store. Unsync must be called prior to resynchronization.
+		 * That will prevent any unwanted resynchronization.
+		 * Notice that previous data will still be available.
+		 * @returns
+		 */
+		this.unsync = function unsync() {
+			return _stateMachine.event("unsync");
+		};
+
+		/**
+		 * Upload the document to the database
+		 * Works for CouchDBStore that are synchronized with documents or bulk of documents.
+		 * If synchronized with a bulk of documents, you can set the documents to delete _deleted property to true.
+		 * No modification can be done on views.
+		 * @returns true if upload called
+		 */
+		this.upload = function upload() {
+			var promise = new Promise;
+			if (_syncInfo.document) {
+				_stateMachine.event("updateDatabase", promise);
+				return promise;
+			} else if (!_syncInfo.view){
+				_stateMachine.event("updateDatabaseWithBulkDoc", promise);
+				return promise;
+			}
+			return false;
+		};
+
+		/**
+		 * Remove the document from the database
+		 * @returns true if remove called
+		 */
+		this.remove = function remove() {
+			if (_syncInfo.document) {
+				return _stateMachine.event("removeFromDatabase");
+			}
+			return false;
+		};
+
+		/**
+		 * The transport object to use
+		 * @param {Object} transport the transport object
+		 * @returns {Boolean} true if
+		 */
+		this.setTransport = function setTransport(transport) {
+			if (transport && typeof transport.listen == "function" && typeof transport.request == "function") {
+				_transport = transport;
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Get the state machine
+		 * Also only useful for debugging
+		 * @private
+		 * @returns {StateMachine} the state machine
+		 */
+		this.getStateMachine = function getStateMachine() {
+			return _stateMachine;
+		};
+
+		/**
+		 * Get the current transport
+		 * Also only useful for debugging
+		 * @private
+		 * @returns {Object} the current transport
+		 */
+		this.getTransport = function getTransport() {
+			return _transport;
+		};
+
+		/**
+		 * The functions called by the stateMachine made available for testing purpose
+		 * @private
+		 */
+		this.actions = actions;
+
+	};
+
+	return function CouchDBStoreFactory(data) {
+		CouchDBStoreConstructor.prototype = new Store(data);
+		return new CouchDBStoreConstructor;
+	};
+
+});
+
+/**
+ * https://github.com/flams/CouchDB-emily-tools
+ * The MIT License (MIT)
+ * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
+ */
+define('CouchDBUser',["CouchDBStore", "Promise"],
+
+/**
+ * @class
+ * CouchDBUser synchronises a CouchDBStore with a CouchDB User.
+ * It also provides tools to ease the creation/modification of users.
+ */
+function CouchDBUser(CouchDBStore, Promise) {
+
+	/**
+	 * Defines CouchDBUser
+	 * @returns {CouchDBUserConstructor}
+	 */
+	function CouchDBUserConstructor() {
+
+		/**
+		 * the name of the table in which users are saved
+		 * @private
+		 */
+		var _userDB = "_users",
+
+		/**
+		 * the string which prefixes a user's id
+		 * @private
+		 */
+		_idPrefix = "org.couchdb.user:";
+
+		/**
+		 * Get the name of the users' db
+		 * @returns {String}
+		 */
+		this.getUserDB = function getUserDB() {
+			return _userDB;
+		};
+
+		/**
+		 * Set the name of the users' db
+		 * @param {String} name of the db
+		 * @returns {Boolean} true if name truthy
+		 */
+		this.setUserDB = function setUserDB(name) {
+			if (name) {
+				_userDB = name;
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Get the string that prefixes the users' id
+		 * @returns {String}
+		 */
+		this.getIdPrefix = function getIdPrefix() {
+			return _idPrefix;
+		};
+
+		/**
+		 * Set the string that prefixes the users' id
+		 * @param {String} name string that prefixes the users' id
+		 * @returns {Boolean} true if name truthy
+		 */
+		this.setIdPrefix = function setIdPrefix(name) {
+			if (name) {
+				_idPrefix = name;
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Set user's id
+		 * @param {String} id
+		 * @returns {Boolean} true if id truthy
+		 */
+		this.setId = function setId(id) {
+			if (id) {
+				this.set("_id", _idPrefix + id);
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Get the user's id
+		 * @returns {String} the user's id
+		 */
+		this.getId = function getId() {
+			return this.get("_id");
+		};
+
+		/**
+		 * Load a user given it's id
+		 * @param {String} id of the user (without prefix)
+		 * @returns {Boolean} true if sync succeeded
+		 */
+		this.load = function load(id) {
+			return this.sync(_userDB, _idPrefix + id);
+		};
+
+		/**
+		 * Gets the user profile in couchDB by using its own credentials.
+		 * name and password must be set prior to calling login, or the promise will be rejected.
+		 * If the login is successful, the promise is fulfilled with the user information like:
+		 * { _id: 'org.couchdb.user:couchdb',
+		 *  _rev: '1-8995e8ff247dae75048ab2dc800136d7',
+		 * name: 'couchdb',
+		 * password: null,
+		 * roles: [],
+		 * type: 'user' }
+		 *
+		 * @returns {Promise}
+		 */
+		this.login = function login() {
+			var promise = new Promise,
+				name = this.get("name"),
+				password = this.get("password");
+
+			if (name && typeof name == "string" && typeof password == "string") {
+				this.getTransport().request("CouchDB", {
+					method: "GET",
+					path: "/_users/org.couchdb.user:"+name,
+					auth: name + ":" + password
+				},
+				promise.fulfill,
+				promise);
+			} else {
+				promise.reject({
+					error: "name & password must be strings"
+				});
+			}
+
+			return promise;
+		};
+
+		/**
+		 * Adds a user to the database
+		 * The following fields must be set prior to calling create:
+		 * name: the name of the user
+		 * password: its desired password, NOT encrypted
+		 *
+		 * If not specified, the following fields have default values:
+		 * type: "user"
+		 * roles: []
+		 *
+		 * The function itself will not warn you for incorrect fields
+		 * but the promise that is returned will fulfilled with couchdb's reply.
+		 * @returns {Promise}
+		*/
+		this.create = function create() {
+			var promise = new Promise;
+
+			if (!this.get("type")) {
+				this.set("type", "user");
+			}
+
+			if (!this.get("roles")) {
+				this.set("roles", []);
+			}
+
+			this.load(this.get("name")).then(function () {
+				promise.reject({error: "Failed to create user. The user already exists"});
+			}, function () {
+				this.upload().then(function (success) {
+					promise.fulfill(success);
+				}, function (error) {
+					promise.reject(error);
+				});
+			}, this);
+
+			return promise;
+		};
+	};
+
+	return function CouchDBUserFactory() {
+		CouchDBUserConstructor.prototype = new CouchDBStore;
+		return new CouchDBUserConstructor;
+	};
+
+
+
+});
+
+/**
+ * https://github.com/flams/CouchDB-emily-tools
+ * The MIT License (MIT)
+ * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
+ */
+define('CouchDBSecurity',["CouchDBStore"],
+
+/**
+ * @class
+ * CouchDBSecurity synchronises a CouchDBStore with _security document
+ */
+function CouchDBSecurity(CouchDBStore) {
+
+	/**
+	 * Defines CouchDBSecurity
+	 * @returns {CouchDBSecurityConstructor}
+	 */
+	function CouchDBSecurityConstructor() {
+
+		/**
+		 * the name of the _security document
+		 * @private
+		 */
+		var _name = "_security";
+
+		/**
+		 * Set the name of the _security document
+		 * @param {String} name the name of the docuyment
+		 * @returns {Boolean} true if name is truthy
+		 */
+		this.setName = function setName(name) {
+			if (name){
+				_name = name;
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Get the name of the _Security document
+		 * @returns {String}
+		 */
+		this.getName = function getName() {
+			return _name;
+		};
+
+		/**
+		 * Load the security document
+		 * @param {String} db the name of the database
+		 */
+		this.load = function load(db) {
+			return this.sync(db, _name);
+		};
+
+
+	};
+
+	return function CouchDBSecurityFactory() {
+		CouchDBSecurityConstructor.prototype = new CouchDBStore;
+		return new CouchDBSecurityConstructor;
+	};
+
+
+
+});
