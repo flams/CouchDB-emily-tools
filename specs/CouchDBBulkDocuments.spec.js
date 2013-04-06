@@ -289,19 +289,19 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 			expect(couchDBBulkDocuments.alter.mostRecentCall.args[2]).toEqual(0);
 			expect(couchDBBulkDocuments.alter.mostRecentCall.args[3]._rev).toEqual("1-5b629f97e2298a911cce75d01bd6c65e");
 		});
-/**
+
 		it("should update the selected document", function () {
 			var doc = {
-						"_id":"document2",
-						"_rev":"2-a071048ce217ff1341fb224b83417003",
-						"desc":"my second document"
+					"_id":"document2",
+					"_rev":"2-a071048ce217ff1341fb224b83417003",
+					"desc":"my second document"
 				},
 				cb;
 
 			spyOn(couchDBBulkDocuments, "loop");
 			spyOn(couchDBBulkDocuments, "set");
 
-			couchDBBulkDocuments.actions.updateBulkDocInStore.call(couchDBBulkDocuments, "document2", doc);
+			couchDBBulkDocuments.onChange("document2", doc);
 
 			expect(couchDBBulkDocuments.loop.wasCalled).toEqual(true);
 			cb = couchDBBulkDocuments.loop.mostRecentCall.args[0];
@@ -319,18 +319,10 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 
 		});
 
-		it("should unsync a view, ie. stop listening to changes and reset it", function () {
-			var spy = jasmine.createSpy();
-			couchDBBulkDocuments.stopListening = spy;
-			couchDBBulkDocuments.actions.unsync.call(couchDBBulkDocuments);
-			expect(spy.wasCalled).toEqual(true);
-			expect(couchDBBulkDocuments.stopListening).toBeUndefined();
-		});
-
 	});
 
 	describe("CouchDBStoreDataBaseUpdateWithBulkDocuments", function () {
-
+/**
 		var couchDBBulkDocuments = null,
 			stateMachine = null;
 

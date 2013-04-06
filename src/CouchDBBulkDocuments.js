@@ -171,6 +171,18 @@ function CouchDBBulkDocuments(Store, CouchDBBase, Tools, Promise) {
 			}
 		};
 
+		/**
+		 * Update in the Store a document that was updated in CouchDB
+		 * @private
+		 */
+		this.onChange = function onChange(id, doc) {
+			this.loop(function (value, idx) {
+				if (value.id == id) {
+					this.set(idx, doc);
+				}
+			}, this);
+		};
+
 	}
 
 	return function CouchDBBulkDocumentsFactory(data) {
