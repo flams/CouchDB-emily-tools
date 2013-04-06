@@ -124,11 +124,11 @@ function CouchDBBulkDocuments(Store, CouchDBBase, Tools, Promise) {
 						action;
 
 					if (json.changes[0].rev.search("1-") == 0) {
-						action = "bulkAdd";
+						action = "add";
 					} else if (json.deleted) {
-						action = "delete";
+						action = "remove";
 					} else {
-						action = "bulkChange";
+						action = "change";
 					}
 
 					this.getStateMachine().event(action, json.id, json.doc);

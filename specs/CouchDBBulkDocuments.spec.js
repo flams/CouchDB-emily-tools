@@ -194,11 +194,11 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 			expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			expect(transportMock.listen.mostRecentCall.args[3]).toBe(couchDBBulkDocuments);
 		});
-/**
+
 		it("should not fail with empty json from heartbeat", function () {
 			var callback;
 
-			couchDBBulkDocuments.actions.subscribeToBulkChanges.call(CouchDBBulkDocuments, 2);
+			couchDBBulkDocuments.onListen();
 			callback = transportMock.listen.mostRecentCall.args[2];
 
 			expect(function() {
@@ -207,15 +207,17 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 		});
 
 		it("should call for document addition if a document has been added to the database", function () {
-			var listenRes = '{"seq":3,"id":"document2","changes":[{"rev":"1-a071048ce217ff1341fb224b83417003"}],"doc":{"_id":"document2","_rev":"1-a071048ce217ff1341fb224b83417003","desc":"my second document"}}';
+			var listenRes = '{"seq":3,"id":"document2","changes":[{"rev":"1-a071048ce217ff1341fb224b83417003"}],"doc":{"_id":"document2","_rev":"1-a071048ce217ff1341fb224b83417003","desc":"my second document"}}',
+				callback;
 
 			spyOn(stateMachine, "event");
 
-			couchDBBulkDocuments.actions.subscribeToBulkChanges.call(couchDBBulkDocuments, 2);
-			callback = transportMock.listen.mostRecentCall.args[2](listenRes);
+			couchDBBulkDocuments.onListen();
+			callback = transportMock.listen.mostRecentCall.args[2];
+			callback.call(couchDBBulkDocuments, listenRes);
 
 			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("bulkAdd");
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("add");
 			expect(stateMachine.event.mostRecentCall.args[1]).toEqual("document2");
 		});
 
@@ -225,12 +227,12 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 
 			spyOn(stateMachine, "event");
 
-			couchDBBulkDocuments.actions.subscribeToBulkChanges.call(couchDBBulkDocuments, 2);
+			couchDBBulkDocuments.onListen();
 			callback = transportMock.listen.mostRecentCall.args[2];
-			callback(listenRes);
+			callback.call(couchDBBulkDocuments, listenRes);
 
 			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("bulkChange");
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("change");
 			expect(stateMachine.event.mostRecentCall.args[1]).toEqual("document2");
 			expect(stateMachine.event.mostRecentCall.args[2]._rev).toEqual("2-a071048ce217ff1341fb224b83417003");
 		});
@@ -241,15 +243,15 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 
 			spyOn(stateMachine, "event");
 
-			couchDBBulkDocuments.actions.subscribeToBulkChanges.call(couchDBBulkDocuments, 2);
+			couchDBBulkDocuments.onListen();
 			callback = transportMock.listen.mostRecentCall.args[2];
-			callback(listenRes);
+			callback.call(couchDBBulkDocuments, listenRes);
 
 			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("delete");
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("remove");
 			expect(stateMachine.event.mostRecentCall.args[1]).toEqual("document2");
 		});
-
+/**
 		it("should add the new document (only works with range)", function () {
 
 			var query = {starkey: "document1", endkey: "document5"},
