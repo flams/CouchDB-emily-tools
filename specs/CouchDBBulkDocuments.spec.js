@@ -143,15 +143,14 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 			expect(couchDBBulkDocuments.reset.mostRecentCall.args[0][0].key).toEqual("document1");
 
 			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("subscribeToBulkChanges");
-
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("listen");
 
 		});
-/**
+
 		it("should throw an explicit error if resulting json has no 'row' property", function () {
 			var cb;
 
-			couchDBBulkDocuments.actions.getBulkDocuments("yes");
+			couchDBBulkDocuments.onSync();
 			cb = transportMock.request.mostRecentCall.args[2];
 
 			expect(function () {
@@ -167,7 +166,7 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 					']}',
 				callback;
 
-			couchDBBulkDocuments.actions.getBulkDocuments.call(couchDBBulkDocuments);
+			couchDBBulkDocuments.onSync();
 			spyOn(promise, "fulfill");
 			callback = transportMock.request.mostRecentCall.args[2];
 
@@ -175,7 +174,7 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 			expect(promise.fulfill.wasCalled).toEqual(true);
 			expect(promise.fulfill.mostRecentCall.args[0]).toBe(couchDBBulkDocuments);
 		});
-
+/**
 		it("should subscribe to bulk changes", function () {
 			var reqData;
 

@@ -82,11 +82,11 @@ function CouchDBBulkDocuments(Store, CouchDBBase, Tools, Promise) {
 					var json = JSON.parse(results);
 
 					if (!json.rows) {
-						throw new Error("CouchDBStore.sync(\"" + _syncInfo.database + "\", " + errorString + ") failed: " + results);
+						throw new Error("CouchDBBulkDocuments.sync(\"" + _syncInfo.database + "\", " + errorString + ") failed: " + results);
 					} else {
 						this.reset(json.rows);
 						this.getPromise().fulfill(this);
-						this.getStateMachine().event("subscribeToBulkChanges");
+						this.getStateMachine().event("listen");
 					}
 				}, this);
 		};
