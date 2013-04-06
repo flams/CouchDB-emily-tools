@@ -91,6 +91,51 @@ function CouchDBBulkDocuments(Store, CouchDBBase, Tools, Promise) {
 				}, this);
 		};
 
+		/**
+		 * Subscribe to changes when synchronized with a bulk of documents
+		 * @private
+		 */
+		this.onListen = function onListen() {
+
+			var _syncInfo = this.getSyncInfo();
+
+			Tools.mixin({
+				feed: "continuous",
+				heartbeat: 20000,
+				descending: true,
+				include_docs: true
+			}, _syncInfo.query);
+
+        	this.stopListening = this.getTransport().listen(
+        		this.getHandlerName(),
+        		{
+					path: "/" + _syncInfo.database + "/_changes",
+					query: _syncInfo.query
+				},
+				function (changes) {
+					var json;
+					// Should I test for this very special case (heartbeat?)
+					// Or do I have to try catch for any invalid json?
+					if (changes == "\n") {
+						return false;
+					}
+
+					var json = JSON.parse(changes),
+						action;
+
+					if (json.changes[0].rev.search("1-") == 0) {
+						action = "bulkAdd";
+					} else if (json.deleted) {
+						action = "delete";
+					} else {
+						action = "bulkChange";
+					}
+
+					this.getStateMachine().event(action, json.id, json.doc);
+
+				}, this);
+		};
+
 	}
 
 	return function CouchDBBulkDocumentsFactory(data) {
