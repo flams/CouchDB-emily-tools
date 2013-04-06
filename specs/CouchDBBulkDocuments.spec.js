@@ -121,7 +121,7 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 			expect(transportMock.request.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBBulkDocuments);
 		});
-/**
+
 		it("should reset the store on sync and ask for changes subscription", function () {
 
 			var res = '{"total_rows":2,"update_seq":2,"offset":0,"rows":['+
@@ -130,7 +130,7 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 					']}',
 				callback;
 
-			couchDBBulkDocuments.actions.getBulkDocuments.call(couchDBBulkDocuments);
+			couchDBBulkDocuments.onSync();
 
 			callback = transportMock.request.mostRecentCall.args[2];
 			spyOn(stateMachine, "event");
@@ -147,7 +147,7 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 
 
 		});
-
+/**
 		it("should throw an explicit error if resulting json has no 'row' property", function () {
 			var cb;
 
