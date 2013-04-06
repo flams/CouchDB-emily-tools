@@ -148,7 +148,7 @@ function CouchDBUser(CouchDBStore, Promise) {
 		 * name: the name of the user
 		 * password: its desired password, NOT encrypted
 		 *
- 		 * If not specified, the following fields have default values:
+		 * If not specified, the following fields have default values:
 		 * type: "user"
 		 * roles: []
 		 *

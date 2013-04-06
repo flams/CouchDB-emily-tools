@@ -157,37 +157,37 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			 * @private
 			 */
 			createDocument: function (promise) {
-            	_transport.request(_channel, {
-            		method: "PUT",
-            		path: "/" + _syncInfo.database + "/" + _syncInfo.document,
-            		headers: {
-            			"Content-Type": "application/json"
-            		},
-            		data: this.toJSON()
-            	}, function (result) {
-            		var json = JSON.parse(result);
-            		if (json.ok) {
-            			promise.fulfill(json);
-                		_stateMachine.event("subscribeToDocumentChanges");
-            		} else {
-            			promise.reject(json);
-            		}
-            	});
-            },
+				_transport.request(_channel, {
+					method: "PUT",
+					path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+					headers: {
+						"Content-Type": "application/json"
+					},
+					data: this.toJSON()
+				}, function (result) {
+					var json = JSON.parse(result);
+					if (json.ok) {
+						promise.fulfill(json);
+						_stateMachine.event("subscribeToDocumentChanges");
+					} else {
+						promise.reject(json);
+					}
+				});
+			},
 
-            /**
-             * Subscribe to changes when synchronized with a view
-             * @private
-             */
-            subscribeToViewChanges: function () {
+			/**
+			 * Subscribe to changes when synchronized with a view
+			 * @private
+			 */
+			subscribeToViewChanges: function () {
 
-            	Tools.mixin({
+				Tools.mixin({
 					feed: "continuous",
 					heartbeat: 20000,
 					descending: true
 				}, _syncInfo.query);
 
-            	this.stopListening = _transport.listen(_channel, {
+				this.stopListening = _transport.listen(_channel, {
 						path: "/" + _syncInfo.database + "/_changes",
 						query: _syncInfo.query
 					},
@@ -268,7 +268,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 					include_docs: true
 				}, _syncInfo.query);
 
-            	this.stopListening = _transport.listen(_channel, {
+				this.stopListening = _transport.listen(_channel, {
 						path: "/" + _syncInfo.database + "/_changes",
 						query: _syncInfo.query
 					},
@@ -464,85 +464,85 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 				}, function (doc) {
 					this.reset(JSON.parse(doc));
 				}, this);
-		    },
+			},
 
-		    /**
-		     * Delete all document's properties
-		     * @private
-		     */
-		    deleteDoc: function () {
-		    	this.reset({});
-		    },
+			/**
+			 * Delete all document's properties
+			 * @private
+			 */
+			deleteDoc: function () {
+				this.reset({});
+			},
 
-		    /**
-		     * Update a document in CouchDB through a PUT request
-		     * @private
-		     */
-		    updateDatabase: function (promise) {
+			/**
+			 * Update a document in CouchDB through a PUT request
+			 * @private
+			 */
+			updateDatabase: function (promise) {
 
-		    	_transport.request(_channel, {
-            		method: "PUT",
-            		path: "/" + _syncInfo.database + "/" + _syncInfo.document,
-            		headers: {
-            			"Content-Type": "application/json"
-            		},
-            		data: this.toJSON()
-            	}, function (response) {
-            		var json = JSON.parse(response);
-            		if (json.ok) {
-            			this.set("_rev", json.rev);
-            			promise.fulfill(json);
-            		} else {
-            			promise.reject(json);
-            		}
-            	}, this);
-		    },
+				_transport.request(_channel, {
+					method: "PUT",
+					path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+					headers: {
+						"Content-Type": "application/json"
+					},
+					data: this.toJSON()
+				}, function (response) {
+					var json = JSON.parse(response);
+					if (json.ok) {
+						this.set("_rev", json.rev);
+						promise.fulfill(json);
+					} else {
+						promise.reject(json);
+					}
+				}, this);
+			},
 
-		    /**
-		     * Update the database with bulk documents
-		     * @private
-		     */
-		    updateDatabaseWithBulkDoc: function (promise) {
+			/**
+			 * Update the database with bulk documents
+			 * @private
+			 */
+			updateDatabaseWithBulkDoc: function (promise) {
 
-		    	var docs = [];
-		    	this.loop(function (value) {
-		    		docs.push(value.doc);
-		    	});
+				var docs = [];
+				this.loop(function (value) {
+					docs.push(value.doc);
+				});
 
-		    	_transport.request(_channel, {
-		    		method: "POST",
-		    		path: "/" + _syncInfo.database + "/_bulk_docs",
-		    		headers: {
-		    			"Content-Type": "application/json"
-		    		},
-		    		data: JSON.stringify({"docs": docs})
-		    	}, function (response) {
-		    		promise.fulfill(JSON.parse(response));
-            	});
-		    },
+				_transport.request(_channel, {
+					method: "POST",
+					path: "/" + _syncInfo.database + "/_bulk_docs",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					data: JSON.stringify({"docs": docs})
+				}, function (response) {
+					promise.fulfill(JSON.parse(response));
+				});
+			},
 
-		    /**
-		     * Remove a document from CouchDB through a DELETE request
-		     * @private
-		     */
-		    removeFromDatabase: function () {
-		    	_transport.request(_channel, {
-            		method: "DELETE",
-            		path: "/" + _syncInfo.database + "/" + _syncInfo.document,
-            		query: {
-            			rev: this.get("_rev")
-            		}
-            	});
-		    },
+			/**
+			 * Remove a document from CouchDB through a DELETE request
+			 * @private
+			 */
+			removeFromDatabase: function () {
+				_transport.request(_channel, {
+					method: "DELETE",
+					path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+					query: {
+						rev: this.get("_rev")
+					}
+				});
+			},
 
-             /**
-              * The function call to unsync the store
-              * @private
-              */
-             unsync: function () {
-            	 this.stopListening();
-            	 delete this.stopListening;
-             }
+			 /**
+			  * The function call to unsync the store
+			  * @private
+			  */
+			 unsync: function () {
+				 this.stopListening();
+				 delete this.stopListening;
+			 }
 		},
 
 		/**
@@ -552,32 +552,32 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		 */
 		_stateMachine = new StateMachine("Unsynched", {
 			"Unsynched": [
-			    ["getView", actions.getView, this, "Synched"],
+				["getView", actions.getView, this, "Synched"],
 				["getDocument", actions.getDocument, this, "Synched"],
 				["getBulkDocuments", actions.getBulkDocuments, this, "Synched"]
 			 ],
 
 			"Synched": [
-			    ["updateDatabase", actions.createDocument, this],
-			    ["subscribeToViewChanges", actions.subscribeToViewChanges, this, "Listening"],
+				["updateDatabase", actions.createDocument, this],
+				["subscribeToViewChanges", actions.subscribeToViewChanges, this, "Listening"],
 				["subscribeToDocumentChanges", actions.subscribeToDocumentChanges, this, "Listening"],
 				["subscribeToBulkChanges", actions.subscribeToBulkChanges, this, "Listening"],
 				["unsync", function noop(){}, "Unsynched"]
 			 ],
 
 			"Listening": [
-			    ["change", actions.updateDocInStore, this],
-			    ["bulkAdd", actions.addBulkDocInStore, this],
-			    ["bulkChange", actions.updateBulkDocInStore, this],
+				["change", actions.updateDocInStore, this],
+				["bulkAdd", actions.addBulkDocInStore, this],
+				["bulkChange", actions.updateBulkDocInStore, this],
 				["delete", actions.removeDocInStore, this],
 				["add", actions.addDocInStore, this],
 				["updateReduced", actions.updateReduced, this],
 				["updateDoc", actions.updateDoc, this],
-			    ["deleteDoc", actions.deleteDoc, this],
-			    ["updateDatabase", actions.updateDatabase, this],
-			    ["updateDatabaseWithBulkDoc", actions.updateDatabaseWithBulkDoc, this],
-			    ["removeFromDatabase", actions.removeFromDatabase, this],
-			    ["unsync", actions.unsync, this, "Unsynched"]
+				["deleteDoc", actions.deleteDoc, this],
+				["updateDatabase", actions.updateDatabase, this],
+				["updateDatabaseWithBulkDoc", actions.updateDatabaseWithBulkDoc, this],
+				["removeFromDatabase", actions.removeFromDatabase, this],
+				["unsync", actions.unsync, this, "Unsynched"]
 			]
 
 		});

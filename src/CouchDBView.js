@@ -72,12 +72,12 @@ function CouchDBView(Store, CouchDBBase, Tools) {
 		};
 
 		/**
-         * Subscribe to changes when synchronized with a view
-         * @private
-         */
-        this.onListen = function onListen() {
+		 * Subscribe to changes when synchronized with a view
+		 * @private
+		 */
+		this.onListen = function onListen() {
 
-        	var _syncInfo = this.getSyncInfo();
+			var _syncInfo = this.getSyncInfo();
 
 			Tools.mixin({
 				feed: "continuous",

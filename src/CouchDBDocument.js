@@ -4,15 +4,15 @@
  * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  */
 
-define("CouchDBDocument",
+ define("CouchDBDocument",
 
-["Store", "CouchDBBase", "Tools", "Promise"],
+	["Store", "CouchDBBase", "Tools", "Promise"],
 
 /**
  * @class
  * CouchDBDocument synchronizes a Store with a CouchDB document
  */
-function CouchDBDocument(Store, CouchDBBase, Tools, Promise) {
+ function CouchDBDocument(Store, CouchDBBase, Tools, Promise) {
 
 	function CouchDBDocumentConstructor() {
 
@@ -23,11 +23,11 @@ function CouchDBDocument(Store, CouchDBBase, Tools, Promise) {
 		 * @param {Object} [optional] query an object with queryparams
 		 * @returns {Object} syncInfo if valid, false if not
 		 */
-		this.setSyncInfo = function setSyncInfo(database, doc, query) {
+		 this.setSyncInfo = function setSyncInfo(database, doc, query) {
 			if (typeof database == "string" &&
 				typeof doc == "string") {
 
-				if (!query || (typeof query == "object")) {
+			if (!query || (typeof query == "object")) {
 					return {
 						"database": database,
 						"document": doc,
@@ -39,13 +39,13 @@ function CouchDBDocument(Store, CouchDBBase, Tools, Promise) {
 			} else {
 				return false;
 			}
-		};
+		 };
 
 		/**
 		 * Get a CouchDB document
 		 * @private
 		 */
-		this.onSync = function onSync() {
+		 this.onSync = function onSync() {
 
 			var _syncInfo = this.getSyncInfo();
 
@@ -66,13 +66,13 @@ function CouchDBDocument(Store, CouchDBBase, Tools, Promise) {
 						this.getPromise().reject(results);
 					}
 				}, this);
-		};
+		 };
 
 		/**
 		 * Subscribe to changes when synchronized with a document
 		 * @private
 		 */
-		this.onListen = function onListen() {
+		 this.onListen = function onListen() {
 
 			var _syncInfo = this.getSyncInfo();
 
@@ -106,16 +106,16 @@ function CouchDBDocument(Store, CouchDBBase, Tools, Promise) {
 						} else {
 							this.getStateMachine().event("change");
 						}
-					 }
+					}
 				}, this
-			);
-		};
+				);
+		 };
 
 		/**
 		 * Update the document when synchronized with a document.
 		 * @private
 		 */
-		this.onChange = function onChange() {
+		 this.onChange = function onChange() {
 
 			var _syncInfo = this.getSyncInfo();
 
@@ -128,24 +128,24 @@ function CouchDBDocument(Store, CouchDBBase, Tools, Promise) {
 				function (doc) {
 					this.reset(JSON.parse(doc));
 				}, this
-			);
-	    };
+				);
+		 };
 
-	    /**
-	     * Delete all document's properties
-	     * @private
-	     */
-	    this.onRemove = function onRemove() {
-	    	this.reset({});
-	    };
+		/**
+		 * Delete all document's properties
+		 * @private
+		 */
+		 this.onRemove = function onRemove() {
+			this.reset({});
+		 };
 
-	    /**
+		/**
 		 * Upload the document to the database
 		 * @returns true if synched
 		 */
-		this.upload = function upload() {
+		 this.upload = function upload() {
 			var promise = new Promise,
-				_syncInfo = this.getSyncInfo();
+			_syncInfo = this.getSyncInfo();
 
 			if (_syncInfo.document) {
 				this.getStateMachine().event("upload", promise);
@@ -153,13 +153,13 @@ function CouchDBDocument(Store, CouchDBBase, Tools, Promise) {
 			}
 
 			return false;
-		};
+		 };
 
 		/**
 		 * Remove the document from the database
 		 * @returns true if remove called
 		 */
-		this.remove = function remove() {
+		 this.remove = function remove() {
 
 			var _syncInfo = this.getSyncInfo();
 
@@ -167,90 +167,90 @@ function CouchDBDocument(Store, CouchDBBase, Tools, Promise) {
 				return this.getStateMachine().event("removeFromDatabase");
 			}
 			return false;
-		};
+		 };
 
 		/**
 		 * Put a new document in CouchDB
 		 * @private
 		 */
-		this.databaseCreate = function createDocument(promise) {
+		 this.databaseCreate = function createDocument(promise) {
 
 			var _syncInfo = this.getSyncInfo();
 
-        	this.getTransport().request(
-        		this.getHandlerName(),
-        		{
-	        		method: "PUT",
-	        		path: "/" + _syncInfo.database + "/" + _syncInfo.document,
-	        		headers: {
-	        			"Content-Type": "application/json"
-	        		},
-	        		data: this.toJSON()
-        		},
-        		function (result) {
-	        		var json = JSON.parse(result);
-	        		if (json.ok) {
-	        			promise.fulfill(json);
-	            		this.getStateMachine().event("subscribeToDocumentChanges");
-	        		} else {
-	        			promise.reject(json);
-	        		}
-        		}, this
-        	);
-        };
+			this.getTransport().request(
+				this.getHandlerName(),
+				{
+					method: "PUT",
+					path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+					headers: {
+						"Content-Type": "application/json"
+					},
+					data: this.toJSON()
+				},
+				function (result) {
+					var json = JSON.parse(result);
+					if (json.ok) {
+						promise.fulfill(json);
+						this.getStateMachine().event("subscribeToDocumentChanges");
+					} else {
+						promise.reject(json);
+					}
+				}, this
+				);
+		 };
 
-    	/**
-	     * Update a document in CouchDB through a PUT request
-	     * @private
-	     */
-	    this.databaseUpdate = function updateDatabase(promise) {
+		/**
+		 * Update a document in CouchDB through a PUT request
+		 * @private
+		 */
+		 this.databaseUpdate = function updateDatabase(promise) {
 
-	    	var _syncInfo = this.getSyncInfo();
+			var _syncInfo = this.getSyncInfo();
 
-	    	this.getTransport().request(
-	    		this.getHandlerName(),
-	    		{
-	        		method: "PUT",
-	        		path: "/" + _syncInfo.database + "/" + _syncInfo.document,
-	        		headers: {
-	        			"Content-Type": "application/json"
-	        		},
-	        		data: this.toJSON()
-        		},
-        		function (response) {
-	        		var json = JSON.parse(response);
-	        		if (json.ok) {
-	        			this.set("_rev", json.rev);
-	        			promise.fulfill(json);
-	        		} else {
-	        			promise.reject(json);
-	        		}
-        		},
-        	this);
-	    };
+			this.getTransport().request(
+				this.getHandlerName(),
+				{
+					method: "PUT",
+					path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+					headers: {
+						"Content-Type": "application/json"
+					},
+					data: this.toJSON()
+				},
+				function (response) {
+					var json = JSON.parse(response);
+					if (json.ok) {
+						this.set("_rev", json.rev);
+						promise.fulfill(json);
+					} else {
+						promise.reject(json);
+					}
+				},
+				this);
+		 };
 
-    	/**
-	     * Remove a document from CouchDB through a DELETE request
-	     * @private
-	     */
-	    this.databaseRemove = function removeFromDatabase() {
+		/**
+		 * Remove a document from CouchDB through a DELETE request
+		 * @private
+		 */
+		 this.databaseRemove = function removeFromDatabase() {
 
-	    	var _syncInfo = this.getSyncInfo();
+			var _syncInfo = this.getSyncInfo();
 
-	    	this.getTransport().request(this.getHandlerName(),
-	    		{
-	        		method: "DELETE",
-	        		path: "/" + _syncInfo.database + "/" + _syncInfo.document,
-	        		query: {
-	        			rev: this.get("_rev")
-	        		}
-        		});
-	    };
+			this.getTransport().request(this.getHandlerName(),
+			{
+				method: "DELETE",
+				path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+				query: {
+					rev: this.get("_rev")
+				}
+			});
+		 };
 
 		// Add the missing states
 		var stateMachine = this.getStateMachine(),
-			Synched = stateMachine.get("Synched"),
-			Listening = stateMachine.get("Listening");
+		Synched = stateMachine.get("Synched"),
+		Listening = stateMachine.get("Listening");
 
 		Synched.add("upload", this.databaseCreate, this);
 		Listening.add("upload", this.databaseUpdate, this);

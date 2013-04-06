@@ -356,7 +356,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 						'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' +
 						'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' +
 						'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"for the example"}}]}',
-	           callback;
+			   callback;
 
 			spyOn(stateMachine, "event");
 			spyOn(couchDBStore, "reset");
@@ -381,7 +381,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 						'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' +
 						'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' +
 						'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"for the example"}}]}',
-	    		callback;
+				callback;
 
 			couchDBStore.actions.getView.call(couchDBStore);
 			spyOn(promise, "fulfill");

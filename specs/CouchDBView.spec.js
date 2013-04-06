@@ -105,7 +105,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 						'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' +
 						'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' +
 						'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"for the example"}}]}',
-	           callback;
+			   callback;
 
 			spyOn(stateMachine, "event");
 			spyOn(couchDBView, "reset");
@@ -130,7 +130,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 						'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' +
 						'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' +
 						'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"for the example"}}]}',
-	    		callback;
+				callback;
 
 			couchDBView.onSync();
 			spyOn(promise, "fulfill");
@@ -304,7 +304,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 		});
 
 		it("should add a document that is present in the view but missing in the store -it's not a new doc, rev!=1-", function () {
-			var view = 	'{"total_rows":3,"offset":0,"rows":[' +
+			var view =  '{"total_rows":3,"offset":0,"rows":[' +
 				'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' +
 				'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' +
 				'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"a change for the example"}}]}',
@@ -326,7 +326,7 @@ function (CouchDBBase, CouchDBView, Store, Promise) {
 		});
 
 		it("should remove a document that is not present in the view anymore -it's not a removed doc!-", function () {
-			var view = 	'{"total_rows":3,"offset":0,"rows":[' +
+			var view =  '{"total_rows":3,"offset":0,"rows":[' +
 				'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' +
 				'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' +
 				'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"a change for the example"}}]}',
