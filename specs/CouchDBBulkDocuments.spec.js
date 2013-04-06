@@ -174,12 +174,12 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 			expect(promise.fulfill.wasCalled).toEqual(true);
 			expect(promise.fulfill.mostRecentCall.args[0]).toBe(couchDBBulkDocuments);
 		});
-/**
+
 		it("should subscribe to bulk changes", function () {
 			var reqData;
 
 			expect(couchDBBulkDocuments.stopListening).toBeUndefined();
-			couchDBBulkDocuments.actions.subscribeToBulkChanges.call(couchDBBulkDocuments, 2);
+			couchDBBulkDocuments.onListen();
 			expect(couchDBBulkDocuments.stopListening).toBe(stopListening);
 
 			expect(transportMock.listen.wasCalled).toEqual(true);
@@ -194,7 +194,7 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 			expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			expect(transportMock.listen.mostRecentCall.args[3]).toBe(couchDBBulkDocuments);
 		});
-
+/**
 		it("should not fail with empty json from heartbeat", function () {
 			var callback;
 
