@@ -1,3 +1,7 @@
 */.DS_Store
 couchdb-emily-tools.sublime-workspace
 couchdb-emily-tools.sublime-project
+.DS_Store
+couchdb.stderr
+couchdb.stdout
+temp.js
