@@ -244,9 +244,6 @@ define(["Store", "CouchDBBase", "Tools", "Promise", "StateMachine"],
 			});
 		 };
 
-		/**
-		 * Create the state machine with the default states
-		 */
 		this.setStateMachine(new StateMachine("Unsynched", {
 
 			"Unsynched": [

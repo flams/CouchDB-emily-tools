@@ -38,8 +38,10 @@ function (CouchDBBase, CouchDBDocument, Store, Promise, StateMachine) {
 
 		it("should return a new promise", function () {
 			var couchDBDocument = new CouchDBDocument,
-				promise = couchDBDocument.sync("db", "document");
+				promise;
 
+			couchDBDocument.setTransport(transportMock),
+			promise = couchDBDocument.sync("db", "document");
 			expect(promise).toBeInstanceOf(Promise);
 		});
 

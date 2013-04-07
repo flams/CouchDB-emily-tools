@@ -3,13 +3,13 @@
  * The MIT License (MIT)
  * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  */
-define(["Store", "CouchDBBase", "Tools"],
+define(["Store", "CouchDBBase", "Tools", "StateMachine"],
 
 /**
  * @class
  * CouchDBView synchronizes a Store with a CouchDB view
  */
-function CouchDBView(Store, CouchDBBase, Tools) {
+function CouchDBView(Store, CouchDBBase, Tools, StateMachine) {
 
 	function CouchDBViewConstructor() {
 
@@ -236,11 +236,26 @@ function CouchDBView(Store, CouchDBBase, Tools) {
 			}, this);
 		};
 
-		// Add the missing states
-		var stateMachine = this.getStateMachine(),
-			Listening = stateMachine.get("Listening");
+		this.setStateMachine(new StateMachine("Unsynched", {
 
-		Listening.add("updateReduced", this.updateReduced, this);
+			"Unsynched": [
+				["sync", this.onSync, this, "Synched"]
+			],
+
+			"Synched": [
+				["listen", this.onListen, this, "Listening"],
+				["unsync", function NOOP() {}, "Unsynched"]
+			],
+
+			"Listening": [
+				["unsync", this.unsync, this, "Unsynched"],
+				["change", this.onChange, this],
+				["add", this.onAdd, this],
+				["remove", this.onRemove, this],
+				["updateReduced", this.updateReduced, this]
+			]
+
+		}));
 
 	}
 

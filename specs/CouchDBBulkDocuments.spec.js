@@ -4,9 +4,9 @@
  * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  */
 
-require(["CouchDBBase", "CouchDBBulkDocuments", "Store", "Promise"],
+require(["CouchDBBase", "CouchDBBulkDocuments", "Store", "Promise", "StateMachine"],
 
-function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
+function (CouchDBBase, CouchDBBulkDocuments, Store, Promise, StateMachine) {
 
 	var transportMock = null,
 		stopListening = null,
@@ -39,9 +39,87 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise) {
 
 		it("should return a new promise", function () {
 			var couchDBBulkDocuments = new CouchDBBulkDocuments,
-				promise = couchDBBulkDocuments.sync("db", query);
+				promise;
 
+			couchDBBulkDocuments.setTransport(transportMock),
+			promise = couchDBBulkDocuments.sync("db", query);
 			expect(promise).toBeInstanceOf(Promise);
+		});
+
+	});
+
+	describe("CouchDBBulkDocuments delegates its internal states to a stateMachine", function () {
+
+		var couchDBBulkDocuments = null,
+			stateMachine = null;
+
+		beforeEach(function () {
+			couchDBBulkDocuments = new CouchDBBulkDocuments;
+			stateMachine = couchDBBulkDocuments.getStateMachine();
+		});
+
+		it("should embed a stateMachine", function () {
+			expect(couchDBBulkDocuments.getStateMachine).toBeInstanceOf(Function);
+			expect(couchDBBulkDocuments.getStateMachine()).toBeInstanceOf(StateMachine);
+		});
+
+		it("should have a function to set a new stateMachine", function () {
+			var stateMachine = {event:function(){}};
+			expect(couchDBBulkDocuments.setStateMachine).toBeInstanceOf(Function);
+			expect(couchDBBulkDocuments.setStateMachine({})).toBe(false);
+			expect(couchDBBulkDocuments.setStateMachine(stateMachine)).toBe(true);
+			expect(couchDBBulkDocuments.getStateMachine()).toBe(stateMachine);
+		});
+
+		it("should be initialised in Unsynched state by default", function () {
+			expect(stateMachine.getCurrent()).toBe("Unsynched");
+		});
+
+		it("should have a default Unsynched state", function () {
+			var Unsynched = stateMachine.get("Unsynched");
+
+			var sync = Unsynched.get("sync");
+			expect(sync[0]).toBe(couchDBBulkDocuments.onSync);
+			expect(sync[1]).toBe(couchDBBulkDocuments);
+			expect(sync[2]).toBe("Synched");
+		});
+
+		it("should have a default synched state", function () {
+			var Synched = stateMachine.get("Synched");
+
+			var listen = Synched.get("listen");
+			expect(listen[0]).toBe(couchDBBulkDocuments.onListen);
+			expect(listen[1]).toBe(couchDBBulkDocuments);
+			expect(listen[2]).toBe("Listening");
+
+			var unsync = Synched.get("unsync");
+			expect(unsync[0].name).toBe("NOOP");
+			expect(unsync[2]).toBe("Unsynched");
+		});
+
+		it("should have a default Listening state", function () {
+			var Listening = stateMachine.get("Listening");
+
+			var unsync = Listening.get("unsync");
+			expect(unsync[0]).toBe(couchDBBulkDocuments.unsync);
+			expect(unsync[1]).toBe(couchDBBulkDocuments);
+			expect(unsync[2]).toBe("Unsynched");
+
+			var change = Listening.get("change");
+			expect(change[0]).toBe(couchDBBulkDocuments.onChange);
+			expect(change[1]).toBe(couchDBBulkDocuments);
+
+			var add = Listening.get("add");
+			expect(add[0]).toBe(couchDBBulkDocuments.onAdd);
+			expect(add[1]).toBe(couchDBBulkDocuments);
+
+			var remove = Listening.get("remove");
+			expect(remove[0]).toBe(couchDBBulkDocuments.onRemove);
+			expect(remove[1]).toBe(couchDBBulkDocuments);
+
+			var upload = Listening.get("upload");
+			expect(upload[0]).toBe(couchDBBulkDocuments.databaseUpdate);
+			expect(upload[1]).toBe(couchDBBulkDocuments);
 		});
 
 	});
