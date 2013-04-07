@@ -12,11 +12,11 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 
 	couchDBDocument.setTransport(transport);
 
-	couchDBDocument.sync("test", "mydocument")
+	couchDBDocument.sync("test", "doesntexist")
 	.then(function () {
 		console.log(couchDBDocument.toJSON());
 	}, function (error) {
-		console.log(error);
+		console.log(error);assert.equal(false, true);
 	});
 
 });

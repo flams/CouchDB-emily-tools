@@ -56,7 +56,7 @@ build: clean-build CouchDBTools.js
 	cp LICENSE build/
 	cp -rf src/ build/src/
 
-temp.js:
+temp.js: clean-temp
 	r.js -o tools/build.js
 
 CouchDBTools.js: temp.js

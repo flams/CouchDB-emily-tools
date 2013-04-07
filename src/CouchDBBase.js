@@ -3,14 +3,14 @@
  * The MIT License (MIT)
  * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  */
-define(["Store", "StateMachine", "Tools", "Promise"],
+define(["Store", "Tools", "Promise"],
 
 /**
  * @class
  * CouchDBBase is a subtype of an Emily Store
  * and is an abstract class for CouchDBViews, BulkViews, Documents, BulkDocuments
  */
-function CouchDBBase(Store, StateMachine, Tools, Promise) {
+function CouchDBBase(Store, Tools, Promise) {
 
 	/**
 	 * Duck typing.
@@ -53,12 +53,6 @@ function CouchDBBase(Store, StateMachine, Tools, Promise) {
 			return false;
 		}
 	}
-
-	/**
-	 * A noop function
-	 * @private
-	 */
-	function NOOP() {}
 
 	function CouchDBBaseConstructor() {
 
@@ -272,29 +266,6 @@ function CouchDBBase(Store, StateMachine, Tools, Promise) {
 		this.setSyncInfo = function setSyncInfo(syncInfo) {
 			return _syncInfo = syncInfo;
 		};
-
-		/**
-		 * Create the state machine with the default states
-		 */
-		this.setStateMachine(new StateMachine("Unsynched", {
-
-			"Unsynched": [
-				["sync", this.onSync, this, "Synched"]
-			],
-
-			"Synched": [
-				["listen", this.onListen, this, "Listening"],
-				["unsync", NOOP, "Unsynched"]
-			],
-
-			"Listening": [
-				["unsync", this.unsync, this, "Unsynched"],
-				["change", this.onChange, this],
-				["add", this.onAdd, this],
-				["remove", this.onRemove, this]
-			]
-
-		}));
 
 	}
 

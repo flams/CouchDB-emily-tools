@@ -3,13 +3,13 @@
  * The MIT License (MIT)
  * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  */
-define(["Store", "CouchDBBase", "Tools", "Promise"],
+define(["Store", "CouchDBBase", "Tools", "Promise", "StateMachine"],
 
 /**
  * @class
  * CouchDBDocument synchronizes a Store with a CouchDB document
  */
- function CouchDBDocument(Store, CouchDBBase, Tools, Promise) {
+ function CouchDBDocument(Store, CouchDBBase, Tools, Promise, StateMachine) {
 
 	function CouchDBDocumentConstructor() {
 
@@ -244,14 +244,31 @@ define(["Store", "CouchDBBase", "Tools", "Promise"],
 			});
 		 };
 
-		// Add the missing states
-		var stateMachine = this.getStateMachine(),
-		Synched = stateMachine.get("Synched"),
-		Listening = stateMachine.get("Listening");
+		/**
+		 * Create the state machine with the default states
+		 */
+		this.setStateMachine(new StateMachine("Unsynched", {
 
-		Synched.add("upload", this.databaseCreate, this);
-		Listening.add("upload", this.databaseUpdate, this);
-		Listening.add("removeFromDatabase", this.databaseRemove, this);
+			"Unsynched": [
+				["sync", this.onSync, this, "Synched"]
+			],
+
+			"Synched": [
+				["listen", this.onListen, this, "Listening"],
+				["unsync", function NOOP() {}, "Unsynched"],
+				["upload", this.databaseCreate, this]
+			],
+
+			"Listening": [
+				["unsync", this.unsync, this, "Unsynched"],
+				["change", this.onChange, this],
+				["add", this.onAdd, this],
+				["remove", this.onRemove, this],
+				["upload", this.databaseUpdate, this],
+				["removeFromDatabase", this.databaseRemove, this]
+			]
+
+		}));
 
 	}
 
