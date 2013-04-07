@@ -69,76 +69,12 @@ function (CouchDBBase, Store, Promise, StateMachine) {
 			expect(couchDBBase.getTransport()).toBe(transportMock);
 		});
 
-	});
-
-	describe("CouchDBBase delegates its internal states to a stateMachine", function () {
-
-		var couchDBBase = null,
-			stateMachine = null;
-
-		beforeEach(function () {
-			couchDBBase = new CouchDBBase;
-			stateMachine = couchDBBase.getStateMachine();
-		});
-
-		it("should embed a stateMachine", function () {
-			expect(couchDBBase.getStateMachine).toBeInstanceOf(Function);
-			expect(couchDBBase.getStateMachine()).toBeInstanceOf(StateMachine);
-		});
-
 		it("should have a function to set a new stateMachine", function () {
 			var stateMachine = {event:function(){}};
 			expect(couchDBBase.setStateMachine).toBeInstanceOf(Function);
 			expect(couchDBBase.setStateMachine({})).toBe(false);
 			expect(couchDBBase.setStateMachine(stateMachine)).toBe(true);
 			expect(couchDBBase.getStateMachine()).toBe(stateMachine);
-		});
-
-		it("should be initialised in Unsynched state by default", function () {
-			expect(stateMachine.getCurrent()).toBe("Unsynched");
-		});
-
-		it("should have a default Unsynched state", function () {
-			var Unsynched = stateMachine.get("Unsynched");
-
-			var sync = Unsynched.get("sync");
-			expect(sync[0]).toBe(couchDBBase.onSync);
-			expect(sync[1]).toBe(couchDBBase);
-			expect(sync[2]).toBe("Synched");
-		});
-
-		it("should have a default synched state", function () {
-			var Synched = stateMachine.get("Synched");
-
-			var listen = Synched.get("listen");
-			expect(listen[0]).toBe(couchDBBase.onListen);
-			expect(listen[1]).toBe(couchDBBase);
-			expect(listen[2]).toBe("Listening");
-
-			var unsync = Synched.get("unsync");
-			expect(unsync[0].name).toBe("NOOP");
-			expect(unsync[2]).toBe("Unsynched");
-		});
-
-		it("should have a default Listening state", function () {
-			var Listening = stateMachine.get("Listening");
-
-			var unsync = Listening.get("unsync");
-			expect(unsync[0]).toBe(couchDBBase.unsync);
-			expect(unsync[1]).toBe(couchDBBase);
-			expect(unsync[2]).toBe("Unsynched");
-
-			var change = Listening.get("change");
-			expect(change[0]).toBe(couchDBBase.onChange);
-			expect(change[1]).toBe(couchDBBase);
-
-			var add = Listening.get("add");
-			expect(add[0]).toBe(couchDBBase.onAdd);
-			expect(add[1]).toBe(couchDBBase);
-
-			var remove = Listening.get("remove");
-			expect(remove[0]).toBe(couchDBBase.onRemove);
-			expect(remove[1]).toBe(couchDBBase);
 		});
 
 	});

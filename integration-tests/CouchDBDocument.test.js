@@ -16,7 +16,7 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 	.then(function () {
 		console.log(couchDBDocument.toJSON());
 	}, function (error) {
-		console.log(error);assert.equal(false, true);
+		console.log(error);
 	});
 
 });
