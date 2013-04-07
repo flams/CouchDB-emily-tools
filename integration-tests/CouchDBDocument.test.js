@@ -1,21 +1,22 @@
-/**
- * https://github.com/flams/CouchDB-emily-tools
- * The MIT License (MIT)
- * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
- */
+var emily = require("emily"),
+	tools = require("../tools");
 
-require(["CouchDBBulkDocuments"],
+emily.handlers.set("CouchDB", tools.handler);
 
-function (CouchDBBulkDocuments) {
+tools.configuration.adminAuth = "couchdb:couchdb";
 
-	describe("CouchDBBulkDocuments synchronizes with a document in CouchDB", function () {
+tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Transport) {
 
-		it("should be a constructor function", function () {
-			expect(CouchDBBulkDocuments).toBeInstanceOf(Function);
-			expect(true).toBe(false);
-		});
+	var couchDBDocument = new CouchDBDocument,
+		transport = new Transport(emily.handlers);
 
+	couchDBDocument.setTransport(transport);
 
+	couchDBDocument.sync("test", "mydocument")
+	.then(function () {
+		console.log(couchDBDocument.toJSON());
+	}, function (error) {
+		console.log(error);
 	});
 
 });

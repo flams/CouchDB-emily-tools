@@ -49,13 +49,8 @@ tests-unit: clean-temp temp.js
 	java -jar $(JsTestDriver) \
 		--tests all
 
-tests-integration: clean-temp temp.js
-	node tools/jasmine-node.js \
-	lib/Emily.js \
-	lib/require.js \
-	temp.js \
-	specs/specHelper.js \
-	$(INTEGRATION)
+tests-integration:
+	node $(INTEGRATION)
 
 build: clean-build CouchDBTools.js
 	cp LICENSE build/
