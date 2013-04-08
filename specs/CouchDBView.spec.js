@@ -30,7 +30,8 @@ function (CouchDBBase, CouchDBView, Store, Promise, StateMachine) {
 				promise;
 
 			couchDBView.setTransport({
-				request: jasmine.createSpy()
+				request: jasmine.createSpy(),
+				listen: jasmine.createSpy()
 			});
 			promise = couchDBView.sync("db", "design", "view");
 			expect(promise).toBeInstanceOf(Promise);
