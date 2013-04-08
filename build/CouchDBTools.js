@@ -528,9 +528,6 @@ define('CouchDBDocument',["Store", "CouchDBBase", "Tools", "Promise", "StateMach
 			});
 		 };
 
-		/**
-		 * Create the state machine with the default states
-		 */
 		this.setStateMachine(new StateMachine("Unsynched", {
 
 			"Unsynched": [
@@ -568,13 +565,13 @@ define('CouchDBDocument',["Store", "CouchDBBase", "Tools", "Promise", "StateMach
  * The MIT License (MIT)
  * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  */
-define('CouchDBView',["Store", "CouchDBBase", "Tools"],
+define('CouchDBView',["Store", "CouchDBBase", "Tools", "StateMachine"],
 
 /**
  * @class
  * CouchDBView synchronizes a Store with a CouchDB view
  */
-function CouchDBView(Store, CouchDBBase, Tools) {
+function CouchDBView(Store, CouchDBBase, Tools, StateMachine) {
 
 	function CouchDBViewConstructor() {
 
@@ -801,11 +798,26 @@ function CouchDBView(Store, CouchDBBase, Tools) {
 			}, this);
 		};
 
-		// Add the missing states
-		var stateMachine = this.getStateMachine(),
-			Listening = stateMachine.get("Listening");
+		this.setStateMachine(new StateMachine("Unsynched", {
 
-		Listening.add("updateReduced", this.updateReduced, this);
+			"Unsynched": [
+				["sync", this.onSync, this, "Synched"]
+			],
+
+			"Synched": [
+				["listen", this.onListen, this, "Listening"],
+				["unsync", function NOOP() {}, "Unsynched"]
+			],
+
+			"Listening": [
+				["unsync", this.unsync, this, "Unsynched"],
+				["change", this.onChange, this],
+				["add", this.onAdd, this],
+				["remove", this.onRemove, this],
+				["updateReduced", this.updateReduced, this]
+			]
+
+		}));
 
 	}
 
@@ -821,13 +833,13 @@ function CouchDBView(Store, CouchDBBase, Tools) {
  * The MIT License (MIT)
  * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  */
-define('CouchDBBulkDocuments',["Store", "CouchDBBase", "Tools", "Promise"],
+define('CouchDBBulkDocuments',["Store", "CouchDBBase", "Tools", "Promise", "StateMachine"],
 
 /**
  * @class
  * CouchDBBulkDocuments synchronizes a Store with a bulk of CouchDB documents
  */
- function CouchDBBulkDocuments(Store, CouchDBBase, Tools, Promise) {
+ function CouchDBBulkDocuments(Store, CouchDBBase, Tools, Promise, StateMachine) {
 
 	function CouchDBBulkDocumentsConstructor() {
 
@@ -904,7 +916,7 @@ define('CouchDBBulkDocuments',["Store", "CouchDBBase", "Tools", "Promise"],
 					this.getStateMachine().event("listen");
 				}
 			}, this);
-	};
+		};
 
 		/**
 		 * Subscribe to changes when synchronized with a bulk of documents
@@ -1048,11 +1060,26 @@ define('CouchDBBulkDocuments',["Store", "CouchDBBase", "Tools", "Promise"],
 			return promise;
 		 };
 
-		// Add the missing states
-		var stateMachine = this.getStateMachine(),
-		Listening = stateMachine.get("Listening");
+		this.setStateMachine(new StateMachine("Unsynched", {
 
-		Listening.add("upload", this.databaseUpdate, this);
+			"Unsynched": [
+				["sync", this.onSync, this, "Synched"]
+			],
+
+			"Synched": [
+				["listen", this.onListen, this, "Listening"],
+				["unsync", function NOOP() {}, "Unsynched"]
+			],
+
+			"Listening": [
+				["unsync", this.unsync, this, "Unsynched"],
+				["change", this.onChange, this],
+				["add", this.onAdd, this],
+				["remove", this.onRemove, this],
+				["upload", this.databaseUpdate, this]
+			]
+
+		}));
 
 	}
 
