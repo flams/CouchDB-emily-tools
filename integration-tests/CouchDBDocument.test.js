@@ -35,11 +35,13 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 		success("CouchDBDocument gives an error message when trying to synchronize with a document that doesn't exist");
 		//
 
-	}).then(null, catchError);
+	}).then(null, catchError)
+	.then(function () {
+		console.log("oh")
+		this.upload().then(success, catchError);
+	}, this);
 
 });
 
-process.on('uncaughtException', function (error) {
-	log("error", error.stack);
-});
+process.on('uncaughtException', catchError);
 
