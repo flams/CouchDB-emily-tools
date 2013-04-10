@@ -209,7 +209,7 @@ function (CouchDBBase, CouchDBDocument, Store, Promise, StateMachine) {
 			expect(doc["_rev"]).toBe("1-7f5175756a7ab72660278c3c0aed2eee")
 
 			expect(stateMachine.event.wasCalled).toBe(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toBe("onListen");
+			expect(stateMachine.event.mostRecentCall.args[0]).toBe("listen");
 		});
 
 		it("should reject the callback if the document doesn't exist", function () {
