@@ -21,7 +21,7 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 
 	couchDBDocument.setTransport(transport);
 
-	couchDBDocument.sync("test", "document")
+	couchDBDocument.sync("test", "document2")
 	.then(function () {
 		// If the document exists...
 	}, function (error) {
@@ -35,10 +35,15 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 		success("CouchDBDocument gives an error message when trying to synchronize with a document that doesn't exist");
 		//
 
-	}).then(null, catchError)
+	}).then(null, catchError);
+
+	couchDBDocument.unsync();
+
+	couchDBDocument.sync("test", "document2")
 	.then(function () {
-		this.upload().then(success, catchError);
-	}, this);
+		this.upload();
+	}, couchDBDocument)
+	.then(null, catchError);
 
 });
 
