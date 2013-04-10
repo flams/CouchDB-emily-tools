@@ -342,7 +342,7 @@ define('CouchDBDocument',["Store", "CouchDBBase", "Tools", "Promise", "StateMach
 					if (json._id) {
 						this.reset(json);
 						this.getPromise().fulfill(this);
-						this.getStateMachine().event("onListen");
+						this.getStateMachine().event("listen");
 					} else {
 						this.getPromise().reject(results);
 					}
