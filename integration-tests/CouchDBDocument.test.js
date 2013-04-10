@@ -37,7 +37,6 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 
 	}).then(null, catchError)
 	.then(function () {
-		console.log("oh")
 		this.upload().then(success, catchError);
 	}, this);
 
