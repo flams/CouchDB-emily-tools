@@ -7,6 +7,9 @@ emily.handlers.set("CouchDB", tools.handler);
 tools.configuration.adminAuth = "couchdb:couchdb";
 
 function catchError(error) {
+	if (typeof error == "object") {
+		error = JSON.stringify(error);
+	}
 	error && console.error('\u001b[31m' + error + '\u001b[0m');
 }
 
@@ -22,9 +25,13 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 	couchDBDocument.setTransport(transport);
 
 	couchDBDocument.sync("test", "document")
-	.then(function () {
+	.then(function (data) {
 		// If the document exists...
-	}, function (error) {
+		catchError("The document already existed and has been removed, please re-run" + JSON.stringify(data));
+		this.remove();
+	}, couchDBDocument,
+
+	function (error) {
 
 		//
 		// CouchDBDocument gives an error message when trying to synchronize with a document that doesn't exist
@@ -46,14 +53,26 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 		this.set("name", "couchDB emily tools");
 		this.upload()
 		.then(function () {
-			success("It can upload a document");
-		}, catchError);
+			success("It can create a document that doesn't exist");
+		}, catchError)
 
+		.then(function() {
+
+			this.upload()
+			.then(function () {
+				this.remove();
+				success("It can then be removed");
+			}, couchDBDocument, catchError)
+			.then(catchError, catchError);
+
+			success("It can upload again a document that already exists to update it");
+		}, couchDBDocument, catchError)
 
 	}, couchDBDocument)
 	.then(null, catchError);
 
 	couchDBDocument.unsync();
+
 
 });
 
