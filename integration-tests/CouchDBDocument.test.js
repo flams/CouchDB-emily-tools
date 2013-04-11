@@ -46,22 +46,15 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 		this.set("name", "couchDB emily tools");
 		this.upload()
 		.then(function () {
-			assert.equal(true, true, "It can upload a document");
+			success("It can upload a document");
 		}, catchError);
-
 
 
 	}, couchDBDocument)
 	.then(null, catchError);
 
 	couchDBDocument.unsync();
-/*
-	couchDBDocument.sync("test", "document")
-	.then(function () {
-		assert.equal(this.get("name"), "couchDB emily tools", "It can load a document from the database");
-	}, couchDBDocument)
-	.then(null, catchError);
-*/
+
 });
 
 process.on('uncaughtException', catchError);
