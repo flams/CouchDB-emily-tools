@@ -29,7 +29,6 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 		//
 		// CouchDBDocument gives an error message when trying to synchronize with a document that doesn't exist
 		//
-		console.log(error)
 		error = JSON.parse(error);
 		assert.equal((error.reason == "missing" || error.reason == "deleted"), true, "It should tell if the document is missing");
 		assert.equal(error.error, "not_found", "It should give a not_found or deleted error message");
@@ -39,10 +38,27 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 	}).then(null, catchError);
 
 	couchDBDocument.unsync();
-/*
+
 	couchDBDocument.sync("test", "document")
 	.then(null, function () {
-		this.upload();
+
+
+		this.set("name", "couchDB emily tools");
+		this.upload()
+		.then(function () {
+			assert.equal(true, true, "It can upload a document");
+		}, catchError);
+
+
+
+	}, couchDBDocument)
+	.then(null, catchError);
+
+	couchDBDocument.unsync();
+/*
+	couchDBDocument.sync("test", "document")
+	.then(function () {
+		assert.equal(this.get("name"), "couchDB emily tools", "It can load a document from the database");
 	}, couchDBDocument)
 	.then(null, catchError);
 */
