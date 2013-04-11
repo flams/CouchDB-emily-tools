@@ -31,20 +31,20 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 		//
 		error = JSON.parse(error);
 		assert.equal(error.reason, "missing", "It should tell if the document is missing");
-		assert.equal(error.error, "not_found", "It should give a not_found error message");
+		assert.equal((error.error == "not_found" || error.error == "deleted"), true, "It should give a not_found or deleted error message");
 		success("CouchDBDocument gives an error message when trying to synchronize with a document that doesn't exist");
 		//
 
 	}).then(null, catchError);
 
 	couchDBDocument.unsync();
-
+/**
 	couchDBDocument.sync("test", "document2")
 	.then(function () {
 		this.upload();
 	}, couchDBDocument)
 	.then(null, catchError);
-
+*/
 });
 
 process.on('uncaughtException', catchError);
