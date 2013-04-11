@@ -234,7 +234,7 @@ function CouchDBBase(Store, Tools, Promise) {
 		 * It's to be overriden in the sub Store
 		 */
 		this.unsync = function unsync() {
-			this.stopListening();
+			this.stopListening && this.stopListening();
 			delete this.stopListening;
 		};
 
@@ -341,8 +341,8 @@ define('CouchDBDocument',["Store", "CouchDBBase", "Tools", "Promise", "StateMach
 					var json = JSON.parse(results);
 					if (json._id) {
 						this.reset(json);
-						this.getPromise().fulfill(this);
 						this.getStateMachine().event("listen");
+						this.getPromise().fulfill(this);
 					} else {
 						this.getPromise().reject(results);
 					}

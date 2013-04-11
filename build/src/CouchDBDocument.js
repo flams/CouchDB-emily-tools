@@ -57,8 +57,8 @@ define(["Store", "CouchDBBase", "Tools", "Promise", "StateMachine"],
 					var json = JSON.parse(results);
 					if (json._id) {
 						this.reset(json);
-						this.getPromise().fulfill(this);
 						this.getStateMachine().event("listen");
+						this.getPromise().fulfill(this);
 					} else {
 						this.getPromise().reject(results);
 					}

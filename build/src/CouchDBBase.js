@@ -228,7 +228,7 @@ function CouchDBBase(Store, Tools, Promise) {
 		 * It's to be overriden in the sub Store
 		 */
 		this.unsync = function unsync() {
-			this.stopListening();
+			this.stopListening && this.stopListening();
 			delete this.stopListening;
 		};
 
