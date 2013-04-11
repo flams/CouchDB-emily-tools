@@ -21,7 +21,7 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 
 	couchDBDocument.setTransport(transport);
 
-	couchDBDocument.sync("test", "document4")
+	couchDBDocument.sync("test", "document")
 	.then(function () {
 		// If the document exists...
 	}, function (error) {
@@ -40,7 +40,7 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 
 	couchDBDocument.unsync();
 /*
-	couchDBDocument.sync("test", "document2")
+	couchDBDocument.sync("test", "document")
 	.then(null, function () {
 		this.upload();
 	}, couchDBDocument)
