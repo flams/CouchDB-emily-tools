@@ -150,6 +150,12 @@ function (CouchDBBase, Store, Promise, StateMachine) {
 			expect(spy.wasCalled).toEqual(true);
 			expect(couchDBBase.stopListening).toBeUndefined();
 		});
+
+		it("shouldn't prevent from unsyncing if stopListening is not defined", function() {
+			expect(function () {
+				couchDBBase.unsync();
+			}).not.toThrow();
+		});
 	});
 
 });
