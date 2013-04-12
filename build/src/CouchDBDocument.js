@@ -173,7 +173,6 @@ define(["Store", "CouchDBBase", "Tools", "Promise", "StateMachine"],
 		 this.databaseCreate = function createDocument(promise) {
 
 			var _syncInfo = this.getSyncInfo();
-
 			this.getTransport().request(
 				this.getHandlerName(),
 				{
@@ -203,7 +202,6 @@ define(["Store", "CouchDBBase", "Tools", "Promise", "StateMachine"],
 		 this.databaseUpdate = function updateDatabase(promise) {
 
 			var _syncInfo = this.getSyncInfo();
-
 			this.getTransport().request(
 				this.getHandlerName(),
 				{
