@@ -20,6 +20,14 @@ function success(message) {
 	message && console.log('\u001b[32m' + message + '\u001b[0m')
 }
 
+/**
+ * Tested workflow:
+ *
+ * document.sync() on a document that doesnt exist
+ * then upload() which creates it
+ * then upload() again
+ * then remove()
+ */
 tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Transport) {
 
 	var couchDBDocument = new CouchDBDocument,
@@ -79,8 +87,36 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 
 	couchDBDocument.unsync();
 
-
 });
 
+/**
+ * Test workflow:
+ * couchDBDocument.sync() on a document that exists
+ * then remove();
+ */
+tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Transport) {
+
+	var newDocument = new CouchDBDocument,
+		existingDocument = new CouchDBDocument,
+		transport = new Transport(emily.handlers);
+
+	newDocument.setTransport(transport);
+	existingDocument.setTransport(transport);
+
+	newDocument.sync("db", "documentToRemove").then(function () {
+
+		existingDocument.sync("db", "documentToRemove").then(
+			existingDocument.remove,
+			existingDocument
+		);
+
+		existingDocument.sync("db", "documentToRemove").then(catchError, function () {
+			success("It can remove an existing document");
+		});
+
+	});
+
+
+});
 process.on('uncaughtException', catchError);
 
