@@ -212,16 +212,16 @@ function (CouchDBBase, CouchDBDocument, Store, Promise, StateMachine) {
 			expect(stateMachine.event.mostRecentCall.args[0]).toBe("listen");
 		});
 
-		it("should reject the callback if the document doesn't exist", function () {
+		it("should fulfill the promise if the document doesn't exist", function () {
 			couchDBDocument.onSync();
 			var promise = couchDBDocument.sync("db", "document2"),
 				callback = transportMock.request.mostRecentCall.args[2];
 
-			spyOn(promise, "reject");
-			callback.call(couchDBDocument, "{}");
+			spyOn(promise, "fulfill");
+			callback.call(couchDBDocument, '{"reason": "missing"}');
 
-			expect(promise.reject.wasCalled).toBe(true);
-			expect(promise.reject.mostRecentCall.args[0]).toBe("{}");
+			expect(promise.fulfill.wasCalled).toBe(true);
+			expect(promise.fulfill.mostRecentCall.args[0].reason).toBe("missing");
 		});
 
 		it("should fulfill the promise when the doc is synched", function () {
@@ -236,7 +236,7 @@ function (CouchDBBase, CouchDBDocument, Store, Promise, StateMachine) {
 			callback.call(couchDBDocument, '{"_id": "id"}');
 
 			expect(promise.fulfill.wasCalled).toBe(true);
-			expect(promise.fulfill.mostRecentCall.args[0]).toBe(couchDBDocument);
+			expect(promise.fulfill.mostRecentCall.args[0]._id).toBe("id");
 		});
 
 		it("should subscribe to document changes", function () {

@@ -116,7 +116,7 @@ function (CouchDBBase, Store, Promise, StateMachine) {
 		});
 
 		it("should return the promise on sync", function () {
-			promise = couchDBBase.sync({}));
+			promise = couchDBBase.sync({});
 			expect(promise).toBe(couchDBBase.getPromise());
 		});
 
