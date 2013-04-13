@@ -106,7 +106,6 @@ function (CouchDBBase, Store, Promise, StateMachine) {
 
 		it("should have a function for synchronizing the store with CouchDB", function () {
 			var syncInfo = {};
-			couchDBBase.setPromise(promise);
 			expect(couchDBBase.sync).toBeInstanceOf(Function);
 			expect(couchDBBase.sync()).toBe(false);
 			expect(couchDBBase.sync(syncInfo)).toBeTruthy();
@@ -117,9 +116,8 @@ function (CouchDBBase, Store, Promise, StateMachine) {
 		});
 
 		it("should return the promise on sync", function () {
-			var syncInfo = {};
-			couchDBBase.setPromise(promise);
-			expect(couchDBBase.sync(syncInfo)).toBe(promise);
+			promise = couchDBBase.sync({}));
+			expect(promise).toBe(couchDBBase.getPromise());
 		});
 
 		it("should have a function for validating and setting the sync info that can be overriden", function () {
@@ -146,9 +144,15 @@ function (CouchDBBase, Store, Promise, StateMachine) {
 		it("should unsync a store, ie. stop listening to changes and reset it", function () {
 			var spy = jasmine.createSpy();
 			couchDBBase.stopListening = spy;
-			couchDBBase.unsync();
+			couchDBBase.onUnsync();
 			expect(spy.wasCalled).toEqual(true);
 			expect(couchDBBase.stopListening).toBeUndefined();
+		});
+
+		it("should have an unsync method", function () {
+			couchDBBase.unsync();
+			expect(stateMachine.event.wasCalled).toBe(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toBe("unsync");
 		});
 
 		it("shouldn't prevent from unsyncing if stopListening is not defined", function() {

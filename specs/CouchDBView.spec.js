@@ -92,7 +92,7 @@ function (CouchDBBase, CouchDBView, Store, Promise, StateMachine) {
 			var Listening = stateMachine.get("Listening");
 
 			var unsync = Listening.get("unsync");
-			expect(unsync[0]).toBe(couchDBView.unsync);
+			expect(unsync[0]).toBe(couchDBView.onUnsync);
 			expect(unsync[1]).toBe(couchDBView);
 			expect(unsync[2]).toBe("Unsynched");
 

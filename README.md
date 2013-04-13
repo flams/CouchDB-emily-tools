@@ -89,6 +89,7 @@ requirejs(["CouchDBStore", "SocketIOTransport"], function (CouchDBStore, SocketI
 * Complete refactor of the tools. Documents, BulkDocuments and Views are in distinct files.
 * Fixed bugs in document creation/update
 * document.remove also returns a promise
+* When a document doesn't exist, the promise is now fulfilled instead of rejected
 
 ###1.0.6 - 27 MAR 2013
 
