@@ -63,15 +63,15 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 
 			this.upload()
 			.then(function () {
-				success("It's synchronized after creation")
-				this.remove();
-				success("It can then be removed");
+				success("It's synchronized after creation");
+
+				this.remove().then(function () {
+					success("It can then be removed");
+				}, catchError);
+
 			}, couchDBDocument, catchError)
 			.then(success, catchError);
 
-
-
-			//success("It can upload again a document that already exists to update it");
 		}, couchDBDocument, catchError)
 
 	}, couchDBDocument)
