@@ -27,7 +27,7 @@ function success(message) {
  * then upload() which creates it
  * then upload() again
  * then remove()
- */
+ *//*
 tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Transport) {
 
 	var couchDBDocument = new CouchDBDocument,
@@ -88,7 +88,7 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 	couchDBDocument.unsync();
 
 });
-
+*/
 /**
  * Test workflow:
  * couchDBDocument.sync() on a document that exists
@@ -103,20 +103,32 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 	newDocument.setTransport(transport);
 	existingDocument.setTransport(transport);
 
-	newDocument.sync("db", "documentToRemove").then(function () {
+	newDocument.sync("test", "documentToRemove").then(newDocument.remove, newDocument, function () {
 
-		existingDocument.sync("db", "documentToRemove").then(
-			existingDocument.remove,
-			existingDocument
-		);
+		newDocument.upload().then(function () {
 
-		existingDocument.sync("db", "documentToRemove").then(catchError, function () {
-			success("It can remove an existing document");
+			existingDocument.sync("test", "documentToRemove").then(function () {
+
+				existingDocument.remove()
+				.then(function () {
+
+					existingDocument.unsync();
+
+					existingDocument.sync("test", "documentToRemove").then(success, function () {
+						success("It can remove an existing document");
+					});
+
+				});
+
+			}).then(null, catchError);
+
 		});
 
 	});
 
 
 });
+
+
 process.on('uncaughtException', catchError);
 
