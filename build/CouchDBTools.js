@@ -457,6 +457,7 @@ define('CouchDBDocument',["Store", "CouchDBBase", "Tools", "Promise", "StateMach
 		 this.databaseCreate = function createDocument(promise) {
 
 			var _syncInfo = this.getSyncInfo();
+
 			this.getTransport().request(
 				this.getHandlerName(),
 				{
@@ -470,8 +471,10 @@ define('CouchDBDocument',["Store", "CouchDBBase", "Tools", "Promise", "StateMach
 				function (result) {
 					var json = JSON.parse(result);
 					if (json.ok) {
+						this.set("_rev", json.rev);
+						this.set("_id", json.id);
+						this.getStateMachine().event("listen");
 						promise.fulfill(json);
-						this.getStateMachine().event("subscribeToDocumentChanges");
 					} else {
 						promise.reject(json);
 					}
@@ -486,6 +489,7 @@ define('CouchDBDocument',["Store", "CouchDBBase", "Tools", "Promise", "StateMach
 		 this.databaseUpdate = function updateDatabase(promise) {
 
 			var _syncInfo = this.getSyncInfo();
+
 			this.getTransport().request(
 				this.getHandlerName(),
 				{
