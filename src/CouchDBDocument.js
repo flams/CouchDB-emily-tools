@@ -187,8 +187,10 @@ define(["Store", "CouchDBBase", "Tools", "Promise", "StateMachine"],
 				function (result) {
 					var json = JSON.parse(result);
 					if (json.ok) {
+						this.set("_rev", json.rev);
+						this.set("_id", json.id);
+						this.getStateMachine().event("listen");
 						promise.fulfill(json);
-						this.getStateMachine().event("subscribeToDocumentChanges");
 					} else {
 						promise.reject(json);
 					}

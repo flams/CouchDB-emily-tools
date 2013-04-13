@@ -468,7 +468,7 @@ function (CouchDBBase, CouchDBDocument, Store, Promise, StateMachine) {
 			expect(transportMock.request.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			transportMock.request.mostRecentCall.args[2].call(couchDBDocument, '{"ok":true}');
 			expect(stateMachine.event.wasCalled).toBe(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toBe("subscribeToDocumentChanges");
+			expect(stateMachine.event.mostRecentCall.args[0]).toBe("listen");
 		});
 
 		it("should fulfill the promise on doc create if update ok", function () {
@@ -479,6 +479,15 @@ function (CouchDBBase, CouchDBDocument, Store, Promise, StateMachine) {
 			transportMock.request.mostRecentCall.args[2].call(couchDBDocument, response);
 			expect(promise.fulfill.wasCalled).toBe(true);
 			expect(promise.fulfill.mostRecentCall.args[0].ok).toBe(true);
+		});
+
+		it("should set the _rev and _id when the doc is created", function () {
+			var promise = new Promise,
+				response = '{"ok":true, "id": "document", "rev": "10"}';
+			couchDBDocument.databaseCreate(promise);
+			transportMock.request.mostRecentCall.args[2].call(couchDBDocument, response);
+			expect(couchDBDocument.get("_id")).toBe("document");
+			expect(couchDBDocument.get("_rev")).toBe("10");
 		});
 
 		it("should reject the promise on doc create if update failed", function () {
