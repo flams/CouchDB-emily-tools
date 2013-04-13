@@ -344,15 +344,12 @@ define('CouchDBDocument',["Store", "CouchDBBase", "Tools", "Promise", "StateMach
 					query: _syncInfo.query
 				},
 				function (results) {
-					console.log(results)
 					var json = JSON.parse(results);
 					if (json._id) {
 						this.reset(json);
 						this.getStateMachine().event("listen");
-						this.getPromise().fulfill(this);
-					} else {
-						this.getPromise().reject(results);
 					}
+					this.getPromise().fulfill(json);
 				}, this);
 		 };
 
@@ -826,7 +823,7 @@ function CouchDBView(Store, CouchDBBase, Tools, StateMachine) {
 			],
 
 			"Listening": [
-				["unsync", this.unsync, this, "Unsynched"],
+				["unsync", this.onUnsync, this, "Unsynched"],
 				["change", this.onChange, this],
 				["add", this.onAdd, this],
 				["remove", this.onRemove, this],
@@ -1088,7 +1085,7 @@ define('CouchDBBulkDocuments',["Store", "CouchDBBase", "Tools", "Promise", "Stat
 			],
 
 			"Listening": [
-				["unsync", this.unsync, this, "Unsynched"],
+				["unsync", this.onUnsync, this, "Unsynched"],
 				["change", this.onChange, this],
 				["add", this.onAdd, this],
 				["remove", this.onRemove, this],

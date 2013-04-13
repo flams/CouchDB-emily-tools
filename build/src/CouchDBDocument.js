@@ -54,15 +54,12 @@ define(["Store", "CouchDBBase", "Tools", "Promise", "StateMachine"],
 					query: _syncInfo.query
 				},
 				function (results) {
-					console.log(results)
 					var json = JSON.parse(results);
 					if (json._id) {
 						this.reset(json);
 						this.getStateMachine().event("listen");
-						this.getPromise().fulfill(this);
-					} else {
-						this.getPromise().reject(results);
 					}
+					this.getPromise().fulfill(json);
 				}, this);
 		 };
 
