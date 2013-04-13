@@ -395,14 +395,6 @@ function (CouchDBBase, CouchDBDocument, Store, Promise, StateMachine) {
 			expect(stateMachine.event.mostRecentCall.args[1]).toBe(promise);
 		});
 
-		it("should have a function to remove a document", function () {
-			expect(couchDBDocument.remove).toBeInstanceOf(Function);
-			spyOn(stateMachine, "event");
-			couchDBDocument.remove();
-			expect(stateMachine.event.wasCalled).toBe(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toBe("removeFromDatabase");
-		});
-
 		it("should update the database on update", function () {
 			var reqData;
 			couchDBDocument.set("fakeRev", "10-hello");
@@ -500,6 +492,14 @@ function (CouchDBBase, CouchDBDocument, Store, Promise, StateMachine) {
 			expect(promise.reject.mostRecentCall.args[0].ok).toBe(false);
 		});
 
+		it("should have a function to remove a document", function () {
+			expect(couchDBDocument.remove).toBeInstanceOf(Function);
+			spyOn(stateMachine, "event");
+			couchDBDocument.remove();
+			expect(stateMachine.event.wasCalled).toBe(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toBe("removeFromDatabase");
+		});
+
 		it("should remove a document from the database", function () {
 			couchDBDocument.set("_rev", "10-hello");
 
@@ -509,6 +509,34 @@ function (CouchDBBase, CouchDBDocument, Store, Promise, StateMachine) {
 			expect(transportMock.request.mostRecentCall.args[1].method).toBe("DELETE");
 			expect(transportMock.request.mostRecentCall.args[1].path).toBe("/db/document1");
 			expect(transportMock.request.mostRecentCall.args[1].query.rev).toBe("10-hello");
+		});
+
+		it("should return a promise that is fulfilled when the document is removed", function () {
+			expect(couchDBDocument.remove()).toBeInstanceOf(Promise);
+			var promise = new Promise();
+			couchDBDocument.databaseRemove(promise);
+			var callback = transportMock.request.mostRecentCall.args[2];
+
+			spyOn(promise, "fulfill");
+
+			expect(callback).toBeInstanceOf(Function);
+			callback('{"ok":true}');
+
+			expect(promise.fulfill.wasCalled).toBe(true);
+			expect(promise.fulfill.mostRecentCall.args[0].ok).toBe(true);
+		});
+
+		it("should return a promise that is fulfilled when the document is removed", function () {
+			var promise = new Promise();
+			couchDBDocument.databaseRemove(promise);
+			var callback = transportMock.request.mostRecentCall.args[2];
+
+			spyOn(promise, "reject");
+
+			expect(callback).toBeInstanceOf(Function);
+			callback('{}');
+
+			expect(promise.reject.wasCalled).toBe(true);
 		});
 
 	});
