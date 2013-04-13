@@ -84,6 +84,12 @@ requirejs(["CouchDBStore", "SocketIOTransport"], function (CouchDBStore, SocketI
 
 ## Changelog
 
+###1.1.0 - pending
+
+* Complete refactor of the tools. Documents, BulkDocuments and Views are in distinct files.
+* Fixed bugs in document creation/update
+* document.remove also returns a promise
+
 ###1.0.6 - 27 MAR 2013
 
 * Aborting a non established connection doesn't fail anymore
