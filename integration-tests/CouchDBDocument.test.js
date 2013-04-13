@@ -27,7 +27,7 @@ function success(message) {
  * then upload() which creates it
  * then upload() again
  * then remove()
- *//*
+ */
 tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Transport) {
 
 	var couchDBDocument = new CouchDBDocument,
@@ -36,59 +36,27 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 	couchDBDocument.setTransport(transport);
 
 	couchDBDocument.sync("test", "document")
-	.then(function (data) {
-		// If the document exists...
-		catchError("The document already existed and has been removed, please re-run" + JSON.stringify(data));
+
+	.then(function (result) {
+		this.upload();
+	}, couchDBDocument, catchError)
+
+	.then(function (result) {
+		success("It can create a document that doesn't exist");
+		this.upload();
+	}, couchDBDocument, catchError)
+
+	.then(function () {
+		success("It's synchronized after creation");
 		this.remove();
-	}, couchDBDocument,
+	}, couchDBDocument, catchError)
 
-	function (error) {
-
-		//
-		// CouchDBDocument gives an error message when trying to synchronize with a document that doesn't exist
-		//
-		error = JSON.parse(error);
-		assert.equal((error.reason == "missing" || error.reason == "deleted"), true, "It should tell if the document is missing");
-		assert.equal(error.error, "not_found", "It should give a not_found or deleted error message");
-		success("CouchDBDocument gives an error message when trying to synchronize with a document that doesn't exist");
-		//
-
-	}).then(null, catchError);
-
-	couchDBDocument.unsync();
-
-	couchDBDocument.sync("test", "document")
-	.then(null, function () {
-
-
-		this.set("name", "couchDB emily tools");
-		this.upload()
-		.then(function () {
-			success("It can create a document that doesn't exist");
-		}, catchError)
-
-		.then(function() {
-
-			this.upload()
-			.then(function () {
-				success("It's synchronized after creation");
-
-				this.remove().then(function () {
-					success("It can then be removed");
-				}, catchError);
-
-			}, couchDBDocument, catchError)
-			.then(success, catchError);
-
-		}, couchDBDocument, catchError)
-
-	}, couchDBDocument)
-	.then(null, catchError);
-
-	couchDBDocument.unsync();
+	.then(function () {
+		success("It can then be removed");
+	}, catchError);
 
 });
-*/
+
 /**
  * Test workflow:
  * couchDBDocument.sync() on a document that exists
@@ -103,28 +71,30 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 	newDocument.setTransport(transport);
 	existingDocument.setTransport(transport);
 
-	newDocument.sync("test", "documentToRemove").then(newDocument.remove, newDocument, function () {
+	newDocument.sync("test", "documentToRemove")
 
-		newDocument.upload().then(function () {
+	.then(function () {
+		return newDocument.upload();
+	}, catchError)
 
-			existingDocument.sync("test", "documentToRemove").then(function () {
+	.then(function () {
+		return existingDocument.sync("test", "documentToRemove");
+	}, catchError)
 
-				existingDocument.remove()
-				.then(function () {
+	.then(function () {
+		return existingDocument.remove();
+	}, catchError)
 
-					existingDocument.unsync();
+	.then(function () {
+		existingDocument.unsync();
+		return existingDocument.sync("test", "documentToRemove");
+	}, catchError)
 
-					existingDocument.sync("test", "documentToRemove").then(success, function () {
-						success("It can remove an existing document");
-					});
-
-				});
-
-			}).then(null, catchError);
-
-		});
-
-	});
+	.then(function (error) {
+		if (error.reason == "deleted") {
+			success("It can remove an existing document");
+		}
+	}, catchError);
 
 
 });
