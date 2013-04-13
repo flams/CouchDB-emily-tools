@@ -266,7 +266,7 @@ define(["Store", "CouchDBBase", "Tools", "Promise", "StateMachine"],
 			],
 
 			"Listening": [
-				["unsync", this.unsync, this, "Unsynched"],
+				["unsync", this.onUnsync, this, "Unsynched"],
 				["change", this.onChange, this],
 				["add", this.onAdd, this],
 				["remove", this.onRemove, this],
