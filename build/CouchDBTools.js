@@ -188,6 +188,9 @@ function CouchDBBase(Store, Tools, Promise) {
 		 * @returns {Boolean} false if no configuration object given
 		 */
 		this.sync = function sync() {
+
+			_promise = new Promise;
+
 			if (_syncInfo = this.setSyncInfo.apply(this, arguments)) {
 				_stateMachine.event("sync");
 				return _promise;
@@ -231,11 +234,14 @@ function CouchDBBase(Store, Tools, Promise) {
 
 		/**
 		 * This function will be called when the Store is unsynched
-		 * It's to be overriden in the sub Store
 		 */
-		this.unsync = function unsync() {
+		this.onUnsync = function onUnsync() {
 			this.stopListening && this.stopListening();
 			delete this.stopListening;
+		};
+
+		this.unsync = function unsync() {
+			_stateMachine.event("unsync");
 		};
 
 		/**
@@ -338,6 +344,7 @@ define('CouchDBDocument',["Store", "CouchDBBase", "Tools", "Promise", "StateMach
 					query: _syncInfo.query
 				},
 				function (results) {
+					console.log(results)
 					var json = JSON.parse(results);
 					if (json._id) {
 						this.reset(json);
@@ -550,7 +557,7 @@ define('CouchDBDocument',["Store", "CouchDBBase", "Tools", "Promise", "StateMach
 			],
 
 			"Listening": [
-				["unsync", this.unsync, this, "Unsynched"],
+				["unsync", this.onUnsync, this, "Unsynched"],
 				["change", this.onChange, this],
 				["add", this.onAdd, this],
 				["remove", this.onRemove, this],

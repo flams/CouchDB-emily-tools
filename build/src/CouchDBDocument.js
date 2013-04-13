@@ -54,6 +54,7 @@ define(["Store", "CouchDBBase", "Tools", "Promise", "StateMachine"],
 					query: _syncInfo.query
 				},
 				function (results) {
+					console.log(results)
 					var json = JSON.parse(results);
 					if (json._id) {
 						this.reset(json);
@@ -266,7 +267,7 @@ define(["Store", "CouchDBBase", "Tools", "Promise", "StateMachine"],
 			],
 
 			"Listening": [
-				["unsync", this.unsync, this, "Unsynched"],
+				["unsync", this.onUnsync, this, "Unsynched"],
 				["change", this.onChange, this],
 				["add", this.onAdd, this],
 				["remove", this.onRemove, this],
