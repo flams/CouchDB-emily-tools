@@ -158,12 +158,11 @@ define(["Store", "CouchDBBase", "Tools", "Promise", "StateMachine"],
 		 */
 		 this.remove = function remove() {
 
-			var _syncInfo = this.getSyncInfo();
+			var _syncInfo = this.getSyncInfo(),
+				promise = new Promise();
 
-			if (_syncInfo.document) {
-				return this.getStateMachine().event("removeFromDatabase");
-			}
-			return false;
+			this.getStateMachine().event("removeFromDatabase", promise);
+			return promise;
 		 };
 
 		/**
@@ -232,7 +231,7 @@ define(["Store", "CouchDBBase", "Tools", "Promise", "StateMachine"],
 		 * Remove a document from CouchDB through a DELETE request
 		 * @private
 		 */
-		 this.databaseRemove = function removeFromDatabase() {
+		 this.databaseRemove = function removeFromDatabase(promise) {
 
 			var _syncInfo = this.getSyncInfo();
 
@@ -242,6 +241,14 @@ define(["Store", "CouchDBBase", "Tools", "Promise", "StateMachine"],
 				path: "/" + _syncInfo.database + "/" + _syncInfo.document,
 				query: {
 					rev: this.get("_rev")
+				}
+			},
+			function (response) {
+				var json = JSON.parse(response);
+				if (json.ok) {
+					promise.fulfill(json);
+				} else {
+					promise.reject(json);
 				}
 			});
 		 };
