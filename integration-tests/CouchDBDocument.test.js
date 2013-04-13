@@ -14,6 +14,9 @@ function catchError(error) {
 }
 
 function success(message) {
+		if (typeof message == "object") {
+		message = JSON.stringify(message);
+	}
 	message && console.log('\u001b[32m' + message + '\u001b[0m')
 }
 
@@ -60,12 +63,15 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 
 			this.upload()
 			.then(function () {
+				success("It's synchronized after creation")
 				this.remove();
 				success("It can then be removed");
 			}, couchDBDocument, catchError)
-			.then(catchError, catchError);
+			.then(success, catchError);
 
-			success("It can upload again a document that already exists to update it");
+
+
+			//success("It can upload again a document that already exists to update it");
 		}, couchDBDocument, catchError)
 
 	}, couchDBDocument)
