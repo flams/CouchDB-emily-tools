@@ -677,7 +677,7 @@ function CouchDBView(Store, CouchDBBase, Tools, StateMachine) {
 						action = "updateReduced";
 					} else {
 						if (json.deleted) {
-							action = "delete";
+							action = "remove";
 						} else if (json.changes && json.changes[0].rev.search("1-") == 0) {
 							action = "add";
 						} else {
