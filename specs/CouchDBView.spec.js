@@ -325,7 +325,7 @@ function (CouchDBBase, CouchDBView, Store, Promise, StateMachine) {
 			callback.call(couchDBView, listenRes);
 
 			expect(stateMachine.event.wasCalled).toBe(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toBe("delete");
+			expect(stateMachine.event.mostRecentCall.args[0]).toBe("remove");
 			expect(stateMachine.event.mostRecentCall.args[1]).toBe("document4");
 		});
 
