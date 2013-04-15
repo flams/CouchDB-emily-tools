@@ -25,9 +25,23 @@ function success(message) {
 
 /**
  * Tested workflow:
- *
+ * Synchronization with a CouchDBView
+ * Upload a new document, make sure it's picked up
  */
-tools.requirejs(["CouchDBView", "Transport"], function (CouchDBView, Transport) {
+tools.requirejs(["CouchDBView", "CouchDBDocument", "Transport"], function (CouchDBView, CouchDBDocument, Transport) {
+
+	var couchDBView = new CouchDBView,
+		couchDBDocument = new CouchDBDocument,
+		transport = new Transport(emily.handlers);
+
+	couchDBDocument.setTransport(transport);
+	couchDBView.setTransport(transport);
+
+	couchDBView.sync("test", "list", "_view/id")
+
+	.then(function (hop) {
+		console.log(couchDBView.toJSON());
+	});
 
 
 });
