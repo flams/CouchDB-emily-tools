@@ -32,8 +32,7 @@ tools.requirejs(["CouchDBView", "CouchDBDocument", "Transport"], function (Couch
 
 	var couchDBView = new CouchDBView,
 		couchDBDocument = new CouchDBDocument,
-		transport = new Transport(emily.handlers),
-		nbDocuments = 0;
+		transport = new Transport(emily.handlers);
 
 	couchDBDocument.setTransport(transport);
 	couchDBView.setTransport(transport);
@@ -44,11 +43,21 @@ tools.requirejs(["CouchDBView", "CouchDBDocument", "Transport"], function (Couch
 		if (this.count() > 0) {
 			success("It can synchronize a store with a view");
 		}
+
+		this.watch("added", function (idx, newDocument) {
+			success("It can notify when documents are added");
+		}, this);
+
 		this.watch("updated", function (idx, newDocument) {
 			if (newDocument.id == "newDocument") {
-				success("It can notify when documents are added");
+				success("It can notify when documents are updated");
 			}
 		}, this);
+
+		this.watch("deleted", function (idx, newDocument) {
+			success("It can notify when documents are removed");
+		}, this);
+
 	}, couchDBView)
 
 	.then(function () {
@@ -57,6 +66,10 @@ tools.requirejs(["CouchDBView", "CouchDBDocument", "Transport"], function (Couch
 
 	.then(function () {
 		return this.upload();
+	}, couchDBDocument)
+
+	.then(function () {
+		this.remove();
 	}, couchDBDocument);
 
 
