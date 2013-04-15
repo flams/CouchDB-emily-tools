@@ -28,7 +28,7 @@ function success(message) {
  * Synchronization with a CouchDBView
  * Upload a new document, make sure it's picked up
  */
-tools.requirejs(["CouchDBView", "CouchDBDocument", "Transport"], function (CouchDBView, CouchDBDocument, Transport) {
+tools.requirejs(["CouchDBView", "CouchDBDocument", "Transport", "Promise"], function (CouchDBView, CouchDBDocument, Transport, Promise) {
 
 	var couchDBView = new CouchDBView,
 		couchDBDocument = new CouchDBDocument,
@@ -69,7 +69,9 @@ tools.requirejs(["CouchDBView", "CouchDBDocument", "Transport"], function (Couch
 	}, couchDBDocument)
 
 	.then(function () {
-		this.remove();
+		// Removing the document too quickly actually removes 'silently' the document
+		// from the view. That needs to be fixed
+		setTimeout(this.remove.bind(this), 100);
 	}, couchDBDocument);
 
 
