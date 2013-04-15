@@ -58,12 +58,12 @@ function CouchDBView(Store, CouchDBBase, Tools, StateMachine) {
 					throw new Error("CouchDBStore [" + _syncInfo.database + ", " + _syncInfo.design + ", " + _syncInfo.view + "].sync() failed: " + results);
 				} else {
 					this.reset(json.rows);
-					this.getPromise().fulfill(this);
 					if (typeof json.total_rows == "undefined") {
 						_syncInfo.reducedView = true;
 					}
 
 					this.getStateMachine().event("listen");
+					this.getPromise().fulfill(json);
 				}
 			}, this);
 		};
