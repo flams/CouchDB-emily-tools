@@ -166,8 +166,6 @@ function (CouchDBBase, CouchDBView, Store, Promise, StateMachine) {
 			couchDBView.sync("db", "design", "_view/view", query);
 		});
 
-		it("should add ")
-
 		it("should get a view's data", function () {
 			var reqData;
 
@@ -220,7 +218,7 @@ function (CouchDBBase, CouchDBView, Store, Promise, StateMachine) {
 
 			callback.call(couchDBView, res);
 			expect(promise.fulfill.wasCalled).toBe(true);
-			expect(promise.fulfill.mostRecentCall.args[0]).toBe(couchDBView);
+			expect(promise.fulfill.mostRecentCall.args[0].total_rows).toBe(3);
 		});
 
 		it("should set the reduced flag if the view is reduced", function () {
