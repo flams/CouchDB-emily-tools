@@ -55,22 +55,28 @@ tools.requirejs(["CouchDBBulkDocuments", "Transport"], function (CouchDBBulkDocu
 
 	.then(function () {
 		this.alter("push", {
-			"_id": "document1"
+			doc: {
+				"_id": "document1"
+			}
 		});
 
 		this.alter("push", {
-			"_id": "document2"
+			doc: {
+				"_id": "document2"
+			}
 		});
 
 		this.alter("push", {
-			"_id": "document3"
+			doc: {
+				"_id": "document3"
+			}
 		});
 
 		this.alter("push", {
-			"_id": "document4"
+			doc: {
+				"_id": "document4"
+			}
 		});
-
-
 
 	}, bulkDocumentsB, catchError)
 
@@ -78,6 +84,7 @@ tools.requirejs(["CouchDBBulkDocuments", "Transport"], function (CouchDBBulkDocu
 		var self = this;
 
 		setTimeout(function () {
+			success(self.toJSON())
 		self.upload();
 
 		}, 100);
