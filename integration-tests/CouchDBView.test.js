@@ -69,9 +69,11 @@ tools.requirejs(["CouchDBView", "CouchDBDocument", "Transport", "Promise"], func
 	}, couchDBDocument)
 
 	.then(function () {
-		// Removing the document too quickly actually removes 'silently' the document
-		// from the view. That needs to be fixed
-		setTimeout(this.remove.bind(this), 100);
+		var self = this;
+
+		setTimeout(function () {
+			self.remove();
+		}, 100);
 	}, couchDBDocument);
 
 

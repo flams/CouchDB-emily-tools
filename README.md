@@ -91,6 +91,10 @@ requirejs(["CouchDBStore", "SocketIOTransport"], function (CouchDBStore, SocketI
 * document.remove also returns a promise
 * When a document doesn't exist, the promise is now fulfilled instead of rejected
 
+####Known issues:
+
+If a document is removed directly (within a few milliseconds) after a document is updated (same doc or another), a CouchDB view may remove it first and then add it back. I'm trying to find a solution to this situation
+
 ###1.0.6 - 27 MAR 2013
 
 * Aborting a non established connection doesn't fail anymore
