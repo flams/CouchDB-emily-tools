@@ -28,6 +28,7 @@ handler = function (data, onEnd, onData) {
 	data.path += "?" + qs.stringify(data.query);
 
 	var exec = function () {
+		console.log(data)
 		req = http.request(data, function (res) {
 
 			var body = "";

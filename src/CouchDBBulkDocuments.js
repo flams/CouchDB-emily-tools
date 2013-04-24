@@ -197,7 +197,7 @@ define(["Store", "CouchDBBase", "Tools", "Promise", "StateMachine"],
 		 * @private
 		 */
 		 this.databaseUpdate = function databaseUpdate(promise) {
-
+console.log("upload called")
 			var docs = [],
 			_syncInfo = this.getSyncInfo();
 
@@ -226,6 +226,7 @@ define(["Store", "CouchDBBase", "Tools", "Promise", "StateMachine"],
 		 */
 		 this.upload = function upload() {
 			var promise = new Promise;
+			console.log(this.getStateMachine().getCurrent())
 			this.getStateMachine().event("upload", promise);
 			return promise;
 		 };

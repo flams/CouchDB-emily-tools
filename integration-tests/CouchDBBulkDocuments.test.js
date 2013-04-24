@@ -25,10 +25,63 @@ function success(message) {
 
 /**
  * Tested workflow:
- *
- *
+ * Create an empty couchdb bulk documents (A)
+ * Synchronize another CouchDB Bulk documents on a document range (B)
+ * Add 5 documents to A with 3 documents within the range of store (B) and upload them
+ * Make sure that B has them
+ * Unsync the store with the 4 docs (A)
+ * Resync it (A) with specifically 3 of the docs
+ * Make sure that they are present
  */
 tools.requirejs(["CouchDBBulkDocuments", "Transport"], function (CouchDBBulkDocuments, Transport) {
+
+	var bulkDocumentsA = new CouchDBBulkDocuments([]),
+		bulkDocumentsB = new CouchDBBulkDocuments([]),
+		transport = new Transport(emily.handlers);
+
+		bulkDocumentsA.setTransport(transport);
+		bulkDocumentsB.setTransport(transport);
+
+	bulkDocumentsA.sync("test", {
+		startkey: '"document2"',
+		endkey: '"document4"'
+	})
+
+	.then(function () {
+		return bulkDocumentsB.sync("test", {
+			keys: []
+		});
+	})
+
+	.then(function () {
+		this.alter("push", {
+			"_id": "document1"
+		});
+
+		this.alter("push", {
+			"_id": "document2"
+		});
+
+		this.alter("push", {
+			"_id": "document3"
+		});
+
+		this.alter("push", {
+			"_id": "document4"
+		});
+
+
+
+	}, bulkDocumentsB, catchError)
+
+	.then(function () {
+		var self = this;
+
+		setTimeout(function () {
+		self.upload();
+
+		}, 100);
+	}, bulkDocumentsB, catchError);
 
 });
 
