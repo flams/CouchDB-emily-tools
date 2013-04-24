@@ -1040,7 +1040,6 @@ define('CouchDBBulkDocuments',["Store", "CouchDBBase", "Tools", "Promise", "Stat
 		 * @private
 		 */
 		 this.databaseUpdate = function databaseUpdate(promise) {
-console.log("upload called")
 			var docs = [],
 			_syncInfo = this.getSyncInfo();
 
