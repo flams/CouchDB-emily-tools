@@ -103,6 +103,51 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 
 /**
  * Tested workflow:
+ * couchDBDocument.sync() on a document that exists
+ * update it
+ * then upload();
+ */
+tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Transport) {
+
+	var newDocument = new CouchDBDocument,
+		existingDocument = new CouchDBDocument,
+		transport = new Transport(emily.handlers),
+		rand = Math.random() + "";
+
+	newDocument.setTransport(transport);
+	existingDocument.setTransport(transport);
+
+	newDocument.sync("test", "documentToUpdate")
+
+	.then(function () {
+		return newDocument.upload();
+	}, catchError)
+
+	.then(function () {
+		return existingDocument.sync("test", "documentToUpdate");
+	}, catchError)
+
+	.then(function () {
+		existingDocument.set("rand", rand);
+		return existingDocument.upload();
+	}, catchError)
+
+	.then(function () {
+		existingDocument.unsync();
+		return existingDocument.sync("test", "documentToUpdate");
+	}, catchError)
+
+	.then(function () {
+		if (existingDocument.get("rand") == rand) {
+			success("It can directly update an existing document");
+		}
+		return existingDocument.remove();
+	}, catchError);
+
+});
+
+/**
+ * Tested workflow:
  * sync document1 on a document
  * sync document2 on the same document
  * update document1
