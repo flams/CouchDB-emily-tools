@@ -3,9 +3,9 @@
  * The MIT License (MIT)
  * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  */
-require(["CouchDBUser", "Store", "CouchDBStore", "Transport", "Promise"],
+require(["CouchDBUser", "Store", "CouchDBDocument", "Transport", "Promise"],
 
-function (CouchDBUser, Store, CouchDBStore, Transport, Promise) {
+function (CouchDBUser, Store, CouchDBDocument, Transport, Promise) {
 
 	describe("CouchDBUserTest", function () {
 
@@ -15,8 +15,8 @@ function (CouchDBUser, Store, CouchDBStore, Transport, Promise) {
 			expect(CouchDBUser).toBeInstanceOf(Function);
 		});
 
-		it("should inherit from CouchDBStore", function () {
-			// WHY this doesn't work? expect(Object.getPrototypeOf(couchDBUser)).toBeInstanceOf(CouchDBStore)
+		it("should inherit from CouchDBDocument", function () {
+			// WHY this doesn't work? expect(Object.getPrototypeOf(couchDBUser)).toBeInstanceOf(CouchDBDocument)
 		});
 
 	});

@@ -3,7 +3,7 @@
  * The MIT License (MIT)
  * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  */
-require(["CouchDBSecurity", "CouchDBStore"], function (CouchDBSecurity, CouchDBStore) {
+require(["CouchDBSecurity", "CouchDBDocument"], function (CouchDBSecurity, CouchDBDocument) {
 
 	describe("CouchDBSecurityTest", function () {
 
@@ -13,8 +13,8 @@ require(["CouchDBSecurity", "CouchDBStore"], function (CouchDBSecurity, CouchDBS
 			expect(CouchDBSecurity).toBeInstanceOf(Function);
 		});
 
-		it("should inherit from CouchDBStore", function () {
-			//expect(Object.getPrototypeOf(couchDBSecurity)).toBeInstanceOf(CouchDBStore)
+		it("should inherit from CouchDBDocument", function () {
+			//expect(Object.getPrototypeOf(couchDBSecurity)).toBeInstanceOf(CouchDBDocument)
 		});
 
 	});

@@ -3,13 +3,13 @@
  * The MIT License (MIT)
  * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  */
-define(["CouchDBStore"],
+define(["CouchDBDocument"],
 
 /**
  * @class
- * CouchDBSecurity synchronises a CouchDBStore with _security document
+ * CouchDBSecurity synchronises a CouchDBDocument with _security document
  */
-function CouchDBSecurity(CouchDBStore) {
+function CouchDBSecurity(CouchDBDocument) {
 
 	/**
 	 * Defines CouchDBSecurity
@@ -57,7 +57,7 @@ function CouchDBSecurity(CouchDBStore) {
 	};
 
 	return function CouchDBSecurityFactory() {
-		CouchDBSecurityConstructor.prototype = new CouchDBStore;
+		CouchDBSecurityConstructor.prototype = new CouchDBDocument;
 		return new CouchDBSecurityConstructor;
 	};
 
