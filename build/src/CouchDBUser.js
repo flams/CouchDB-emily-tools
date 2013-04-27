@@ -3,14 +3,14 @@
  * The MIT License (MIT)
  * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  */
-define(["CouchDBStore", "Promise"],
+define(["CouchDBDocument", "Promise"],
 
 /**
  * @class
- * CouchDBUser synchronises a CouchDBStore with a CouchDB User.
+ * CouchDBUser synchronises a CouchDBDocument with a CouchDB User.
  * It also provides tools to ease the creation/modification of users.
  */
-function CouchDBUser(CouchDBStore, Promise) {
+function CouchDBUser(CouchDBDocument, Promise) {
 
 	/**
 	 * Defines CouchDBUser
@@ -180,7 +180,7 @@ function CouchDBUser(CouchDBStore, Promise) {
 	};
 
 	return function CouchDBUserFactory() {
-		CouchDBUserConstructor.prototype = new CouchDBStore;
+		CouchDBUserConstructor.prototype = new CouchDBDocument;
 		return new CouchDBUserConstructor;
 	};
 
