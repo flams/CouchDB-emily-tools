@@ -404,6 +404,9 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise, StateMachine) {
 					"date":"2012/01/13 12:45:56",
 					"title":"my first document",
 					"body":"in this database"
+				},
+				"doc": {
+					"_id": "document1"
 				}
 			},
 			{
@@ -413,6 +416,9 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise, StateMachine) {
 					"date":"2012/01/13 13:45:21",
 					"title":"this is a new document",
 					"body":"in the database"
+				},
+				"doc": {
+					"_id": "document2"
 				}
 			},
 			{
@@ -422,6 +428,9 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise, StateMachine) {
 					"date":"2012/01/13 21:45:12",
 					"title":"the 3rd document",
 					"body":"a change for the example"
+				},
+				"doc": {
+					"_id": "document3"
 				}
 			},
 			{
@@ -431,6 +440,9 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise, StateMachine) {
 					"date":"2012/01/13 23:37:12",
 					"title":"the 4th\'s just been added",
 					"body":"do you see me?"
+				},
+				"doc": {
+					"_id": "document4"
 				}
 			}]);
 
@@ -451,6 +463,12 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise, StateMachine) {
 			couchDBBulkDocuments = new CouchDBBulkDocuments;
 			couchDBBulkDocuments.setTransport(transportMock);
 			couchDBBulkDocuments.sync("db", {keys: ["document1", "document2"]});
+
+			couchDBBulkDocuments.reset([
+				{"id":"document1","key":"document1","value":{"rev":"1-793111e6af0ccddb08147c0be1f49843"},"doc":{"_id":"document1","_rev":"1-793111e6af0ccddb08147c0be1f49843","desc":"my first doc"}},
+				{"id":"document2","key":"document2","value":{"rev":"2-a071048ce217ff1341fb224b83417003"},"doc":{"_id":"document2","_rev":"2-a071048ce217ff1341fb224b83417003","desc":"my second document"}}
+			]);
+
 			stateMachine = couchDBBulkDocuments.getStateMachine();
 		});
 
@@ -466,24 +484,10 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise, StateMachine) {
 			expect(couchDBBulkDocuments.upload()).toBeInstanceOf(Promise);
 		});
 
-		it("should fulfill the promise on update if update ok", function () {
-			var promise = new Promise,
-				response = '{}';
-			spyOn(promise, "fulfill");
-			couchDBBulkDocuments.databaseUpdate(promise);
-			transportMock.request.mostRecentCall.args[2](response);
-			expect(promise.fulfill.wasCalled).toEqual(true);
-			expect(promise.fulfill.mostRecentCall.args[0]).toBeInstanceOf(Object);
-		});
-
 		it("should update the database on update", function () {
 			var reqData,
 				data;
 
-			couchDBBulkDocuments.reset([
-				{"id":"document1","key":"document1","value":{"rev":"1-793111e6af0ccddb08147c0be1f49843"},"doc":{"_id":"document1","_rev":"1-793111e6af0ccddb08147c0be1f49843","desc":"my first doc"}},
-				{"id":"document2","key":"document2","value":{"rev":"2-a071048ce217ff1341fb224b83417003"},"doc":{"_id":"document2","_rev":"2-a071048ce217ff1341fb224b83417003","desc":"my second document"}}
-			]);
 			couchDBBulkDocuments.databaseUpdate();
 
 			expect(transportMock.request.wasCalled).toEqual(true);
@@ -499,6 +503,38 @@ function (CouchDBBase, CouchDBBulkDocuments, Store, Promise, StateMachine) {
 			expect(data.docs[0]._id).toEqual("document1");
 			expect(data.docs[1]._id).toEqual("document2");
 
+		});
+
+		it("should fulfill the promise on update if update ok", function () {
+			var promise = new Promise,
+				response = '[{}, {}]';
+			spyOn(promise, "fulfill");
+			couchDBBulkDocuments.databaseUpdate(promise);
+			transportMock.request.mostRecentCall.args[2].call(couchDBBulkDocuments, response);
+			expect(promise.fulfill.wasCalled).toEqual(true);
+			expect(promise.fulfill.mostRecentCall.args[0]).toBeInstanceOf(Object);
+		});
+
+		it("should update the revision ids on update", function() {
+			var promise = new Promise,
+				response = '[{"ok":true,"id":"document1","rev":"9-0c29f3ff80cdf5234680c1f670653388"},' +
+					'{"ok":true,"id":"document2","rev":"15-adb686558eb1608bb9742ae24f6e0feb"}]'
+
+			couchDBBulkDocuments.databaseUpdate(promise);
+			transportMock.request.mostRecentCall.args[2].call(couchDBBulkDocuments, response);
+
+			expect(couchDBBulkDocuments.get(0).doc._rev).toBe("9-0c29f3ff80cdf5234680c1f670653388");
+			expect(couchDBBulkDocuments.get(1).doc._rev).toBe("15-adb686558eb1608bb9742ae24f6e0feb");
+		});
+
+		it("shouldn't update the revision ids if the update is not successfull", function() {
+			var promise = new Promise,
+				response = '[{"id":"document1","error":"conflict","reason":"Document update conflict."}, {}]';
+
+			couchDBBulkDocuments.databaseUpdate(promise);
+			transportMock.request.mostRecentCall.args[2].call(couchDBBulkDocuments, response);
+
+			expect(couchDBBulkDocuments.get(0).doc._rev).toBe("1-793111e6af0ccddb08147c0be1f49843");
 		});
 
 	});
