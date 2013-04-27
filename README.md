@@ -18,9 +18,9 @@ var emily = require("emily"),
 
 emily.handlers.set("CouchDB", tools.handler);
 
-tools.requirejs(["CouchDBStore", "Transport"], function (CouchDBStore, Transport) {
+tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Transport) {
 
-	var cdb = new CouchDBStore,
+	var cdb = new CouchDBDocument,
 		transport = new Transport(emily.handlers);
 
 	cdb.setTransport(transport);
@@ -67,10 +67,10 @@ And on the client side:
 ```
 
 ```js
-requirejs(["CouchDBStore", "SocketIOTransport"], function (CouchDBStore, SocketIOTransport) {
+requirejs(["CouchDBDocument", "SocketIOTransport"], function (CouchDBDocument, SocketIOTransport) {
 
 	var socket = io.connect("http://localhost"),
-		cdb = new CouchDBStore,
+		cdb = new CouchDBDocument,
 		transport = new SocketIOTransport(socket);
 
 	cdb.setTransport(transport);
