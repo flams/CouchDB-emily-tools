@@ -46,9 +46,9 @@
 
 <span class="nx">emily</span><span class="p">.</span><span class="nx">handlers</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">"CouchDB"</span><span class="p">,</span> <span class="nx">tools</span><span class="p">.</span><span class="nx">handler</span><span class="p">);</span>
 
-<span class="nx">tools</span><span class="p">.</span><span class="nx">requirejs</span><span class="p">([</span><span class="s2">"CouchDBStore"</span><span class="p">,</span> <span class="s2">"Transport"</span><span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">CouchDBStore</span><span class="p">,</span> <span class="nx">Transport</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">tools</span><span class="p">.</span><span class="nx">requirejs</span><span class="p">([</span><span class="s2">"CouchDBDocument"</span><span class="p">,</span> <span class="s2">"Transport"</span><span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">CouchDBDocument</span><span class="p">,</span> <span class="nx">Transport</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="kd">var</span> <span class="nx">cdb</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">CouchDBStore</span><span class="p">,</span>
+    <span class="kd">var</span> <span class="nx">cdb</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">CouchDBDocument</span><span class="p">,</span>
         <span class="nx">transport</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Transport</span><span class="p">(</span><span class="nx">emily</span><span class="p">.</span><span class="nx">handlers</span><span class="p">);</span>
 
     <span class="nx">cdb</span><span class="p">.</span><span class="nx">setTransport</span><span class="p">(</span><span class="nx">transport</span><span class="p">);</span>
@@ -91,10 +91,10 @@ In future implementations, redis store will probably be optional and an adapter 
 <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"CouchDBTools.js"</span> <span class="nt">/&gt;</span>
 </pre></div>
 
-<div class="highlight"><pre><span class="nx">requirejs</span><span class="p">([</span><span class="s2">"CouchDBStore"</span><span class="p">,</span> <span class="s2">"SocketIOTransport"</span><span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">CouchDBStore</span><span class="p">,</span> <span class="nx">SocketIOTransport</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><span class="nx">requirejs</span><span class="p">([</span><span class="s2">"CouchDBDocument"</span><span class="p">,</span> <span class="s2">"SocketIOTransport"</span><span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">CouchDBDocument</span><span class="p">,</span> <span class="nx">SocketIOTransport</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="kd">var</span> <span class="nx">socket</span> <span class="o">=</span> <span class="nx">io</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="s2">"http://localhost"</span><span class="p">),</span>
-        <span class="nx">cdb</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">CouchDBStore</span><span class="p">,</span>
+        <span class="nx">cdb</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">CouchDBDocument</span><span class="p">,</span>
         <span class="nx">transport</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SocketIOTransport</span><span class="p">(</span><span class="nx">socket</span><span class="p">);</span>
 
     <span class="nx">cdb</span><span class="p">.</span><span class="nx">setTransport</span><span class="p">(</span><span class="nx">transport</span><span class="p">);</span>
@@ -108,7 +108,16 @@ In future implementations, redis store will probably be optional and an adapter 
 
 <h2>Changelog</h2>
 
-<h3>1.0.6 - 27 MAR 2013</h3>
+<h3>2.0.0 - 27 APR 2013</h3>
+
+<ul>
+<li>Complete refactor of the tools. Documents, BulkDocuments and Views are in distinct files.</li>
+<li>Fixed bugs in document creation/update</li>
+<li>Fixed bulk docs not updating the rev id after upload</li>
+<li>document.remove also returns a promise</li>
+<li>When a document doesn't exist, the promise is now fulfilled instead of rejected</li>
+<li>CouchDBStore doesn't exist anymore, a specific CouchDBView, CouchDBDocument or CouchDBBulkDocuments must be used instead</li>
+</ul><h3>1.0.6 - 27 MAR 2013</h3>
 
 <ul>
 <li>Aborting a non established connection doesn't fail anymore</li>
