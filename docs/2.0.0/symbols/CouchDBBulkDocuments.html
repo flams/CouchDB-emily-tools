@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - CouchDBStore</title>
+		<title>JsDoc Reference - CouchDBBulkDocuments</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -199,8 +199,6 @@ ul.inheritsList
 	
 	<li><a href="../symbols/CouchDBSecurity.html">CouchDBSecurity</a></li>
 	
-	<li><a href="../symbols/CouchDBStore.html">CouchDBStore</a></li>
-	
 	<li><a href="../symbols/CouchDBUser.html">CouchDBUser</a></li>
 	
 	<li><a href="../symbols/CouchDBView.html">CouchDBView</a></li>
@@ -214,7 +212,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class CouchDBStore
+				Class CouchDBBulkDocuments
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -222,17 +220,16 @@ ul.inheritsList
 				
 				
 			
-				CouchDBStore synchronises a Store with a CouchDB view or document
-It subscribes to _changes to keep its data up to date.
+				CouchDBBulkDocuments synchronizes a Store with a bulk of CouchDB documents
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_CouchDBStore.js.html">CouchDBStore.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_CouchDBBulkDocuments.js.html">CouchDBBulkDocuments.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class CouchDBStore.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class CouchDBBulkDocuments.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -245,7 +242,7 @@ It subscribes to _changes to keep its data up to date.
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/CouchDBStore.html#constructor">CouchDBStore</a></b>(Store, StateMachine, Tools, Promise)
+								<b><a href="../symbols/CouchDBBulkDocuments.html#constructor">CouchDBBulkDocuments</a></b>(Store, CouchDBBase, Tools, Promise, StateMachine)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -261,7 +258,7 @@ It subscribes to _changes to keep its data up to date.
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class CouchDBStore.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class CouchDBBulkDocuments.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -272,57 +269,20 @@ It subscribes to _changes to keep its data up to date.
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&lt;inner&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#-CouchDBStoreConstructor">CouchDBStoreConstructor</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/CouchDBBulkDocuments.html#setSyncInfo">setSyncInfo</a></b>(database, query)
 								</div>
-								<div class="description">Defines the CouchDBStore</div>
+								<div class="description">Set the synchronization data if valid data is supplied</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#remove">remove</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/CouchDBBulkDocuments.html#upload">upload</a></b>()
 								</div>
-								<div class="description">Remove the document from the database</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#setTransport">setTransport</a></b>(transport)
-								</div>
-								<div class="description">The transport object to use</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#sync">sync</a></b>(database, view)
-								</div>
-								<div class="description">Synchronize the store with a view</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#unsync">unsync</a></b>()
-								</div>
-								<div class="description">Unsync a store.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#upload">upload</a></b>()
-								</div>
-								<div class="description">Upload the document to the database
-Works for CouchDBStore that are synchronized with documents or bulk of documents.</div>
+								<div class="description">Upload the document to the database</div>
 							</td>
 						</tr>
 					
@@ -343,7 +303,7 @@ Works for CouchDBStore that are synchronized with documents or bulk of documents
 				</div>
 				
 				<div class="fixedFont">
-						<b>CouchDBStore</b>(Store, StateMachine, Tools, Promise)
+						<b>CouchDBBulkDocuments</b>(Store, CouchDBBase, Tools, Promise, StateMachine)
 				</div>
 				
 				<div class="description">
@@ -365,7 +325,7 @@ Works for CouchDBStore that are synchronized with documents or bulk of documents
 								<dd></dd>
 						
 							<dt>
-								 <b>StateMachine</b>
+								 <b>CouchDBBase</b>
 								
 							</dt>
 								<dd></dd>
@@ -378,6 +338,12 @@ Works for CouchDBStore that are synchronized with documents or bulk of documents
 						
 							<dt>
 								 <b>Promise</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								 <b>StateMachine</b>
 								
 							</dt>
 								<dd></dd>
@@ -403,122 +369,15 @@ Works for CouchDBStore that are synchronized with documents or bulk of documents
 					Method Detail
 				</div>
 				
-					<a name="-CouchDBStoreConstructor"> </a>
-					<div class="fixedFont">&lt;inner&gt; 
-					
-					<span class="light">{CouchDBStoreConstructor}</span>
-					<b>CouchDBStoreConstructor</b>()
-					
-					</div>
-					<div class="description">
-						Defines the CouchDBStore
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{CouchDBStoreConstructor}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="remove"> </a>
+					<a name="setSyncInfo"> </a>
 					<div class="fixedFont">
 					
-					
-					<b>remove</b>()
-					
-					</div>
-					<div class="description">
-						Remove the document from the database
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>true if remove called</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="setTransport"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Boolean}</span>
-					<b>setTransport</b>(transport)
+					<span class="light">{Object}</span>
+					<b>setSyncInfo</b>(database, query)
 					
 					</div>
 					<div class="description">
-						The transport object to use
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>transport</b>
-									
-								</dt>
-								<dd>the transport object</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Boolean}</span> true if</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="sync"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Boolean}</span>
-					<b>sync</b>(database, view)
-					
-					</div>
-					<div class="description">
-						Synchronize the store with a view
+						Set the synchronization data if valid data is supplied
 						
 						
 					</div>
@@ -533,19 +392,13 @@ Works for CouchDBStore that are synchronized with documents or bulk of documents
 									<span class="light fixedFont">{String}</span> <b>database</b>
 									
 								</dt>
-								<dd>the name of the database where to get...</dd>
+								<dd>the database to sync with</dd>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>...design</b>
+									<span class="light fixedFont">{Object}</span> <b>query</b>
 									
 								</dt>
-								<dd>the design document, in which...</dd>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>view</b>
-									
-								</dt>
-								<dd>...the view is.</dd>
+								<dd>an object with queryparams</dd>
 							
 							</dl>
 						
@@ -556,41 +409,7 @@ Works for CouchDBStore that are synchronized with documents or bulk of documents
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Boolean}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="unsync"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>unsync</b>()
-					
-					</div>
-					<div class="description">
-						Unsync a store. Unsync must be called prior to resynchronization.
-That will prevent any unwanted resynchronization.
-Notice that previous data will still be available.
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd></dd>
+								<dd><span class="light fixedFont">{Object}</span> syncInfo if valid, false if not</dd>
 							
 							</dl>
 						
@@ -602,15 +421,12 @@ Notice that previous data will still be available.
 					<a name="upload"> </a>
 					<div class="fixedFont">
 					
-					
+					<span class="light">{Promise}</span>
 					<b>upload</b>()
 					
 					</div>
 					<div class="description">
 						Upload the document to the database
-Works for CouchDBStore that are synchronized with documents or bulk of documents.
-If synchronized with a bulk of documents, you can set the documents to delete _deleted property to true.
-No modification can be done on views.
 						
 						
 					</div>
@@ -625,7 +441,7 @@ No modification can be done on views.
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd>true if upload called</dd>
+								<dd><span class="light fixedFont">{Promise}</span> </dd>
 							
 							</dl>
 						
@@ -646,7 +462,7 @@ No modification can be done on views.
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sat Apr 06 2013 17:46:31 GMT+0100 (BST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sat Apr 27 2013 15:51:50 GMT+0100 (BST)
 		</div>
 	</body>
 </html>
