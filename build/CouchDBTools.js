@@ -457,7 +457,7 @@ define('CouchDBDocument',["Store", "CouchDBBase", "Tools", "Promise", "StateMach
 		 * Put a new document in CouchDB
 		 * @private
 		 */
-		 this.databaseCreate = function createDocument(promise) {
+		 this.databaseCreate = function databaseCreate(promise) {
 
 			var _syncInfo = this.getSyncInfo();
 
@@ -489,7 +489,7 @@ define('CouchDBDocument',["Store", "CouchDBBase", "Tools", "Promise", "StateMach
 		 * Update a document in CouchDB through a PUT request
 		 * @private
 		 */
-		 this.databaseUpdate = function updateDatabase(promise) {
+		 this.databaseUpdate = function databaseUpdate(promise) {
 
 			var _syncInfo = this.getSyncInfo();
 
@@ -519,7 +519,7 @@ define('CouchDBDocument',["Store", "CouchDBBase", "Tools", "Promise", "StateMach
 		 * Remove a document from CouchDB through a DELETE request
 		 * @private
 		 */
-		 this.databaseRemove = function removeFromDatabase(promise) {
+		 this.databaseRemove = function databaseRemove(promise) {
 
 			var _syncInfo = this.getSyncInfo();
 
@@ -1058,8 +1058,14 @@ define('CouchDBBulkDocuments',["Store", "CouchDBBase", "Tools", "Promise", "Stat
 					data: JSON.stringify({"docs": docs})
 				},
 				function (response) {
-					promise.fulfill(JSON.parse(response));
-				});
+					var updates = JSON.parse(response);
+					this.loop(function (doc, idx) {
+						if (updates[idx].ok) {
+							doc.doc._rev = updates[idx].rev;
+						}
+					});
+					promise.fulfill(updates);
+				}, this);
 		 };
 
 		/**

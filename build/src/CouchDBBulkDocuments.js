@@ -215,8 +215,14 @@ define(["Store", "CouchDBBase", "Tools", "Promise", "StateMachine"],
 					data: JSON.stringify({"docs": docs})
 				},
 				function (response) {
-					promise.fulfill(JSON.parse(response));
-				});
+					var updates = JSON.parse(response);
+					this.loop(function (doc, idx) {
+						if (updates[idx].ok) {
+							doc.doc._rev = updates[idx].rev;
+						}
+					});
+					promise.fulfill(updates);
+				}, this);
 		 };
 
 		/**

@@ -167,7 +167,7 @@ define(["Store", "CouchDBBase", "Tools", "Promise", "StateMachine"],
 		 * Put a new document in CouchDB
 		 * @private
 		 */
-		 this.databaseCreate = function createDocument(promise) {
+		 this.databaseCreate = function databaseCreate(promise) {
 
 			var _syncInfo = this.getSyncInfo();
 
@@ -199,7 +199,7 @@ define(["Store", "CouchDBBase", "Tools", "Promise", "StateMachine"],
 		 * Update a document in CouchDB through a PUT request
 		 * @private
 		 */
-		 this.databaseUpdate = function updateDatabase(promise) {
+		 this.databaseUpdate = function databaseUpdate(promise) {
 
 			var _syncInfo = this.getSyncInfo();
 
@@ -229,7 +229,7 @@ define(["Store", "CouchDBBase", "Tools", "Promise", "StateMachine"],
 		 * Remove a document from CouchDB through a DELETE request
 		 * @private
 		 */
-		 this.databaseRemove = function removeFromDatabase(promise) {
+		 this.databaseRemove = function databaseRemove(promise) {
 
 			var _syncInfo = this.getSyncInfo();
 

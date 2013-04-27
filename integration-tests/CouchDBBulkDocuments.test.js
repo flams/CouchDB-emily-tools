@@ -32,6 +32,8 @@ function success(message) {
  * Unsync the store with the 4 docs (A)
  * Resync it (A) with specifically 3 of the docs
  * Make sure that they are present
+ * Remove all documents
+ * Make sure they have all been removed
  */
 tools.requirejs(["CouchDBBulkDocuments", "Transport"], function (CouchDBBulkDocuments, Transport) {
 
@@ -50,7 +52,7 @@ tools.requirejs(["CouchDBBulkDocuments", "Transport"], function (CouchDBBulkDocu
 	.then(function () {
 
 		this.watch("added", function (id, document) {
-			success(document.id, "added");
+			success(document.id + " added");
 		}, this);
 
 	}, bulkDocumentsB, catchError)
@@ -92,9 +94,6 @@ tools.requirejs(["CouchDBBulkDocuments", "Transport"], function (CouchDBBulkDocu
 			}
 		});
 
-	}, bulkDocumentsA, catchError)
-
-	.then(function () {
 		return this.upload();
 	}, bulkDocumentsA, catchError)
 
@@ -102,6 +101,41 @@ tools.requirejs(["CouchDBBulkDocuments", "Transport"], function (CouchDBBulkDocu
 		if (this.count() == 3) {
 			success("It can synchronize on a range of documents");
 		}
+	}, bulkDocumentsB, catchError)
+
+	.then(function () {
+		this.unsync();
+
+		return this.sync("test", {
+			keys: ["document2", "document3", "document5"]
+		});
+	}, bulkDocumentsB, catchError)
+
+	.then(function () {
+		if (this.count() == 3 &&
+			this.get(2).id == "document5") {
+			success("It can synchronize on given documents");
+		}
+	}, bulkDocumentsB, catchError)
+
+	.then(function () {
+
+		this.loop(function (document) {
+			document.doc._deleted = true;
+		}, this);
+
+		return this.upload();
+	}, bulkDocumentsA, catchError)
+
+	.then(function () {
+		var self = this;
+		// We wait a bit for this document to be updated
+		// We could also simply whatch the remove event but this was easier
+		setTimeout(function () {
+			if (!self.count()) {
+				success("It can remove all of the documents");
+			}
+		}, 100);
 	}, bulkDocumentsB, catchError);
 
 });
