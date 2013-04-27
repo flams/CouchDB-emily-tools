@@ -84,13 +84,14 @@ requirejs(["CouchDBStore", "SocketIOTransport"], function (CouchDBStore, SocketI
 
 ## Changelog
 
-###1.1.0 - pending
+###2.0.0 - 27 APR 2013
 
 * Complete refactor of the tools. Documents, BulkDocuments and Views are in distinct files.
 * Fixed bugs in document creation/update
 * Fixed bulk docs not updating the rev id after upload
 * document.remove also returns a promise
 * When a document doesn't exist, the promise is now fulfilled instead of rejected
+* CouchDBStore doesn't exist anymore, a specific CouchDBView, CouchDBDocument or CouchDBBulkDocuments must be used instead
 
 ###1.0.6 - 27 MAR 2013
 
