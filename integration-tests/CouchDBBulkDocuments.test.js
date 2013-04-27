@@ -42,13 +42,21 @@ tools.requirejs(["CouchDBBulkDocuments", "Transport"], function (CouchDBBulkDocu
 		bulkDocumentsA.setTransport(transport);
 		bulkDocumentsB.setTransport(transport);
 
-	bulkDocumentsA.sync("test", {
+	bulkDocumentsB.sync("test", {
 		startkey: '"document2"',
 		endkey: '"document4"'
 	})
 
 	.then(function () {
-		return bulkDocumentsB.sync("test", {
+
+		this.watch("added", function (id, document) {
+			success(document.id, "added");
+		}, this);
+
+	}, bulkDocumentsB, catchError)
+
+	.then(function () {
+		return bulkDocumentsA.sync("test", {
 			keys: []
 		});
 	})
@@ -78,16 +86,22 @@ tools.requirejs(["CouchDBBulkDocuments", "Transport"], function (CouchDBBulkDocu
 			}
 		});
 
-	}, bulkDocumentsB, catchError)
+		this.alter("push", {
+			doc: {
+				"_id": "document5"
+			}
+		});
+
+	}, bulkDocumentsA, catchError)
 
 	.then(function () {
-		var self = this;
+		return this.upload();
+	}, bulkDocumentsA, catchError)
 
-		setTimeout(function () {
-			success(self.toJSON())
-		self.upload();
-
-		}, 100);
+	.then(function () {
+		if (this.count() == 3) {
+			success("It can synchronize on a range of documents");
+		}
 	}, bulkDocumentsB, catchError);
 
 });
