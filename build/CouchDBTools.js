@@ -925,8 +925,8 @@ define('CouchDBBulkDocuments',["Store", "CouchDBBase", "Tools", "Promise", "Stat
 					throw new Error("CouchDBBulkDocuments.sync(\"" + _syncInfo.database + "\", " + errorString + ") failed: " + results);
 				} else {
 					this.reset(json.rows);
-					this.getPromise().fulfill(this);
 					this.getStateMachine().event("listen");
+					this.getPromise().fulfill(this);
 				}
 			}, this);
 		};
@@ -1068,7 +1068,6 @@ define('CouchDBBulkDocuments',["Store", "CouchDBBase", "Tools", "Promise", "Stat
 		 */
 		 this.upload = function upload() {
 			var promise = new Promise;
-			console.log(this.getStateMachine().getCurrent())
 			this.getStateMachine().event("upload", promise);
 			return promise;
 		 };
