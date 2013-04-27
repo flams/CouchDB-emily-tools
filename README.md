@@ -88,12 +88,9 @@ requirejs(["CouchDBStore", "SocketIOTransport"], function (CouchDBStore, SocketI
 
 * Complete refactor of the tools. Documents, BulkDocuments and Views are in distinct files.
 * Fixed bugs in document creation/update
+* Fixed bulk docs not updating the rev id after upload
 * document.remove also returns a promise
 * When a document doesn't exist, the promise is now fulfilled instead of rejected
-
-####Known issues:
-
-If a document is removed directly (within a few milliseconds) after a document is updated (same doc or another), a CouchDB view may remove it first and then add it back. I'm trying to find a solution to this situation
 
 ###1.0.6 - 27 MAR 2013
 
