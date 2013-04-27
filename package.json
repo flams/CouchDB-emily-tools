@@ -1,7 +1,7 @@
 {
  "name": "couchdb-emily-tools",
  "description": "Complete set of tools for synchronizing an observable key/value stores with CouchDB documents, views, and managing users or security documents. Works both in the browser and in node.js",
- "version": "1.0.6",
+ "version": "2.0.0",
  "homepage": "http://flams.github.com/CouchDB-emily-tools/",
  "licenses": [{
   "type":"MIT",
