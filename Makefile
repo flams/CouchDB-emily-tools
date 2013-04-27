@@ -43,7 +43,7 @@ docs: clean-docs
 		-d=docs/latest/ \
 		-t=tools/JsDoc/templates/jsdoc
 
-tests: tests-unit tests-integration
+tests: tests-unit
 
 tests-unit: clean-temp temp.js
 	java -jar $(JsTestDriver) \
