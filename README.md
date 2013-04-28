@@ -84,9 +84,13 @@ requirejs(["CouchDBDocument", "SocketIOTransport"], function (CouchDBDocument, S
 
 ## Changelog
 
+###2.0.1 - pending
+
+* #11 - can't synchronize if a document is 'too big'
+
 ###2.0.0 - 27 APR 2013
 
-* Complete refactor of the tools. Documents, BulkDocuments and Views are in distinct files.
+* Complete refactoring of the tools. Documents, BulkDocuments and Views are in distinct files.
 * Fixed bugs in document creation/update
 * Fixed bulk docs not updating the rev id after upload
 * document.remove also returns a promise
