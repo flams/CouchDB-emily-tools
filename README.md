@@ -2,6 +2,8 @@
 
 CouchDB Emily tools synchronizes an Emily key/value observable store with a couchDB document, view or bulk of documents. It can further manipulate CouchDB User and Security documents.
 
+###
+
 Synchronizing a CouchDBDocument to an existing document is as easy as:
 
 ```js
@@ -22,6 +24,8 @@ Synchronizing a CouchDBDocument to an existing document is as easy as:
 
 ####In node.js
 
+CouchDB Emily Tools is based on Emily
+
 ```bash
 npm install emily couchdb-emily-tools
 ```
@@ -30,8 +34,10 @@ npm install emily couchdb-emily-tools
 var emily = require("emily"),
 	tools = require("couchdb-emily-tools");
 
+// Add the CouchDB handler to Emily. The handler is what issues the requests to CouchDB
 emily.handlers.set("CouchDB", tools.handler);
 
+// Now we can require and use the CouchDB Tools, here's an example with a document.
 tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Transport) {
 
 	var cdb = new CouchDBDocument,
@@ -83,13 +89,19 @@ And on the client side:
 ```js
 requirejs(["CouchDBDocument", "SocketIOTransport"], function (CouchDBDocument, SocketIOTransport) {
 
+	// Create a socket.io socket
 	var socket = io.connect("http://localhost"),
-		cdb = new CouchDBDocument,
-		transport = new SocketIOTransport(socket);
+
+	// Create a couchDBDocument
+	cdb = new CouchDBDocument,
+
+	// And the transport that will issue the requests to CouchDB
+	transport = new SocketIOTransport(socket);
 
 	cdb.setTransport(transport);
 
 	cdb.sync("mydatabase", "mydocument")
+
 	.then(function () {
 		console.log(cdb.toJSON());
 	});
