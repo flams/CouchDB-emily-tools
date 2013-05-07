@@ -43,6 +43,23 @@ Synchronizing a CouchDBDocument to an existing document is as easy as:
 	.then(function () {
 		// Will return the structure of the document exactly as it exists in the database
 		couchDBDocument.toJSON();
+	})
+
+	.then(function () {
+
+		couchDBDocument.set("myProperty", "hello");
+
+		return couchDBDocument.upload();
+
+	})
+
+	.then(function () {
+
+		// At this point, the document has been updated in CouchDB with a new property
+		couchDBDocument.toJSON(); // Will have a myProperty property
+
+		// and we can now remove the document from CouchDB if we want.
+		couchDBDocument.remove();
 	});
 ```
 
