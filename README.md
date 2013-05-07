@@ -2,7 +2,33 @@
 
 CouchDB Emily tools synchronizes an Emily key/value observable store with a couchDB document, view or bulk of documents. It can further manipulate CouchDB User and Security documents.
 
-###
+It can manipulate CouchDB documents:
+
+* Get a CouchDB document and save it in a JavaScript object
+* Update the JavaScript object when the document is updated in the database
+* Upload a modified document to the database
+* Create a document
+* Remove a document
+* publishes events when a property on the JavaScript object is added/removed/updated
+
+It can manipulate CouchDB views:
+
+* Get a CouchDB view and save it in a JavaScript array
+* Update the JavaScript array when a document is added or removed from the databae
+* Update the JavaScript array when a document is updated in the database
+* publishes events when a document on the JavaScript array is added/removed/updated
+
+It can manupulate CouchDB bulk documents:
+
+* Get a CouchDB bulk of documents and save it in a JavaScript array
+* Update the JavaScript array when a document is added or removed from the databae
+* Update the JavaScript array when a document is updated in the database
+* Update the database when one of the documents is updated
+* Add or remove documents in the database when they are add or removed from the JavaScript array
+* publishes events when a document on the JavaScript array is added/removed/updated
+
+In other words, CouchDB emily tools will reflect the status of your CouchDB in observable JavaScript data stores, and you can subscribe to their changes to update the views.
+
 
 Synchronizing a CouchDBDocument to an existing document is as easy as:
 
