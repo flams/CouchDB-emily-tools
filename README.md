@@ -151,6 +151,59 @@ requirejs(["CouchDBDocument", "SocketIOTransport"], function (CouchDBDocument, S
 });
 ```
 
+##API
+
+After you've installed CouchDB Emily tools for user either on the server or the client side, you are ready to play with it. To cope with the asynchronous nature of database operations, CouchDB Emily Tools returns a new promise for each asynchronous method calls, such as 'sync', 'upload' or 'remove'.
+
+As the tools are based on Emily, the promises are completely compliant with the Promise/A+ specs, so you know how they work. The only extra feature that is added to Promise/A+ is the ability to give an extra scope the fulfillment/error callbacks. All the above examples are valid:
+
+```js
+couchDBDocument.sync("database", "document")
+
+.then(this.onSuccess, this);
+
+// or
+.then(this.onSuccess, this.onError);
+
+// or
+.then(this.onSuccess, this, this.onError);
+
+// or
+.then(this.onSuccess, this, this.onError, this);
+
+// or
+.then(this.onSuccess, this.onError, this);
+```
+
+Also, when a handler returns a new promise, the current promise will be resolved when the new one does.
+This basically allows you nicely chain operations on a couchDB tool, such as:
+
+```js
+newDocument.sync("database", "newDocument")
+
+.then(function () {
+	// Creates the document
+	return this.upload();
+}, newDocument)
+
+.then(function () {
+	// Updates the document
+	this.set("property", "hello");
+	return this.upload();
+}, newDocument)
+
+.then(function () {
+	// Removes the document
+	this.remove();
+}, newDocument);
+```
+
+##CouchDBDocument API
+
+##CouchDBView API
+
+##CouchDBBulkDocuments API
+
 ## Changelog
 
 ####2.0.0 - 27 APR 2013
