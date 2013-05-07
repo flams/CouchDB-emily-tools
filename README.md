@@ -99,7 +99,7 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 
 ###On the client side
 
-CouchDB-emily-tools requires Olives to work on the client side. Olives embedds Emily for you.
+CouchDB-emily-tools requires Olives to work on the client side. Olives embeds Emily for you.
 It also expects you to have socket.io installed, and a store for storing sessions, like redis store.
 In future implementations, redis store will probably be optional and an adapter will be accepted to any other store.
 [An example can be found in the suggestions application](https://github.com/podefr/suggestions/blob/master/server.js)
@@ -153,9 +153,9 @@ requirejs(["CouchDBDocument", "SocketIOTransport"], function (CouchDBDocument, S
 
 ##API
 
-After you've installed CouchDB Emily tools for user either on the server or the client side, you are ready to play with it. To cope with the asynchronous nature of database operations, CouchDB Emily Tools returns a new promise for each asynchronous method calls, such as 'sync', 'upload' or 'remove'.
+After you've installed CouchDB Emily tools for use either on the server or the client side, you are ready to play with it. To cope with the asynchronous nature of database operations, CouchDB Emily Tools returns a new promise for each asynchronous method call, such as 'sync', 'upload' or 'remove'.
 
-As the tools are based on Emily, the promises are completely compliant with the Promise/A+ specs, so you know how they work. The only extra feature that is added to Promise/A+ is the ability to give an extra scope the fulfillment/error callbacks. All the above examples are valid:
+As the tools are based on Emily, the promises are completely compliant with the Promise/A+ specs, so you know how they work. The only extra feature that is added to Promise/A+ is the ability to give an extra scope to the fulfillment/error callbacks. All the examples below are valid:
 
 ```js
 couchDBDocument.sync("database", "document")
