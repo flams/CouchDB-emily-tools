@@ -97,7 +97,7 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 });
 ```
 
-###On the client side
+####On the client side
 
 CouchDB-emily-tools requires Olives to work on the client side. Olives embeds Emily for you.
 It also expects you to have socket.io installed, and a store for storing sessions, like redis store.
@@ -202,7 +202,7 @@ newDocument.sync("database", "newDocument")
 
 CouchDBDocument is designed to allow you to perform all of the operations that are possible using standard HTTP requests.
 
-### Creating a CouchDBDocument
+#### Creating a CouchDBDocument
 
 ```js
 tools.requirejs(["CouchDBDocument", "transport"], function (CouchDBDocument, transport) {
@@ -216,13 +216,13 @@ tools.requirejs(["CouchDBDocument", "transport"], function (CouchDBDocument, tra
 });
 ```
 
-### Synchronizing with a document
+#### Synchronizing with a document
 
 ```js
 couchDBDocument.sync("myDatabase", "myDocument").then(...);
 ```
 
-###Synchronizing with a document with extra parameters, like a previous revision
+#### Synchronizing with a document with extra parameters, like a previous revision
 
 You just have to add an extra JSON object that will be serialized to look like:
 
@@ -234,7 +234,7 @@ couchDBDocument.sync("myDatabase", "myDocument", {
 }).then(...);
 ```
 
-### Creating a new document
+#### Creating a new document
 
 ```js
 couchDBDocument.sync("myDatabase", "newDocument").then(function () {
@@ -242,7 +242,7 @@ couchDBDocument.sync("myDatabase", "newDocument").then(function () {
 }, couchDBDocument);
 ```
 
-### Removing an existing document
+#### Removing an existing document
 
 ```js
 couchDBDocument.sync("myDatabase", "oldDocument").then(function () {
@@ -250,7 +250,7 @@ couchDBDocument.sync("myDatabase", "oldDocument").then(function () {
 }, couchDBDocument);
 ```
 
-### Updating an existing document
+#### Updating an existing document
 
 ```js
 couchDBDocument.sync("myDatabase", "oldDocument").then(function () {
@@ -259,7 +259,7 @@ couchDBDocument.sync("myDatabase", "oldDocument").then(function () {
 }, couchDBDocument);
 ```
 
-### Unsynchronizing a synchronized document so it can be synchronized with another doc
+#### Unsynchronizing a synchronized document so it can be synchronized with another doc
 
 ```js
 couchDBDocument.sync("myDatabase", "oldDocument").then(funciton () {
@@ -269,7 +269,7 @@ couchDBDocument.sync("myDatabase", "oldDocument").then(funciton () {
 couchDBDocument.sync("myDatabase", "otherDocument").then(...);
 ```
 
-### Listening for changes on a document
+#### Listening for changes on a document
 
 couchDBDocuments are a subtype of Emily's Store, so they publish events. When a document is updated in CouchDB, the changes are reflected in all synchronized CouchDBDocument.
 
@@ -286,15 +286,13 @@ documentB.sync("myDatabase", "myDocument").then(function () {
 }, documentB);
 ```
 
-### Attachements
+#### Attachements
 
 Attachements are not yet supported, but if you clap your hands enough, it will eventually come :)
 
 ##CouchDBView API
 
-### Synchronizing with a view on a database
-
-### Creating a CouchDBView
+#### Creating a CouchDBView
 
 ```js
 tools.requirejs(["CouchDBView", "transport"], function (CouchDBView, transport) {
@@ -308,7 +306,7 @@ tools.requirejs(["CouchDBView", "transport"], function (CouchDBView, transport) 
 });
 ```
 
-### Synchronizing with a CouchDB View
+#### Synchronizing with a CouchDB View
 
 ```js
 couchDBView.sync("myDatabase", "myDesignDocument", "_view/myView").then(...);
