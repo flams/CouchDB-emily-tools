@@ -200,7 +200,7 @@ newDocument.sync("database", "newDocument")
 
 ##CouchDBDocument API
 
-CouchDBDocument is design to allow you to perform all of the operations that would be otherwise possible using HTTP requests. It abstracts all of them in an easier to read manner so it all comes down to configuration.
+CouchDBDocument is designed to allow you to perform all of the operations that are possible using standard HTTP requests.
 
 ### Synchronizing with a document
 
@@ -208,7 +208,11 @@ CouchDBDocument is design to allow you to perform all of the operations that wou
 couchDBDocument.sync("myDatabase", "myDocument").then(...);
 ```
 
-###Synchronizing with a document with extra parameters, like a previous revision:
+###Synchronizing with a document with extra parameters, like a previous revision
+
+You just have to add an extra JSON object that will be serialized to look like:
+
+?rev=49-2eafd494d37475e4a2ca7255f6e582f2
 
 ```js
 couchDBDocument.sync("myDatabase", "myDocument", {
@@ -241,7 +245,7 @@ couchDBDocument.sync("myDatabase", "oldDocument").then(function () {
 }, couchDBDocument);
 ```
 
-### Unsynchronizing a synchronized document so it can be synchroznize with anoter doc
+### Unsynchronizing a synchronized document so it can be synchroznized with anoter doc
 
 ```js
 couchDBDocument.sync("myDatabase", "oldDocument").then(funciton () {
@@ -253,7 +257,7 @@ couchDBDocument.sync("myDatabase", "otherDocument").then(...);
 
 ### Listening for changes on a document
 
-couchDBDocuments are a subtype of Emily's Store, so they publish events. When a document is updated in CouchDB, then changes will be reflected in all synchronized CouchDBDocument.
+couchDBDocuments are a subtype of Emily's Store, so they publish events. When a document is updated in CouchDB, the changes are reflected in all synchronized CouchDBDocument.
 
 ```js
 documentA.sync("myDatabase", "myDocument").then(function () {
@@ -270,9 +274,7 @@ documentB.sync("myDatabase", "myDocument").then(function () {
 
 ### Attachements
 
-Attachements are not yet supported, but if clap your hands enough, it will eventually come :)
-
-
+Attachements are not yet supported, but if you clap your hands enough, it will eventually come :)
 
 ##CouchDBView API
 
