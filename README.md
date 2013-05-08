@@ -1,6 +1,6 @@
 ## What is CouchDB-emily-tools?
 
-CouchDB Emily tools synchronizes an Emily key/value observable store with a couchDB document, view or bulk of documents. It can further manipulate CouchDB User and Security documents.
+CouchDB Emily tools synchronizes an Emily key/value observable store with a couchDB document, view or bulk of documents. It can further manipulate CouchDB User and Security documents. The exact same code will work in both the browser and in node.js, the only difference being the transport layer.
 
 It can manipulate CouchDB documents:
 
@@ -202,6 +202,20 @@ newDocument.sync("database", "newDocument")
 
 CouchDBDocument is designed to allow you to perform all of the operations that are possible using standard HTTP requests.
 
+### Creating a CouchDBDocument
+
+```js
+tools.requirejs(["CouchDBDocument", "transport"], function (CouchDBDocument, transport) {
+
+	var couchDBDocument = new CouchDBDocument();
+
+	// check the installation section to see how to create the transport layer
+	// depending on the environment (browser or node.js)
+	couchDBDocument.setTransport(transport);
+
+});
+```
+
 ### Synchronizing with a document
 
 ```js
@@ -245,7 +259,7 @@ couchDBDocument.sync("myDatabase", "oldDocument").then(function () {
 }, couchDBDocument);
 ```
 
-### Unsynchronizing a synchronized document so it can be synchroznized with another doc
+### Unsynchronizing a synchronized document so it can be synchronized with another doc
 
 ```js
 couchDBDocument.sync("myDatabase", "oldDocument").then(funciton () {
@@ -277,6 +291,28 @@ documentB.sync("myDatabase", "myDocument").then(function () {
 Attachements are not yet supported, but if you clap your hands enough, it will eventually come :)
 
 ##CouchDBView API
+
+### Synchronizing with a view on a database
+
+### Creating a CouchDBView
+
+```js
+tools.requirejs(["CouchDBView", "transport"], function (CouchDBView, transport) {
+
+	var couchDBView = new CouchDBView();
+
+	// check the installation section to see how to create the transport layer
+	// depending on the environment (browser or node.js)
+	couchDBView.setTransport(transport);
+
+});
+```
+
+### Synchronizing with a CouchDB View
+
+```js
+couchDBView.sync("myDatabase", "myDesignDocument", "_view/myView").then(...);
+```
 
 ##CouchDBBulkDocuments API
 
