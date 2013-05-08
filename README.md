@@ -220,6 +220,11 @@ tools.requirejs(["CouchDBDocument", "transport"], function (CouchDBDocument, tra
 
 ```js
 couchDBDocument.sync("myDatabase", "myDocument").then(...);
+
+// this will save the following in the store's internal object:
+//{"_id":"myDocument","_rev":"50-edaa4bb883be679e9407d7c4c0da15d6","name":"couchdb emily tools"}
+
+this.get("name"); // couchdb emily tools
 ```
 
 #### Synchronizing with a document with extra parameters, like a previous revision

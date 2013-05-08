@@ -33,12 +33,12 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 
 	couchDBDocument.setTransport(transport);
 
-	couchDBDocument.sync("test", "bigDocument")
+	couchDBDocument.sync("test", "documentToWatch")
 
 	.then(function () {
-		this.watchValue("long field", function () {
-			console.log(arguments)
-		})
+		//this.watchValue("long field", function () {
+			console.log(this.toJSON())
+		//})
 	}, couchDBDocument, catchError);
 
 
