@@ -200,6 +200,80 @@ newDocument.sync("database", "newDocument")
 
 ##CouchDBDocument API
 
+CouchDBDocument is design to allow you to perform all of the operations that would be otherwise possible using HTTP requests. It abstracts all of them in an easier to read manner so it all comes down to configuration.
+
+### Synchronizing with a document
+
+```js
+couchDBDocument.sync("myDatabase", "myDocument").then(...);
+```
+
+###Synchronizing with a document with extra parameters, like a previous revision:
+
+```js
+couchDBDocument.sync("myDatabase", "myDocument", {
+	"rev": "49-2eafd494d37475e4a2ca7255f6e582f2"
+}).then(...);
+```
+
+### Creating a new document
+
+```js
+couchDBDocument.sync("myDatabase", "newDocument").then(function () {
+	this.upload();
+}, couchDBDocument);
+```
+
+### Removing an existing document
+
+```js
+couchDBDocument.sync("myDatabase", "oldDocument").then(function () {
+	this.remove();
+}, couchDBDocument);
+```
+
+### Updating an existing document
+
+```js
+couchDBDocument.sync("myDatabase", "oldDocument").then(function () {
+	this.set("newField", "myValue");
+	this.upload();
+}, couchDBDocument);
+```
+
+### Unsynchronizing a synchronized document so it can be synchroznize with anoter doc
+
+```js
+couchDBDocument.sync("myDatabase", "oldDocument").then(funciton () {
+	this.unsync();
+}, couchDBDocument);
+
+couchDBDocument.sync("myDatabase", "otherDocument").then(...);
+```
+
+### Listening for changes on a document
+
+couchDBDocuments are a subtype of Emily's Store, so they publish events. When a document is updated in CouchDB, then changes will be reflected in all synchronized CouchDBDocument.
+
+```js
+documentA.sync("myDatabase", "myDocument").then(function () {
+	this.watchValue("field", function (newValue) {
+		console.log(newValue); // Will log "hello!" when documentB will be uploaded!
+	}, this);
+}, documentA);
+
+documentB.sync("myDatabase", "myDocument").then(function () {
+		this.set("field", "hello!");
+		this.upload();
+}, documentB);
+```
+
+### Attachements
+
+Attachements are not yet supported, but if clap your hands enough, it will eventually come :)
+
+
+
 ##CouchDBView API
 
 ##CouchDBBulkDocuments API
