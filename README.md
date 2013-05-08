@@ -245,7 +245,7 @@ couchDBDocument.sync("myDatabase", "oldDocument").then(function () {
 }, couchDBDocument);
 ```
 
-### Unsynchronizing a synchronized document so it can be synchroznized with anoter doc
+### Unsynchronizing a synchronized document so it can be synchroznized with another doc
 
 ```js
 couchDBDocument.sync("myDatabase", "oldDocument").then(funciton () {
