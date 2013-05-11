@@ -327,6 +327,7 @@ tools.requirejs(["CouchDBView", "transport"], function (CouchDBView, transport) 
 #### Synchronizing with a CouchDB View
 
 A CouchDB View is readonly. Synchronizing a CouchDBView will return a list of documents that will be saved in the data store as documents in a JavaScript array.
+In a couchDBView, the document's properties are saved in the 'value' object.
 
 ```js
 couchDBView.sync("myDatabase", "myDesignDocument", "_view/myView").then(function () {
@@ -385,6 +386,18 @@ couchDBView.watch("updated", function onDocumentUpdated(index, value) {
 }, couchDBView);
 ```
 
+### Watching for updates on a given document
+
+```js
+couchDBView.watchValue(0, function (newValue, action) {
+
+	this.get(0) === newValue;
+
+	action; // "updated"
+
+});
+```
+
 ### Watching for document removed
 
 When a document is removed in CouchDB, couchDBView will publish a "deleted" event
@@ -397,7 +410,7 @@ couchDBView.watch("deleted", function onDocumentDeleted(index) {
 }, couchDBView);
 ```
 
-#### Unsynchronizing q CouchDBView:
+#### Unsynchronizing a CouchDBView:
 
 Unsynching is required for synchronizing the store on another view.
 
@@ -407,6 +420,75 @@ couchDBView.unsync();
 
 ##CouchDBBulkDocuments API
 
+CouchDBBulkDocuments synchronizes the data store with a bulk of documents. New documents can be added or removed to the bulk documents to alter the database. This allows for batch updates of CouchDB.
+
+#### Creating a CouchDBBulkDocuments
+
+```js
+tools.requirejs(["CouchDBBulkDocuments", "transport"], function (CouchDBBulkDocuments, transport) {
+
+	var couchDBBulkDocuments = new CouchDBBulkDocuments();
+
+	// check the installation section to see how to create the transport layer
+	// depending on the environment (browser or node.js)
+	couchDBBulkDocuments.setTransport(transport);
+
+});
+```
+
+#### Synchronizing with a bulk of CouchDB documents
+
+In a couchDBBulkDocuments, the document's properties are saved in the 'doc' object.
+
+```js
+couchDBBulkDocuments.sync("myDatabase", {
+	keys: ["document1", "document2", "document3"]
+}).then(function () {
+
+	// {
+	// 	"id" : "document2",
+	// 	"key" : "document2",
+	// 	"value" : {
+	// 		"rev" : "31-73ef4535724ff2db0a2361c1dab813e7"
+	// 	},
+	// 	"doc" : {
+	// 		"_id" : "document2",
+	// 		"_rev" : "31-73ef4535724ff2db0a2361c1dab813e7"
+	// 	}
+	// }
+	this.get(1);
+
+	this.count(); // 3
+
+});
+````
+
+### Updating one or several documents
+
+CouchDBBulkDocuments can also update documents in CouchDB by uploading the changes done in the data store.
+
+```js
+// The first document now has a myProperty property with newValue
+couchDBBulkDocuments.update(0, "doc.myProperty", "newValue");
+
+// The 4th document too
+couchDBBulkDocuments.update(3, "doc.myProperty", "newValue");
+
+// Upload uploads all of them
+couchDBBulkDocuments.upload();
+````
+
+### Removing one or several documents
+
+CouchDBBulkDocuments can remove one or several documents by adding them the _deleted property set to true.
+
+```js
+couchDBBulkDocuments.loop(function (document) {
+	document.doc._deleted = true;
+}, this);
+
+couchDBBulkDocuments.upload();
+````
 
 
 ## Changelog
