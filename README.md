@@ -329,7 +329,7 @@ tools.requirejs(["CouchDBView", "transport"], function (CouchDBView, transport) 
 A CouchDB View is readonly. Synchronizing a CouchDBView will return a list of documents that will be saved in the data store as documents in a JavaScript array.
 
 ```js
-couchDBView.sync("myDatabase", "myDesignDocument", "_view/myView").then(...);
+couchDBView.sync("myDatabase", "myDesignDocument", "_view/myView").then(function () {
 
  // {
  //	 "id" : "documentA",
@@ -344,10 +344,11 @@ couchDBView.sync("myDatabase", "myDesignDocument", "_view/myView").then(...);
 
  // The number of items in the view
  couchDBView.count();
+
+});
 ```
 
-
-#### Watching for new document added
+#### Watching for document added
 
 When a new document appears in the current view, a "added" event is published
 
@@ -382,7 +383,6 @@ couchDBView.watch("deleted", function onDocumentDeleted(index) {
 
 }, couchDBView);
 ```
-
 
 ##CouchDBBulkDocuments API
 
