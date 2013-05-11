@@ -29,6 +29,16 @@ CouchDB Emily tools synchronizes an Emily key/value observable store with a couc
 
 In other words, CouchDB emily tools will reflect the status of your CouchDB in observable JavaScript data stores, and you can subscribe to their changes to update the views.
 
+####It's a subtype of an Emily observable store:
+
+http://flams.github.io/emily/#store
+
+* It has getters/setters and update methods
+* It publishes events when a property is added/modified
+* It can be based on a JavaScript object for a key/value store
+* It can be based on a JavaScript Array for an ordered list of items
+* It can dump its current state
+
 
 Synchronizing a CouchDBDocument to an existing document is as easy as:
 
@@ -58,7 +68,7 @@ Synchronizing a CouchDBDocument to an existing document is as easy as:
 		// At this point, the document has been updated in CouchDB with a new property
 		couchDBDocument.toJSON(); // Will have a myProperty property
 
-		// and we can now remove the document from CouchDB if we want.
+		// and we can also remove the document from CouchDB if we want.
 		couchDBDocument.remove();
 	});
 ```
@@ -259,7 +269,10 @@ couchDBDocument.sync("myDatabase", "oldDocument").then(function () {
 
 ```js
 couchDBDocument.sync("myDatabase", "oldDocument").then(function () {
+	// Will add or update the newField property to the document
 	this.set("newField", "myValue");
+
+	// Will update it in CouchDB
 	this.upload();
 }, couchDBDocument);
 ```
@@ -313,9 +326,63 @@ tools.requirejs(["CouchDBView", "transport"], function (CouchDBView, transport) 
 
 #### Synchronizing with a CouchDB View
 
+A CouchDB View is readonly. Synchronizing a CouchDBView will return a list of documents that will be saved in the data store as documents in a JavaScript array.
+
 ```js
 couchDBView.sync("myDatabase", "myDesignDocument", "_view/myView").then(...);
+
+ // {
+ //	 "id" : "documentA",
+ //	 "key" : "documentA",
+ //	 "value" : {
+ //		"_id" : "documentA",
+ //		"_rev" : "25-201d5eb10f46c4a85676ff44540a4f1e",
+ //		"newProperty" : "hello!"
+ //	 }
+ // }
+ couchDBView.get(0);
+
+ // The number of items in the view
+ couchDBView.count();
 ```
+
+
+#### Watching for new document added
+
+When a new document appears in the current view, a "added" event is published
+
+```js
+couchDBView.watch("added", function onDocumentAdded(index, value) {
+
+	this.get(index) === value;
+
+}, couchDBView);
+```
+
+### Watching for document updated
+
+When a document is updated in CouchDB, couchDBView will publish an "updated" event
+
+```js
+couchDBView.watch("updated", function onDocumentUpdated(index, value) {
+
+	this.get(index) === value;
+
+}, couchDBView);
+```
+
+### Watching for document removed
+
+When a document is removed in CouchDB, couchDBView will publish an "deleted" event
+
+```js
+couchDBView.watch("deleted", function onDocumentDeleted(index) {
+
+	this.get(index); // undefined
+
+}, couchDBView);
+```
+
 
 ##CouchDBBulkDocuments API
 

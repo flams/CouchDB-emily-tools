@@ -41,6 +41,7 @@ tools.requirejs(["CouchDBView", "CouchDBDocument", "Transport", "Promise"], func
 
 	.then(function (hop) {
 		if (this.count() > 0) {
+			console.log(this.get(100), "hop")
 			success("It can synchronize a store with a view");
 		}
 
