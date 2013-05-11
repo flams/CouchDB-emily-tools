@@ -348,6 +348,19 @@ couchDBView.sync("myDatabase", "myDesignDocument", "_view/myView").then(function
 });
 ```
 
+#### Adding extra parameters
+
+Adding parameters to the request is as easy as adding an extra object. CouchDBView will serialize it.
+
+```js
+couchDBView.sync("myDatabase", "myDesignDocument", "_view/myView", {
+	startkey: "documentA",
+	endKey: "documentZ",
+	limit: 10,
+	skip: 10
+}).then(...);
+```
+
 #### Watching for document added
 
 When a new document appears in the current view, a "added" event is published
@@ -374,7 +387,7 @@ couchDBView.watch("updated", function onDocumentUpdated(index, value) {
 
 ### Watching for document removed
 
-When a document is removed in CouchDB, couchDBView will publish an "deleted" event
+When a document is removed in CouchDB, couchDBView will publish a "deleted" event
 
 ```js
 couchDBView.watch("deleted", function onDocumentDeleted(index) {
@@ -384,7 +397,17 @@ couchDBView.watch("deleted", function onDocumentDeleted(index) {
 }, couchDBView);
 ```
 
+#### Unsynchronizing q CouchDBView:
+
+Unsynching is required for synchronizing the store on another view.
+
+```js
+couchDBView.unsync();
+```
+
 ##CouchDBBulkDocuments API
+
+
 
 ## Changelog
 
