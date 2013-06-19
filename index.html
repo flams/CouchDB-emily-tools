@@ -28,11 +28,13 @@
     <div id="content-wrapper">
       <div class="inner clearfix">
         <section id="main-content">
-          <h2>What is CouchDB-emily-tools?</h2>
+          <h2>
+<a name="what-is-couchdb-emily-tools" class="anchor" href="#what-is-couchdb-emily-tools"><span class="octicon octicon-link"></span></a>What is CouchDB-emily-tools?</h2>
 
 <p>CouchDB Emily tools synchronizes an Emily key/value observable store with a couchDB document, view or bulk of documents. It can further manipulate CouchDB User and Security documents. The exact same code will work in both the browser and in node.js, the only difference being the transport layer.</p>
 
-<h4>It can manipulate CouchDB documents:</h4>
+<h4>
+<a name="it-can-manipulate-couchdb-documents" class="anchor" href="#it-can-manipulate-couchdb-documents"><span class="octicon octicon-link"></span></a>It can manipulate CouchDB documents:</h4>
 
 <ul>
 <li>Get a CouchDB document and save it in a JavaScript object</li>
@@ -41,14 +43,16 @@
 <li>Create a document</li>
 <li>Remove a document</li>
 <li>publishes events when a property on the JavaScript object is added/removed/updated</li>
-</ul><h4>It can manipulate CouchDB views:</h4>
+</ul><h4>
+<a name="it-can-manipulate-couchdb-views" class="anchor" href="#it-can-manipulate-couchdb-views"><span class="octicon octicon-link"></span></a>It can manipulate CouchDB views:</h4>
 
 <ul>
 <li>Get a CouchDB view and save it in a JavaScript array</li>
 <li>Update the JavaScript array when a document is added or removed from the databae</li>
 <li>Update the JavaScript array when a document is updated in the database</li>
 <li>publishes events when a document on the JavaScript array is added/removed/updated</li>
-</ul><h4>It can manupulate CouchDB bulk documents:</h4>
+</ul><h4>
+<a name="it-can-manupulate-couchdb-bulk-documents" class="anchor" href="#it-can-manupulate-couchdb-bulk-documents"><span class="octicon octicon-link"></span></a>It can manupulate CouchDB bulk documents:</h4>
 
 <ul>
 <li>Get a CouchDB bulk of documents and save it in a JavaScript array</li>
@@ -59,7 +63,8 @@
 <li>publishes events when a document on the JavaScript array is added/removed/updated</li>
 </ul><p>In other words, CouchDB emily tools will reflect the status of your CouchDB in observable JavaScript data stores, and you can subscribe to their changes to update the views.</p>
 
-<h4>It's a subtype of an Emily observable store:</h4>
+<h4>
+<a name="its-a-subtype-of-an-emily-observable-store" class="anchor" href="#its-a-subtype-of-an-emily-observable-store"><span class="octicon octicon-link"></span></a>It's a subtype of an Emily observable store:</h4>
 
 <p><a href="http://flams.github.io/emily/#store">http://flams.github.io/emily/#store</a></p>
 
@@ -101,9 +106,11 @@
     <span class="p">});</span>
 </pre></div>
 
-<h2>How to install it?</h2>
+<h2>
+<a name="how-to-install-it" class="anchor" href="#how-to-install-it"><span class="octicon octicon-link"></span></a>How to install it?</h2>
 
-<h4>In node.js</h4>
+<h4>
+<a name="in-nodejs" class="anchor" href="#in-nodejs"><span class="octicon octicon-link"></span></a>In node.js</h4>
 
 <p>CouchDB Emily Tools is based on Emily</p>
 
@@ -111,13 +118,19 @@
 </pre></div>
 
 <div class="highlight"><pre><span class="kd">var</span> <span class="nx">emily</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"emily"</span><span class="p">),</span>
-    <span class="nx">tools</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"couchdb-emily-tools"</span><span class="p">);</span>
+    <span class="nx">CouchDBTools</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"couchdb-emily-tools"</span><span class="p">);</span>
+
+<span class="c1">// The url to CouchDB can be configured, it's localhost by default</span>
+<span class="nx">CouchDBTools</span><span class="p">.</span><span class="nx">configuration</span><span class="p">.</span><span class="nx">hostname</span><span class="o">:</span> <span class="s2">"my.ip.address"</span><span class="p">;</span>
+
+<span class="c1">// The port can be configured too; 5984 being the default one</span>
+<span class="nx">CouchDBTools</span><span class="p">.</span><span class="nx">configuration</span><span class="p">.</span><span class="nx">port</span><span class="o">:</span> <span class="mi">5984</span><span class="p">;</span>
 
 <span class="c1">// Add the CouchDB handler to Emily. The handler is what issues the requests to CouchDB</span>
-<span class="nx">emily</span><span class="p">.</span><span class="nx">handlers</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">"CouchDB"</span><span class="p">,</span> <span class="nx">tools</span><span class="p">.</span><span class="nx">handler</span><span class="p">);</span>
+<span class="nx">emily</span><span class="p">.</span><span class="nx">handlers</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">"CouchDB"</span><span class="p">,</span> <span class="nx">CouchDBTools</span><span class="p">.</span><span class="nx">handler</span><span class="p">);</span>
 
 <span class="c1">// Now we can require and use the CouchDB Tools, here's an example with a document.</span>
-<span class="nx">tools</span><span class="p">.</span><span class="nx">requirejs</span><span class="p">([</span><span class="s2">"CouchDBDocument"</span><span class="p">,</span> <span class="s2">"Transport"</span><span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">CouchDBDocument</span><span class="p">,</span> <span class="nx">Transport</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">CouchDBTools</span><span class="p">.</span><span class="nx">requirejs</span><span class="p">([</span><span class="s2">"CouchDBDocument"</span><span class="p">,</span> <span class="s2">"Transport"</span><span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">CouchDBDocument</span><span class="p">,</span> <span class="nx">Transport</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="kd">var</span> <span class="nx">cdb</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">CouchDBDocument</span><span class="p">,</span>
         <span class="nx">transport</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Transport</span><span class="p">(</span><span class="nx">emily</span><span class="p">.</span><span class="nx">handlers</span><span class="p">);</span>
@@ -133,24 +146,29 @@
 <span class="p">});</span>
 </pre></div>
 
-<h4>On the client side</h4>
+<h4>
+<a name="on-the-client-side" class="anchor" href="#on-the-client-side"><span class="octicon octicon-link"></span></a>On the client side</h4>
 
 <p>CouchDB-emily-tools requires Olives to work on the client side. Olives embeds Emily for you.
-It also expects you to have socket.io installed, and a store for storing sessions, like redis store.
-In future implementations, redis store will probably be optional and an adapter will be accepted to any other store.
+It also expects you to have socket.io installed, and a store for storing sessions, like redis store, which is the only supported for now. In future implementations, redis store will probably be optional and an adapter will be accepted to any other store.
 <a href="https://github.com/podefr/suggestions/blob/master/server.js">An example can be found in the suggestions application</a></p>
 
 <div class="highlight"><pre>npm install olives couchdb-emily-tools
 </pre></div>
 
-<div class="highlight"><pre><span class="kd">var</span> <span class="nx">olives</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"olives"</span><span class="p">),</span>
-    <span class="nx">tools</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"couchdb-emily-tools"</span><span class="p">);</span>
+<p>The server side has some specific configuration:</p>
 
-<span class="c1">// sessionStore can be a new RedisStore for instance</span>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">olives</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"olives"</span><span class="p">),</span>
+    <span class="nx">CouchDBTools</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"couchdb-emily-tools"</span><span class="p">);</span>
+
+<span class="c1">// sessionStore is a new redis-store: https://npmjs.org/package/connect-redis</span>
 <span class="nx">CouchDBTools</span><span class="p">.</span><span class="nx">configuration</span><span class="p">.</span><span class="nx">sessionStore</span> <span class="o">=</span> <span class="nx">sessionStore</span><span class="p">;</span>
 
+<span class="c1">// The name of the cookie sent to the client must be set too</span>
+<span class="nx">CouchDBTools</span><span class="p">.</span><span class="nx">configuration</span><span class="p">.</span><span class="nx">CookieID</span><span class="o">:</span> <span class="s2">"myApplication"</span><span class="p">;</span>
+
 <span class="c1">// Add the CouchDB handler to Olives</span>
-<span class="nx">olives</span><span class="p">.</span><span class="nx">handlers</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">"CouchDB"</span><span class="p">,</span> <span class="nx">tools</span><span class="p">.</span><span class="nx">handler</span><span class="p">);</span>
+<span class="nx">olives</span><span class="p">.</span><span class="nx">handlers</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">"CouchDB"</span><span class="p">,</span> <span class="nx">CouchDBTools</span><span class="p">.</span><span class="nx">handler</span><span class="p">);</span>
 </pre></div>
 
 <p>And on the client side:</p>
@@ -183,7 +201,8 @@ In future implementations, redis store will probably be optional and an adapter 
 <span class="p">});</span>
 </pre></div>
 
-<h2>API</h2>
+<h2>
+<a name="api" class="anchor" href="#api"><span class="octicon octicon-link"></span></a>API</h2>
 
 <p>After you've installed CouchDB Emily tools for use either on the server or the client side, you are ready to play with it. To cope with the asynchronous nature of database operations, CouchDB Emily Tools returns a new promise for each asynchronous method call, such as 'sync', 'upload' or 'remove'.</p>
 
@@ -228,11 +247,13 @@ This basically allows you nicely chain operations on a couchDB tool, such as:</p
 <span class="p">},</span> <span class="nx">newDocument</span><span class="p">);</span>
 </pre></div>
 
-<h2>CouchDBDocument API</h2>
+<h2>
+<a name="couchdbdocument-api" class="anchor" href="#couchdbdocument-api"><span class="octicon octicon-link"></span></a>CouchDBDocument API</h2>
 
 <p>CouchDBDocument is designed to allow you to perform all of the operations that are possible using standard HTTP requests.</p>
 
-<h4>Creating a CouchDBDocument</h4>
+<h4>
+<a name="creating-a-couchdbdocument" class="anchor" href="#creating-a-couchdbdocument"><span class="octicon octicon-link"></span></a>Creating a CouchDBDocument</h4>
 
 <div class="highlight"><pre><span class="nx">tools</span><span class="p">.</span><span class="nx">requirejs</span><span class="p">([</span><span class="s2">"CouchDBDocument"</span><span class="p">,</span> <span class="s2">"transport"</span><span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">CouchDBDocument</span><span class="p">,</span> <span class="nx">transport</span><span class="p">)</span> <span class="p">{</span>
 
@@ -245,7 +266,8 @@ This basically allows you nicely chain operations on a couchDB tool, such as:</p
 <span class="p">});</span>
 </pre></div>
 
-<h4>Synchronizing with a document</h4>
+<h4>
+<a name="synchronizing-with-a-document" class="anchor" href="#synchronizing-with-a-document"><span class="octicon octicon-link"></span></a>Synchronizing with a document</h4>
 
 <div class="highlight"><pre><span class="nx">couchDBDocument</span><span class="p">.</span><span class="nx">sync</span><span class="p">(</span><span class="s2">"myDatabase"</span><span class="p">,</span> <span class="s2">"myDocument"</span><span class="p">).</span><span class="nx">then</span><span class="p">(...);</span>
 
@@ -255,7 +277,8 @@ This basically allows you nicely chain operations on a couchDB tool, such as:</p
 <span class="nx">couchDBDocument</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">);</span> <span class="c1">// couchdb emily tools</span>
 </pre></div>
 
-<h4>Synchronizing with a document with extra parameters, like a previous revision</h4>
+<h4>
+<a name="synchronizing-with-a-document-with-extra-parameters-like-a-previous-revision" class="anchor" href="#synchronizing-with-a-document-with-extra-parameters-like-a-previous-revision"><span class="octicon octicon-link"></span></a>Synchronizing with a document with extra parameters, like a previous revision</h4>
 
 <p>You just have to add an extra JSON object that will be serialized to look like:</p>
 
@@ -266,21 +289,24 @@ This basically allows you nicely chain operations on a couchDB tool, such as:</p
 <span class="p">}).</span><span class="nx">then</span><span class="p">(...);</span>
 </pre></div>
 
-<h4>Creating a new document</h4>
+<h4>
+<a name="creating-a-new-document" class="anchor" href="#creating-a-new-document"><span class="octicon octicon-link"></span></a>Creating a new document</h4>
 
 <div class="highlight"><pre><span class="nx">couchDBDocument</span><span class="p">.</span><span class="nx">sync</span><span class="p">(</span><span class="s2">"myDatabase"</span><span class="p">,</span> <span class="s2">"newDocument"</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">upload</span><span class="p">();</span>
 <span class="p">},</span> <span class="nx">couchDBDocument</span><span class="p">);</span>
 </pre></div>
 
-<h4>Removing an existing document</h4>
+<h4>
+<a name="removing-an-existing-document" class="anchor" href="#removing-an-existing-document"><span class="octicon octicon-link"></span></a>Removing an existing document</h4>
 
 <div class="highlight"><pre><span class="nx">couchDBDocument</span><span class="p">.</span><span class="nx">sync</span><span class="p">(</span><span class="s2">"myDatabase"</span><span class="p">,</span> <span class="s2">"oldDocument"</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
 <span class="p">},</span> <span class="nx">couchDBDocument</span><span class="p">);</span>
 </pre></div>
 
-<h4>Updating an existing document</h4>
+<h4>
+<a name="updating-an-existing-document" class="anchor" href="#updating-an-existing-document"><span class="octicon octicon-link"></span></a>Updating an existing document</h4>
 
 <div class="highlight"><pre><span class="nx">couchDBDocument</span><span class="p">.</span><span class="nx">sync</span><span class="p">(</span><span class="s2">"myDatabase"</span><span class="p">,</span> <span class="s2">"oldDocument"</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="c1">// Will add or update the newField property to the document</span>
@@ -291,7 +317,8 @@ This basically allows you nicely chain operations on a couchDB tool, such as:</p
 <span class="p">},</span> <span class="nx">couchDBDocument</span><span class="p">);</span>
 </pre></div>
 
-<h4>Unsynchronizing a synchronized document so it can be synchronized with another doc</h4>
+<h4>
+<a name="unsynchronizing-a-synchronized-document-so-it-can-be-synchronized-with-another-doc" class="anchor" href="#unsynchronizing-a-synchronized-document-so-it-can-be-synchronized-with-another-doc"><span class="octicon octicon-link"></span></a>Unsynchronizing a synchronized document so it can be synchronized with another doc</h4>
 
 <div class="highlight"><pre><span class="nx">couchDBDocument</span><span class="p">.</span><span class="nx">sync</span><span class="p">(</span><span class="s2">"myDatabase"</span><span class="p">,</span> <span class="s2">"oldDocument"</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">funciton</span> <span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">unsync</span><span class="p">();</span>
@@ -300,7 +327,8 @@ This basically allows you nicely chain operations on a couchDB tool, such as:</p
 <span class="nx">couchDBDocument</span><span class="p">.</span><span class="nx">sync</span><span class="p">(</span><span class="s2">"myDatabase"</span><span class="p">,</span> <span class="s2">"otherDocument"</span><span class="p">).</span><span class="nx">then</span><span class="p">(...);</span>
 </pre></div>
 
-<h4>Listening for changes on a document</h4>
+<h4>
+<a name="listening-for-changes-on-a-document" class="anchor" href="#listening-for-changes-on-a-document"><span class="octicon octicon-link"></span></a>Listening for changes on a document</h4>
 
 <p>couchDBDocuments are a subtype of Emily's Store, so they publish events. When a document is updated in CouchDB, the changes are reflected in all synchronized CouchDBDocument.</p>
 
@@ -316,13 +344,16 @@ This basically allows you nicely chain operations on a couchDB tool, such as:</p
 <span class="p">},</span> <span class="nx">documentB</span><span class="p">);</span>
 </pre></div>
 
-<h4>Attachements</h4>
+<h4>
+<a name="attachements" class="anchor" href="#attachements"><span class="octicon octicon-link"></span></a>Attachements</h4>
 
 <p>Attachements are not yet supported, but if you clap your hands enough, it will eventually come :)</p>
 
-<h2>CouchDBView API</h2>
+<h2>
+<a name="couchdbview-api" class="anchor" href="#couchdbview-api"><span class="octicon octicon-link"></span></a>CouchDBView API</h2>
 
-<h4>Creating a CouchDBView</h4>
+<h4>
+<a name="creating-a-couchdbview" class="anchor" href="#creating-a-couchdbview"><span class="octicon octicon-link"></span></a>Creating a CouchDBView</h4>
 
 <div class="highlight"><pre><span class="nx">tools</span><span class="p">.</span><span class="nx">requirejs</span><span class="p">([</span><span class="s2">"CouchDBView"</span><span class="p">,</span> <span class="s2">"transport"</span><span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">CouchDBView</span><span class="p">,</span> <span class="nx">transport</span><span class="p">)</span> <span class="p">{</span>
 
@@ -335,7 +366,8 @@ This basically allows you nicely chain operations on a couchDB tool, such as:</p
 <span class="p">});</span>
 </pre></div>
 
-<h4>Synchronizing with a CouchDB View</h4>
+<h4>
+<a name="synchronizing-with-a-couchdb-view" class="anchor" href="#synchronizing-with-a-couchdb-view"><span class="octicon octicon-link"></span></a>Synchronizing with a CouchDB View</h4>
 
 <p>A CouchDB View is readonly. Synchronizing a CouchDBView will return a list of documents that will be saved in the data store as documents in a JavaScript array.
 In a couchDBView, the document's properties are saved in the 'value' object.</p>
@@ -359,7 +391,8 @@ In a couchDBView, the document's properties are saved in the 'value' object.</p>
 <span class="p">});</span>
 </pre></div>
 
-<h4>Adding extra parameters</h4>
+<h4>
+<a name="adding-extra-parameters" class="anchor" href="#adding-extra-parameters"><span class="octicon octicon-link"></span></a>Adding extra parameters</h4>
 
 <p>Adding parameters to the request is as easy as adding an extra object. CouchDBView will serialize it.</p>
 
@@ -371,7 +404,8 @@ In a couchDBView, the document's properties are saved in the 'value' object.</p>
 <span class="p">}).</span><span class="nx">then</span><span class="p">(...);</span>
 </pre></div>
 
-<h4>Watching for document added</h4>
+<h4>
+<a name="watching-for-document-added" class="anchor" href="#watching-for-document-added"><span class="octicon octicon-link"></span></a>Watching for document added</h4>
 
 <p>When a new document appears in the current view, a "added" event is published</p>
 
@@ -382,7 +416,8 @@ In a couchDBView, the document's properties are saved in the 'value' object.</p>
 <span class="p">},</span> <span class="nx">couchDBView</span><span class="p">);</span>
 </pre></div>
 
-<h3>Watching for document updated</h3>
+<h3>
+<a name="watching-for-document-updated" class="anchor" href="#watching-for-document-updated"><span class="octicon octicon-link"></span></a>Watching for document updated</h3>
 
 <p>When a document is updated in CouchDB, couchDBView will publish an "updated" event</p>
 
@@ -393,7 +428,8 @@ In a couchDBView, the document's properties are saved in the 'value' object.</p>
 <span class="p">},</span> <span class="nx">couchDBView</span><span class="p">);</span>
 </pre></div>
 
-<h3>Watching for updates on a given document</h3>
+<h3>
+<a name="watching-for-updates-on-a-given-document" class="anchor" href="#watching-for-updates-on-a-given-document"><span class="octicon octicon-link"></span></a>Watching for updates on a given document</h3>
 
 <div class="highlight"><pre><span class="nx">couchDBView</span><span class="p">.</span><span class="nx">watchValue</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">newValue</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
 
@@ -404,7 +440,8 @@ In a couchDBView, the document's properties are saved in the 'value' object.</p>
 <span class="p">});</span>
 </pre></div>
 
-<h3>Watching for document removed</h3>
+<h3>
+<a name="watching-for-document-removed" class="anchor" href="#watching-for-document-removed"><span class="octicon octicon-link"></span></a>Watching for document removed</h3>
 
 <p>When a document is removed in CouchDB, couchDBView will publish a "deleted" event</p>
 
@@ -415,18 +452,21 @@ In a couchDBView, the document's properties are saved in the 'value' object.</p>
 <span class="p">},</span> <span class="nx">couchDBView</span><span class="p">);</span>
 </pre></div>
 
-<h4>Unsynchronizing a CouchDBView:</h4>
+<h4>
+<a name="unsynchronizing-a-couchdbview" class="anchor" href="#unsynchronizing-a-couchdbview"><span class="octicon octicon-link"></span></a>Unsynchronizing a CouchDBView:</h4>
 
 <p>Unsynching is required for synchronizing the store on another view.</p>
 
 <div class="highlight"><pre><span class="nx">couchDBView</span><span class="p">.</span><span class="nx">unsync</span><span class="p">();</span>
 </pre></div>
 
-<h2>CouchDBBulkDocuments API</h2>
+<h2>
+<a name="couchdbbulkdocuments-api" class="anchor" href="#couchdbbulkdocuments-api"><span class="octicon octicon-link"></span></a>CouchDBBulkDocuments API</h2>
 
 <p>CouchDBBulkDocuments synchronizes the data store with a bulk of documents. New documents can be added or removed to the bulk documents to alter the database. This allows for batch updates of CouchDB.</p>
 
-<h4>Creating a CouchDBBulkDocuments</h4>
+<h4>
+<a name="creating-a-couchdbbulkdocuments" class="anchor" href="#creating-a-couchdbbulkdocuments"><span class="octicon octicon-link"></span></a>Creating a CouchDBBulkDocuments</h4>
 
 <div class="highlight"><pre><span class="nx">tools</span><span class="p">.</span><span class="nx">requirejs</span><span class="p">([</span><span class="s2">"CouchDBBulkDocuments"</span><span class="p">,</span> <span class="s2">"transport"</span><span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">CouchDBBulkDocuments</span><span class="p">,</span> <span class="nx">transport</span><span class="p">)</span> <span class="p">{</span>
 
@@ -439,7 +479,8 @@ In a couchDBView, the document's properties are saved in the 'value' object.</p>
 <span class="p">});</span>
 </pre></div>
 
-<h4>Synchronizing with a bulk of CouchDB documents</h4>
+<h4>
+<a name="synchronizing-with-a-bulk-of-couchdb-documents" class="anchor" href="#synchronizing-with-a-bulk-of-couchdb-documents"><span class="octicon octicon-link"></span></a>Synchronizing with a bulk of CouchDB documents</h4>
 
 <p>In a couchDBBulkDocuments, the document's properties are saved in the 'doc' object.</p>
 
@@ -465,7 +506,8 @@ In a couchDBView, the document's properties are saved in the 'value' object.</p>
 <span class="p">});</span>
 </pre></div>
 
-<h3>Updating one or several documents</h3>
+<h3>
+<a name="updating-one-or-several-documents" class="anchor" href="#updating-one-or-several-documents"><span class="octicon octicon-link"></span></a>Updating one or several documents</h3>
 
 <p>CouchDBBulkDocuments can also update documents in CouchDB by uploading the changes done in the data store.</p>
 
@@ -479,7 +521,8 @@ In a couchDBView, the document's properties are saved in the 'value' object.</p>
 <span class="nx">couchDBBulkDocuments</span><span class="p">.</span><span class="nx">upload</span><span class="p">();</span>
 </pre></div>
 
-<h3>Removing one or several documents</h3>
+<h3>
+<a name="removing-one-or-several-documents" class="anchor" href="#removing-one-or-several-documents"><span class="octicon octicon-link"></span></a>Removing one or several documents</h3>
 
 <p>CouchDBBulkDocuments can remove one or several documents by adding them the _deleted property set to true.</p>
 
@@ -490,9 +533,11 @@ In a couchDBView, the document's properties are saved in the 'value' object.</p>
 <span class="nx">couchDBBulkDocuments</span><span class="p">.</span><span class="nx">upload</span><span class="p">();</span>
 </pre></div>
 
-<h2>Changelog</h2>
+<h2>
+<a name="changelog" class="anchor" href="#changelog"><span class="octicon octicon-link"></span></a>Changelog</h2>
 
-<h4>2.0.0 - 27 APR 2013</h4>
+<h4>
+<a name="200---27-apr-2013" class="anchor" href="#200---27-apr-2013"><span class="octicon octicon-link"></span></a>2.0.0 - 27 APR 2013</h4>
 
 <ul>
 <li>Complete refactoring of the tools. Documents, BulkDocuments and Views are in distinct files.</li>
@@ -501,30 +546,36 @@ In a couchDBView, the document's properties are saved in the 'value' object.</p>
 <li>document.remove also returns a promise</li>
 <li>When a document doesn't exist, the promise is now fulfilled instead of rejected</li>
 <li>CouchDBStore doesn't exist anymore, a specific CouchDBView, CouchDBDocument or CouchDBBulkDocuments must be used instead</li>
-</ul><h4>1.0.6 - 27 MAR 2013</h4>
+</ul><h4>
+<a name="106---27-mar-2013" class="anchor" href="#106---27-mar-2013"><span class="octicon octicon-link"></span></a>1.0.6 - 27 MAR 2013</h4>
 
 <ul>
 <li>Aborting a non established connection doesn't fail anymore</li>
-</ul><h4>1.0.5 - 25 MAR 2013</h4>
+</ul><h4>
+<a name="105---25-mar-2013" class="anchor" href="#105---25-mar-2013"><span class="octicon octicon-link"></span></a>1.0.5 - 25 MAR 2013</h4>
 
 <ul>
 <li>Removed specific code imported from another application after 1.0.2</li>
 <li>Updated documentation</li>
-</ul><h4>1.0.3 - 11 MAR 2013</h4>
+</ul><h4>
+<a name="103---11-mar-2013" class="anchor" href="#103---11-mar-2013"><span class="octicon octicon-link"></span></a>1.0.3 - 11 MAR 2013</h4>
 
 <ul>
 <li>Updated emily + requirejs</li>
-</ul><h4>1.0.2 - 01 JAN 2013</h4>
+</ul><h4>
+<a name="102---01-jan-2013" class="anchor" href="#102---01-jan-2013"><span class="octicon octicon-link"></span></a>1.0.2 - 01 JAN 2013</h4>
 
 <ul>
 <li>Now using Emily 1.3.1 promises wich are fully compliant with promise/A+ specs</li>
 <li>Moved Emily's CouchDB handler to CouchDB Emily Tools</li>
 <li>Updated tests</li>
-</ul><h4>1.0.1 - 08 OCT 2012</h4>
+</ul><h4>
+<a name="101---08-oct-2012" class="anchor" href="#101---08-oct-2012"><span class="octicon octicon-link"></span></a>1.0.1 - 08 OCT 2012</h4>
 
 <ul>
 <li>CouchDBStore Views are compatible with couchdb-lucene's</li>
-</ul><h4>1.0.0 - 07 OCT 2012</h4>
+</ul><h4>
+<a name="100---07-oct-2012" class="anchor" href="#100---07-oct-2012"><span class="octicon octicon-link"></span></a>1.0.0 - 07 OCT 2012</h4>
 
 <ul>
 <li>CouchDBStore was removed from Emily and added to CouchDB-Emily-Tools.</li>
