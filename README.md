@@ -90,8 +90,8 @@ var emily = require("emily"),
 // The url to CouchDB can be configured, it's localhost by default
 CouchDBTools.configuration.hostname: "my.ip.address";
 
-// The port can be configured too
-CouchDBTools.configuration.hostname: "my.ip.address";
+// The port can be configured too; 5984 being the default one
+CouchDBTools.configuration.port: 5984;
 
 // Add the CouchDB handler to Emily. The handler is what issues the requests to CouchDB
 emily.handlers.set("CouchDB", CouchDBTools.handler);
@@ -132,7 +132,7 @@ var olives = require("olives"),
 // sessionStore is a new redis-store: https://npmjs.org/package/connect-redis
 CouchDBTools.configuration.sessionStore = sessionStore;
 
-// The name of the cookie sent to the client must set too
+// The name of the cookie sent to the client must be set too
 CouchDBTools.configuration.CookieID: "myApplication";
 
 // Add the CouchDB handler to Olives
