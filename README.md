@@ -85,13 +85,19 @@ npm install emily couchdb-emily-tools
 
 ```js
 var emily = require("emily"),
-	tools = require("couchdb-emily-tools");
+	CouchDBTools = require("couchdb-emily-tools");
+
+// The url to CouchDB can be configured, it's localhost by default
+CouchDBTools.configuration.hostname: "my.ip.address";
+
+// The port can be configured too
+CouchDBTools.configuration.hostname: "my.ip.address";
 
 // Add the CouchDB handler to Emily. The handler is what issues the requests to CouchDB
-emily.handlers.set("CouchDB", tools.handler);
+emily.handlers.set("CouchDB", CouchDBTools.handler);
 
 // Now we can require and use the CouchDB Tools, here's an example with a document.
-tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Transport) {
+CouchDBTools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Transport) {
 
 	var cdb = new CouchDBDocument,
 		transport = new Transport(emily.handlers);
@@ -110,23 +116,27 @@ tools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Tra
 ####On the client side
 
 CouchDB-emily-tools requires Olives to work on the client side. Olives embeds Emily for you.
-It also expects you to have socket.io installed, and a store for storing sessions, like redis store.
-In future implementations, redis store will probably be optional and an adapter will be accepted to any other store.
+It also expects you to have socket.io installed, and a store for storing sessions, like redis store, which is the only supported for now. In future implementations, redis store will probably be optional and an adapter will be accepted to any other store.
 [An example can be found in the suggestions application](https://github.com/podefr/suggestions/blob/master/server.js)
 
 ```bash
 npm install olives couchdb-emily-tools
 ```
 
+The server side has some specific configuration:
+
 ```js
 var olives = require("olives"),
-	tools = require("couchdb-emily-tools");
+	CouchDBTools = require("couchdb-emily-tools");
 
-// sessionStore can be a new RedisStore for instance
+// sessionStore is a new redis-store: https://npmjs.org/package/connect-redis
 CouchDBTools.configuration.sessionStore = sessionStore;
 
+// The name of the cookie sent to the client must set too
+CouchDBTools.configuration.CookieID: "myApplication";
+
 // Add the CouchDB handler to Olives
-olives.handlers.set("CouchDB", tools.handler);
+olives.handlers.set("CouchDB", CouchDBTools.handler);
 ```
 
 And on the client side:
