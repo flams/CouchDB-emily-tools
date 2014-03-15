@@ -14,9 +14,7 @@
  ],
  "author": "Olivier Scherrer <pode.fr@gmail.com>",
  "dependencies": {
-  "requirejs": ">=2.1.5",
-  "emily": ">=1.3.5",
-  "cookie": ">=0.0.5"
+  "emily": ">=2.0.0"
   },
  "keywords": ["CouchDB", "Emily", "Olives", "Tools", "browser", "views", "documents", "synchronize", "login", "security"],
  "repository": {
