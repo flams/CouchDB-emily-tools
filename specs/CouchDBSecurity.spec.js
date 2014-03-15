@@ -3,6 +3,9 @@
  * The MIT License (MIT)
  * Copyright (c) 2012-2014 Olivier Scherrer <pode.fr@gmail.com>
  */
+var CouchDBSecurity = require("../src/CouchDBSecurity"),
+    CouchDBBase = require("../src/CouchDBBase");
+
 describe("CouchDBSecurityTest", function () {
 
     var couchDBSecurity = new CouchDBSecurity;

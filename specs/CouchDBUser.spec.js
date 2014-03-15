@@ -3,6 +3,12 @@
  * The MIT License (MIT)
  * Copyright (c) 2012-2014 Olivier Scherrer <pode.fr@gmail.com>
  */
+var CouchDBUser = require("../src/CouchDBUser"),
+    CouchDBBase = require("../src/CouchDBBase");
+
+var Transport = require("emily").Transport,
+    Promise = require("emily").Promise;
+
 describe("CouchDBUserTest", function () {
 
     var couchDBUser = new CouchDBUser;

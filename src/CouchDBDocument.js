@@ -3,12 +3,12 @@
  * The MIT License (MIT)
  * Copyright (c) 2012-2014 Olivier Scherrer <pode.fr@gmail.com>
  */
- var Store = require("emily").Store,
-    CouchDBBase = require("emily").CouchDBBase,
-    Tools = require("emily").Tools,
-    Promise = require("emily").Promise,
-    StateMachine = require("emily").StateMachine;
+var CouchDBBase = require("./CouchDBBase");
 
+var Store = require("emily").Store,
+Tools = require("emily").Tools,
+Promise = require("emily").Promise,
+StateMachine = require("emily").StateMachine;
 
 function CouchDBDocumentConstructor() {
 

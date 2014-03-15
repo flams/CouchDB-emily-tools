@@ -45,9 +45,8 @@ docs: clean-docs
 
 tests: tests-unit
 
-tests-unit: clean-temp temp.js
-	java -jar $(JsTestDriver) \
-		--tests all
+tests-unit:
+	jasmine-node specs/
 
 tests-integration:
 	node $(INTEGRATION)

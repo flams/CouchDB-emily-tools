@@ -3,8 +3,9 @@
  * The MIT License (MIT)
  * Copyright (c) 2012-2014 Olivier Scherrer <pode.fr@gmail.com>
  */
+var CouchDBBase = require("./CouchDBBase");
+
 var Store = require("emily").Store,
-    CouchDBBase = require("emily").CouchDBBase,
     Tools = require("emily").Tools,
     StateMachine = require("emily").StateMachine;
 

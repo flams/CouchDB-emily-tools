@@ -7,7 +7,6 @@ var Store = require("emily").Store,
     Tools = require("emily").Tools,
     Promise = require("emily").Promise;
 
-
 /**
  * Duck typing.
  * @private
@@ -271,7 +270,7 @@ function CouchDBBaseConstructor() {
 
 }
 
-module.exports = function CouchDBSBaseFactory(data) {
+module.exports = function CouchDBBaseFactory(data) {
     CouchDBBaseConstructor.prototype = new Store(data);
     return new CouchDBBaseConstructor;
 };

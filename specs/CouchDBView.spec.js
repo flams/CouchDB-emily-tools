@@ -3,9 +3,12 @@
  * The MIT License (MIT)
  * Copyright (c) 2012-2014 Olivier Scherrer <pode.fr@gmail.com>
  */
+var CouchDBView = require("../src/CouchDBView"),
+    CouchDBBase = require("../src/CouchDBBase");
+
 var Store = require("emily").Store,
-    CouchDBBase = require("emily").CouchDBBase,
     Tools = require("emily").Tools,
+    Promise = require("emily").Promise,
     StateMachine = require("emily").StateMachine;
 
 describe("CouchDBView inherits from CouchDBBase", function () {
@@ -36,7 +39,6 @@ describe("CouchDBView inherits from CouchDBBase", function () {
         promise = couchDBView.sync("db", "design", "view");
         expect(promise).toBeInstanceOf(Promise);
     });
-
 });
 
 describe("CouchDBView delegates its internal states to a stateMachine", function () {

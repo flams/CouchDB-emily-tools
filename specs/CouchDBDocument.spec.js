@@ -3,6 +3,12 @@
  * The MIT License (MIT)
  * Copyright (c) 2012-2014 Olivier Scherrer <pode.fr@gmail.com>
  */
+var CouchDBDocument = require("../src/CouchDBDocument"),
+    CouchDBBase = require("../src/CouchDBBase");
+
+var Promise = require("emily").Promise,
+    StateMachine = require("emily").StateMachine;
+
 var transportMock = null,
     stopListening = null;
 
