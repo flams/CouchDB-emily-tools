@@ -1,26 +1,33 @@
+/**
+ * https://github.com/flams/CouchDB-emily-tools
+ * The MIT License (MIT)
+ * Copyright (c) 2012-2014 Olivier Scherrer <pode.fr@gmail.com>
+ */
 var emily = require("emily"),
-	tools = require("../tools"),
-	assert = require("assert"),
-	http = require("http");
+    tools = require("../tools"),
+    assert = require("assert"),
+    http = require("http");
+
+var handlers = new emily.Store();
 
 http.globalAgent.maxSockets = 64;
 
-emily.handlers.set("CouchDB", tools.handler);
+handlers.set("CouchDB", tools.handler);
 
 tools.configuration.adminAuth = "couchdb:couchdb";
 
 function catchError(error) {
-	if (typeof error == "object") {
-		error = JSON.stringify(error);
-	}
-	error && console.error('\u001b[31m' + error + '\u001b[0m');
+    if (typeof error == "object") {
+        error = JSON.stringify(error);
+    }
+    error && console.error('\u001b[31m' + error + '\u001b[0m');
 }
 
 function success(message) {
-		if (typeof message == "object") {
-		message = JSON.stringify(message);
-	}
-	message && console.log('\u001b[32m' + message + '\u001b[0m')
+        if (typeof message == "object") {
+        message = JSON.stringify(message);
+    }
+    message && console.log('\u001b[32m' + message + '\u001b[0m')
 }
 
 /**
@@ -28,58 +35,57 @@ function success(message) {
  * Synchronization with a CouchDBView
  * Upload a new document, make sure it's picked up
  */
-tools.requirejs(["CouchDBView", "CouchDBDocument", "Transport", "Promise"], function (CouchDBView, CouchDBDocument, Transport, Promise) {
+var CouchDBView = tools.CouchDBView,
+    CouchDBDocument = tools.CouchDBDocument,
+    Transport = emily.Transport,
+    Promise = tools.Promise;
 
-	var couchDBView = new CouchDBView,
-		couchDBDocument = new CouchDBDocument,
-		transport = new Transport(emily.handlers);
+var couchDBView = new CouchDBView,
+    couchDBDocument = new CouchDBDocument,
+    transport = new Transport(handlers);
 
-	couchDBDocument.setTransport(transport);
-	couchDBView.setTransport(transport);
+couchDBDocument.setTransport(transport);
+couchDBView.setTransport(transport);
 
-	couchDBView.sync("test", "list", "_view/id")
+couchDBView.sync("test", "list", "_view/id")
 
-	.then(function (hop) {
-		if (this.count() > 0) {
-			console.log(this.get(100), "hop")
-			success("It can synchronize a store with a view");
-		}
+.then(function () {
+    if (this.count() > 0) {
+        console.log(this.get(100))
+        success("It can synchronize a store with a view");
+    }
 
-		this.watch("added", function (idx, newDocument) {
-			success("It can notify when documents are added");
-		}, this);
+    this.watch("added", function (idx, newDocument) {
+        success("It can notify when documents are added");
+    }, this);
 
-		this.watch("updated", function (idx, newDocument) {
-			if (newDocument.id == "newDocument") {
-				success("It can notify when documents are updated");
-			}
-		}, this);
+    this.watch("updated", function (idx, newDocument) {
+        if (newDocument.id == "newDocument") {
+            success("It can notify when documents are updated");
+        }
+    }, this);
 
-		this.watch("deleted", function (idx, newDocument) {
-			success("It can notify when documents are removed");
-		}, this);
+    this.watch("deleted", function (idx, newDocument) {
+        success("It can notify when documents are removed");
+    }, this);
 
-	}, couchDBView)
+}, couchDBView)
 
-	.then(function () {
-		return this.sync("test", "newDocument");
-	}, couchDBDocument)
+.then(function () {
+    return this.sync("test", "newDocument");
+}, couchDBDocument)
 
-	.then(function () {
-		return this.upload();
-	}, couchDBDocument)
+.then(function () {
+    return this.upload();
+}, couchDBDocument)
 
-	.then(function () {
-		var self = this;
+.then(function () {
+    var self = this;
 
-		setTimeout(function () {
-			self.remove();
-		}, 100);
-	}, couchDBDocument);
-
-
-});
-
+    setTimeout(function () {
+        self.remove();
+    }, 100);
+}, couchDBDocument);
 
 process.on('uncaughtException', catchError);
 
