@@ -3,6 +3,8 @@
  * The MIT License (MIT)
  * Copyright (c) 2012-2014 Olivier Scherrer <pode.fr@gmail.com>
  */
+"use strict";
+
 var CouchDBDocument = require("./CouchDBDocument");
 
 /**
@@ -46,15 +48,13 @@ function CouchDBSecurityConstructor() {
 	this.load = function load(db) {
 		return this.sync(db, _name);
 	};
-
-
-};
+}
 
 /**
  * @class
  * CouchDBSecurity synchronises a CouchDBDocument with _security document
  */
 module.exports = function CouchDBSecurityFactory() {
-	CouchDBSecurityConstructor.prototype = new CouchDBDocument;
-	return new CouchDBSecurityConstructor;
+	CouchDBSecurityConstructor.prototype = new CouchDBDocument();
+	return new CouchDBSecurityConstructor();
 };

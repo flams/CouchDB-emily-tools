@@ -3,6 +3,8 @@
  * The MIT License (MIT)
  * Copyright (c) 2012-2014 Olivier Scherrer <pode.fr@gmail.com>
  */
+"use strict";
+
 module.exports = {
 	CouchDBBulkDocuments: require("./CouchDBBulkDocuments"),
 	CouchDBDocument: require("./CouchDBDocument"),
