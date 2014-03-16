@@ -43,6 +43,9 @@ docs: clean-docs
 		-d=docs/latest/ \
 		-t=tools/JsDoc/templates/jsdoc
 
+jshint:
+	jshint src
+
 tests: tests-unit
 
 tests-unit:
@@ -121,4 +124,4 @@ endif
 	git checkout master
 
 
-.PHONY: docs clean-docs clean-build build tests release clean gh-pages
+.PHONY: docs clean-docs clean-build build tests release clean gh-pages jshint
