@@ -3,10 +3,11 @@
  * The MIT License (MIT)
  * Copyright (c) 2012-2014 Olivier Scherrer <pode.fr@gmail.com>
  */
+"use strict";
+
 var CouchDBBase = require("./CouchDBBase");
 
-var Store = require("emily").Store,
-    Tools = require("emily").Tools,
+var Tools = require("emily").Tools,
     Promise = require("emily").Promise,
     StateMachine = require("emily").StateMachine;
 
@@ -19,7 +20,7 @@ function CouchDBBulkDocumentsConstructor() {
      * @param {Object} query an object with queryparams
      * @returns {Object} syncInfo if valid, false if not
      */
-     this.setSyncInfo = function setSyncInfo(database,  query) {
+    this.setSyncInfo = function setSyncInfo(database,  query) {
         if (typeof database == "string" &&
             typeof query == "object") {
 
@@ -29,9 +30,9 @@ function CouchDBBulkDocumentsConstructor() {
             };
 
             // Bring keys one level up
-            if (Array.isArray(_syncInfo["query"].keys)) {
-                _syncInfo["keys"] = _syncInfo["query"].keys;
-                delete _syncInfo["query"].keys;
+            if (Array.isArray(_syncInfo.query.keys)) {
+                _syncInfo.keys = _syncInfo.query.keys;
+                delete _syncInfo.query.keys;
             }
 
             return _syncInfo;
@@ -45,7 +46,7 @@ function CouchDBBulkDocumentsConstructor() {
      * Get a bulk of documents
      * @private
      */
-     this.onSync = function onSync() {
+    this.onSync = function onSync() {
 
         var _syncInfo = this.getSyncInfo(),
         reqData = {
@@ -55,7 +56,7 @@ function CouchDBBulkDocumentsConstructor() {
         errorString;
 
         // If an array of keys is defined, we POST it to _all_docs to get arbitrary docs.
-        if (Array.isArray(_syncInfo["keys"])) {
+        if (Array.isArray(_syncInfo.keys)) {
             reqData.method = "POST";
             reqData.data = JSON.stringify({keys:_syncInfo.keys});
             reqData.headers = {
@@ -64,35 +65,36 @@ function CouchDBBulkDocumentsConstructor() {
             errorString = reqData.data;
 
         // Else, we just GET the documents using startkey/endkey
-    } else {
-        reqData.method = "GET";
-        errorString = JSON.stringify(_syncInfo.query);
-    }
+        } else {
+            reqData.method = "GET";
+            errorString = JSON.stringify(_syncInfo.query);
+        }
 
-    _syncInfo.query.include_docs = true;
+        _syncInfo.query.include_docs = true;
 
-    this.getTransport().request(
-        this.getHandlerName(),
-        reqData,
-        function (results) {
+        this.getTransport().request(
+            this.getHandlerName(),
+            reqData,
+            function (results) {
 
-            var json = JSON.parse(results);
+                var json = JSON.parse(results);
 
-            if (!json.rows) {
-                throw new Error("CouchDBBulkDocuments.sync(\"" + _syncInfo.database + "\", " + errorString + ") failed: " + results);
-            } else {
-                this.reset(json.rows);
-                this.getStateMachine().event("listen");
-                this.getPromise().fulfill(this);
-            }
-        }, this);
+                if (!json.rows) {
+                    throw new Error("CouchDBBulkDocuments.sync(\"" +
+                        _syncInfo.database + "\", " + errorString + ") failed: " + results);
+                } else {
+                    this.reset(json.rows);
+                    this.getStateMachine().event("listen");
+                    this.getPromise().fulfill(this);
+                }
+            }, this);
     };
 
     /**
      * Subscribe to changes when synchronized with a bulk of documents
      * @private
      */
-     this.onListen = function onListen() {
+    this.onListen = function onListen() {
 
         var _syncInfo = this.getSyncInfo();
 
@@ -110,17 +112,18 @@ function CouchDBBulkDocumentsConstructor() {
                 query: _syncInfo.query
             },
             function (changes) {
-                var json;
+                var json,
+                action;
+
                 // Should I test for this very special case (heartbeat?)
                 // Or do I have to try catch for any invalid json?
                 if (changes == "\n") {
                     return false;
                 }
 
-                var json = JSON.parse(changes),
-                action;
+                json = JSON.parse(changes);
 
-                if (json.changes[0].rev.search("1-") == 0) {
+                if (json.changes[0].rev.search("1-") === 0) {
                     action = "add";
                 } else if (json.deleted) {
                     action = "remove";
@@ -131,17 +134,17 @@ function CouchDBBulkDocumentsConstructor() {
                 this.getStateMachine().event(action, json.id, json.doc);
 
             }, this);
-     };
+    };
 
     /**
      * Add in the Store a document that was added in CouchDB
      * @private
      */
-     this.onAdd = function onAdd(id) {
+    this.onAdd = function onAdd(id) {
 
         var _syncInfo = this.getSyncInfo();
 
-        if (_syncInfo["query"].startkey || _syncInfo["query"].endkey) {
+        if (_syncInfo.query.startkey || _syncInfo.query.endkey) {
             _syncInfo.query.include_docs = true;
             _syncInfo.query.update_seq = true;
 
@@ -166,37 +169,37 @@ function CouchDBBulkDocumentsConstructor() {
         } else {
             return false;
         }
-     };
+    };
 
     /**
      * Update in the Store a document that was updated in CouchDB
      * @private
      */
-     this.onChange = function onChange(id, doc) {
+    this.onChange = function onChange(id, doc) {
         this.loop(function (value, idx) {
             if (value.id == id) {
                 this.set(idx, doc);
             }
         }, this);
-     };
+    };
 
     /**
      * Remove from the Store a document that was removed in CouchDB
      * @private
      */
-     this.onRemove = function onRemove(id) {
+    this.onRemove = function onRemove(id) {
         this.loop(function (value, idx) {
             if (value.id == id) {
                 this.del(idx);
             }
         }, this);
-     };
+    };
 
     /**
      * Update the database with bulk documents
      * @private
      */
-     this.databaseUpdate = function databaseUpdate(promise) {
+    this.databaseUpdate = function databaseUpdate(promise) {
         var docs = [],
         _syncInfo = this.getSyncInfo();
 
@@ -223,20 +226,19 @@ function CouchDBBulkDocumentsConstructor() {
                 });
                 promise.fulfill(updates);
             }, this);
-     };
+    };
 
     /**
      * Upload the document to the database
      * @returns {Promise}
      */
-     this.upload = function upload() {
-        var promise = new Promise;
+    this.upload = function upload() {
+        var promise = new Promise();
         this.getStateMachine().event("upload", promise);
         return promise;
-     };
+    };
 
     this.setStateMachine(new StateMachine("Unsynched", {
-
         "Unsynched": [
             ["sync", this.onSync, this, "Synched"]
         ],
@@ -253,7 +255,6 @@ function CouchDBBulkDocumentsConstructor() {
             ["remove", this.onRemove, this],
             ["upload", this.databaseUpdate, this]
         ]
-
     }));
 
 }
@@ -264,5 +265,5 @@ function CouchDBBulkDocumentsConstructor() {
  */
 module.exports = function CouchDBBulkDocumentsFactory(data) {
     CouchDBBulkDocumentsConstructor.prototype = new CouchDBBase(data);
-    return new CouchDBBulkDocumentsConstructor;
+    return new CouchDBBulkDocumentsConstructor();
 };
