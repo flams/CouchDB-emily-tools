@@ -54,17 +54,17 @@ tests-unit:
 tests-integration:
 	node $(INTEGRATION)
 
-build: clean-build CouchDBTools.js
+build: clean-build CouchDBTools.min.js
 	cp LICENSE build/
-	cp -rf src/ build/src/
 
 temp.js: clean-temp
-	r.js -o tools/build.js
+	browserify -r ./src/CouchDBTools.js:CouchDBTools -u emily -o temp.js
 
 CouchDBTools.js: temp.js
 	mkdir -p build
 	cat LICENSE-MINI temp.js > build/$@
 
+CouchDBTools.min.js: CouchDBTools.js
 	java -jar tools/GoogleCompiler/compiler.jar \
 		--js build/CouchDBTools.js \
 		--js_output_file build/CouchDBTools.min.js \
