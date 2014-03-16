@@ -3,8 +3,9 @@
  * The MIT License (MIT)
  * Copyright (c) 2012-2014 Olivier Scherrer <pode.fr@gmail.com>
  */
+"use strict";
+
 var Store = require("emily").Store,
-    Tools = require("emily").Tools,
     Promise = require("emily").Promise;
 
 /**
@@ -79,7 +80,7 @@ function CouchDBBaseConstructor() {
      * A promise returned and resolved when the store is synched
      * @private
      */
-    _promise = new Promise;
+    _promise = new Promise();
 
     /**
      * Set the promise to be resolved when the store is synched
@@ -177,10 +178,12 @@ function CouchDBBaseConstructor() {
      * @returns {Boolean} false if no configuration object given
      */
     this.sync = function sync() {
+        var _syncInfo;
 
-        _promise = new Promise;
+        _promise = new Promise();
+        _syncInfo = this.setSyncInfo.apply(this, arguments);
 
-        if (_syncInfo = this.setSyncInfo.apply(this, arguments)) {
+        if (_syncInfo) {
             _stateMachine.event("sync");
             return _promise;
         } else {
@@ -225,8 +228,10 @@ function CouchDBBaseConstructor() {
      * This function will be called when the Store is unsynched
      */
     this.onUnsync = function onUnsync() {
-        this.stopListening && this.stopListening();
-        delete this.stopListening;
+        if (this.stopListening) {
+            this.stopListening();
+            delete this.stopListening;
+        }
     };
 
     this.unsync = function unsync() {
@@ -265,12 +270,13 @@ function CouchDBBaseConstructor() {
      * @returns {Boolean} true
      */
     this.setSyncInfo = function setSyncInfo(syncInfo) {
-        return _syncInfo = syncInfo;
+        _syncInfo = syncInfo;
+        return _syncInfo;
     };
 
 }
 
 module.exports = function CouchDBBaseFactory(data) {
     CouchDBBaseConstructor.prototype = new Store(data);
-    return new CouchDBBaseConstructor;
+    return new CouchDBBaseConstructor();
 };
