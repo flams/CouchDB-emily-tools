@@ -503,6 +503,11 @@ couchDBBulkDocuments.upload();
 
 ## Changelog
 
+###3.0.0 - 16 MAR 2014
+
+* remove requirejs
+* now works with Emily.js and Olives.js version 2.0.0
+
 ####2.0.0 - 27 APR 2013
 
 * Complete refactoring of the tools. Documents, BulkDocuments and Views are in distinct files.
