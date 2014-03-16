@@ -3,12 +3,12 @@
  * The MIT License (MIT)
  * Copyright (c) 2012-2014 Olivier Scherrer <pode.fr@gmail.com>
  */
+"use strict";
+
 var CouchDBBase = require("./CouchDBBase");
 
-var Store = require("emily").Store,
-Tools = require("emily").Tools,
-Promise = require("emily").Promise,
-StateMachine = require("emily").StateMachine;
+var Promise = require("emily").Promise,
+    StateMachine = require("emily").StateMachine;
 
 function CouchDBDocumentConstructor() {
 
@@ -19,11 +19,11 @@ function CouchDBDocumentConstructor() {
      * @param {Object} [optional] query an object with queryparams
      * @returns {Object} syncInfo if valid, false if not
      */
-     this.setSyncInfo = function setSyncInfo(database, doc, query) {
+    this.setSyncInfo = function setSyncInfo(database, doc, query) {
         if (typeof database == "string" &&
             typeof doc == "string") {
 
-        if (!query || (typeof query == "object")) {
+            if (!query || (typeof query == "object")) {
                 return {
                     "database": database,
                     "document": doc,
@@ -35,13 +35,13 @@ function CouchDBDocumentConstructor() {
         } else {
             return false;
         }
-     };
+    };
 
     /**
      * Get a CouchDB document
      * @private
      */
-     this.onSync = function onSync() {
+    this.onSync = function onSync() {
 
         var _syncInfo = this.getSyncInfo();
 
@@ -60,13 +60,13 @@ function CouchDBDocumentConstructor() {
                 }
                 this.getPromise().fulfill(json);
             }, this);
-     };
+    };
 
     /**
      * Subscribe to changes when synchronized with a document
      * @private
      */
-     this.onListen = function onListen() {
+    this.onListen = function onListen() {
 
         var _syncInfo = this.getSyncInfo();
 
@@ -103,13 +103,13 @@ function CouchDBDocumentConstructor() {
                 }
             }, this
             );
-     };
+    };
 
     /**
      * Update the document when synchronized with a document.
      * @private
      */
-     this.onChange = function onChange() {
+    this.onChange = function onChange() {
 
         var _syncInfo = this.getSyncInfo();
 
@@ -123,22 +123,22 @@ function CouchDBDocumentConstructor() {
                 this.reset(JSON.parse(doc));
             }, this
             );
-     };
+    };
 
     /**
      * Delete all document's properties
      * @private
      */
-     this.onRemove = function onRemove() {
+    this.onRemove = function onRemove() {
         this.reset({});
-     };
+    };
 
     /**
      * Upload the document to the database
      * @returns true if synched
      */
-     this.upload = function upload() {
-        var promise = new Promise,
+    this.upload = function upload() {
+        var promise = new Promise(),
         _syncInfo = this.getSyncInfo();
 
         if (_syncInfo.document) {
@@ -147,26 +147,24 @@ function CouchDBDocumentConstructor() {
         }
 
         return false;
-     };
+    };
 
     /**
      * Remove the document from the database
      * @returns true if remove called
      */
-     this.remove = function remove() {
-
-        var _syncInfo = this.getSyncInfo(),
-            promise = new Promise();
+    this.remove = function remove() {
+        var promise = new Promise();
 
         this.getStateMachine().event("removeFromDatabase", promise);
         return promise;
-     };
+    };
 
     /**
      * Put a new document in CouchDB
      * @private
      */
-     this.databaseCreate = function databaseCreate(promise) {
+    this.databaseCreate = function databaseCreate(promise) {
 
         var _syncInfo = this.getSyncInfo();
 
@@ -192,13 +190,13 @@ function CouchDBDocumentConstructor() {
                 }
             }, this
             );
-     };
+    };
 
     /**
      * Update a document in CouchDB through a PUT request
      * @private
      */
-     this.databaseUpdate = function databaseUpdate(promise) {
+    this.databaseUpdate = function databaseUpdate(promise) {
 
         var _syncInfo = this.getSyncInfo();
 
@@ -222,13 +220,13 @@ function CouchDBDocumentConstructor() {
                 }
             },
             this);
-     };
+    };
 
     /**
      * Remove a document from CouchDB through a DELETE request
      * @private
      */
-     this.databaseRemove = function databaseRemove(promise) {
+    this.databaseRemove = function databaseRemove(promise) {
 
         var _syncInfo = this.getSyncInfo();
 
@@ -248,10 +246,9 @@ function CouchDBDocumentConstructor() {
                 promise.reject(json);
             }
         });
-     };
+    };
 
     this.setStateMachine(new StateMachine("Unsynched", {
-
         "Unsynched": [
             ["sync", this.onSync, this, "Synched"]
         ],
@@ -272,7 +269,6 @@ function CouchDBDocumentConstructor() {
         ]
 
     }));
-
 }
 
 /**
@@ -281,5 +277,5 @@ function CouchDBDocumentConstructor() {
  */
 module.exports = function CouchDBDocumentFactory(data) {
     CouchDBDocumentConstructor.prototype = new CouchDBBase(data);
-    return new CouchDBDocumentConstructor;
+    return new CouchDBDocumentConstructor();
 };
