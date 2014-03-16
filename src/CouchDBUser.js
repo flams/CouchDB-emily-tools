@@ -116,7 +116,7 @@ function CouchDBUserConstructor() {
      * @returns {Promise}
      */
     this.login = function login() {
-        var promise = new Promise,
+        var promise = new Promise(),
             name = this.get("name"),
             password = this.get("password");
 
@@ -152,7 +152,7 @@ function CouchDBUserConstructor() {
      * @returns {Promise}
     */
     this.create = function create() {
-        var promise = new Promise;
+        var promise = new Promise();
 
         if (!this.get("type")) {
             this.set("type", "user");
@@ -174,7 +174,7 @@ function CouchDBUserConstructor() {
 
         return promise;
     };
-};
+}
 
 /**
  * @class
@@ -182,6 +182,6 @@ function CouchDBUserConstructor() {
  * It also provides tools to ease the creation/modification of users.
  */
 module.exports = function CouchDBUserFactory() {
-    CouchDBUserConstructor.prototype = new CouchDBDocument;
-    return new CouchDBUserConstructor;
+    CouchDBUserConstructor.prototype = new CouchDBDocument();
+    return new CouchDBUserConstructor();
 };
