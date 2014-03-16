@@ -43,34 +43,34 @@ http://flams.github.io/emily/#store
 Synchronizing a CouchDBDocument to an existing document is as easy as:
 
 ```js
-	var couchDBDocument = new CouchDBDocument();
+var couchDBDocument = new CouchDBDocument();
 
-	// Transport will make the link to the node.js server that issues the request.
-	couchDBDocument.setTransport(transport);
+// Transport will make the link to the node.js server that issues the request.
+couchDBDocument.setTransport(transport);
 
-	couchDBDocument.sync("myDatabase", "myDocument")
+couchDBDocument.sync("myDatabase", "myDocument")
 
-	.then(function () {
-		// Will return the structure of the document exactly as it exists in the database
-		couchDBDocument.toJSON();
-	})
+.then(function () {
+	// Will return the structure of the document exactly as it exists in the database
+	couchDBDocument.toJSON();
+})
 
-	.then(function () {
+.then(function () {
 
-		couchDBDocument.set("myProperty", "hello");
+	couchDBDocument.set("myProperty", "hello");
 
-		return couchDBDocument.upload();
+	return couchDBDocument.upload();
 
-	})
+})
 
-	.then(function () {
+.then(function () {
 
-		// At this point, the document has been updated in CouchDB with a new property
-		couchDBDocument.toJSON(); // Will have a myProperty property
+	// At this point, the document has been updated in CouchDB with a new property
+	couchDBDocument.toJSON(); // Will have a myProperty property
 
-		// and we can also remove the document from CouchDB if we want.
-		couchDBDocument.remove();
-	});
+	// and we can also remove the document from CouchDB if we want.
+	couchDBDocument.remove();
+});
 ```
 
 ##How to install it?
@@ -97,19 +97,19 @@ CouchDBTools.configuration.port: 5984;
 emily.handlers.set("CouchDB", CouchDBTools.handler);
 
 // Now we can require and use the CouchDB Tools, here's an example with a document.
-CouchDBTools.requirejs(["CouchDBDocument", "Transport"], function (CouchDBDocument, Transport) {
+var CouchDBDocument = require("tools").CouchDBDocument,
+    transport = require("emily").Transport;
 
-	var cdb = new CouchDBDocument,
-		transport = new Transport(emily.handlers);
+var cdb = new CouchDBDocument,
+	transport = new Transport(emily.handlers);
 
-	cdb.setTransport(transport);
+cdb.setTransport(transport);
 
-	cdb.sync("mydatabase", "mydocument")
-	.then(function () {
-		console.log(cdb.toJSON());
-	}, function (error) {
-		console.log(error);
-	});
+cdb.sync("mydatabase", "mydocument")
+.then(function () {
+	console.log(cdb.toJSON());
+}, function (error) {
+	console.log(error);
 });
 ```
 
@@ -142,32 +142,31 @@ olives.handlers.set("CouchDB", CouchDBTools.handler);
 And on the client side:
 
 ```html
-<scirpt src="requirejs.js" />
-<script src="/socket.io/socket.io.js" />
-<script src="Emily.js" />
-<script src="Olives.js" />
-<script src="CouchDBTools.js" />
+<script src="/socket.io/socket.io.js"></script>
+<script src="emily.js"></script>
+<script src="olives.js"></script>
+<script src="CouchDBTools.js"></script>
 ```
 
 ```js
-requirejs(["CouchDBDocument", "SocketIOTransport"], function (CouchDBDocument, SocketIOTransport) {
+var CouchDBDocument = require("tools").CouchDBDocument,
+	SocketIOTransport = require("olives").SocketIOTransport;
 
-	// Create a socket.io socket
-	var socket = io.connect("http://localhost"),
+// Create a socket.io socket
+var socket = io.connect("http://localhost"),
 
-	// Create a couchDBDocument
-	cdb = new CouchDBDocument,
+// Create a couchDBDocument
+cdb = new CouchDBDocument,
 
-	// And the transport that will issue the requests to CouchDB
-	transport = new SocketIOTransport(socket);
+// And the transport that will issue the requests to CouchDB
+transport = new SocketIOTransport(socket);
 
-	cdb.setTransport(transport);
+cdb.setTransport(transport);
 
-	cdb.sync("mydatabase", "mydocument")
+cdb.sync("mydatabase", "mydocument")
 
-	.then(function () {
-		console.log(cdb.toJSON());
-	});
+.then(function () {
+	console.log(cdb.toJSON());
 });
 ```
 
@@ -225,15 +224,14 @@ CouchDBDocument is designed to allow you to perform all of the operations that a
 #### Creating a CouchDBDocument
 
 ```js
-tools.requirejs(["CouchDBDocument", "transport"], function (CouchDBDocument, transport) {
+var CouchDBDocument = require("tools").CouchDBDocument,
+	transport = require("emily").Transport;
 
-	var couchDBDocument = new CouchDBDocument();
+var couchDBDocument = new CouchDBDocument();
 
-	// check the installation section to see how to create the transport layer
-	// depending on the environment (browser or node.js)
-	couchDBDocument.setTransport(transport);
-
-});
+// check the installation section to see how to create the transport layer
+// depending on the environment (browser or node.js)
+couchDBDocument.setTransport(transport);
 ```
 
 #### Synchronizing with a document
@@ -323,15 +321,13 @@ Attachements are not yet supported, but if you clap your hands enough, it will e
 #### Creating a CouchDBView
 
 ```js
-tools.requirejs(["CouchDBView", "transport"], function (CouchDBView, transport) {
+var CouchDBView = require("tools").CouchDBView,
+	Transport = require("emily").Transport;
+var couchDBView = new CouchDBView();
 
-	var couchDBView = new CouchDBView();
-
-	// check the installation section to see how to create the transport layer
-	// depending on the environment (browser or node.js)
-	couchDBView.setTransport(transport);
-
-});
+// check the installation section to see how to create the transport layer
+// depending on the environment (browser or node.js)
+couchDBView.setTransport(transport);
 ```
 
 #### Synchronizing with a CouchDB View
@@ -435,15 +431,14 @@ CouchDBBulkDocuments synchronizes the data store with a bulk of documents. New d
 #### Creating a CouchDBBulkDocuments
 
 ```js
-tools.requirejs(["CouchDBBulkDocuments", "transport"], function (CouchDBBulkDocuments, transport) {
+var CouchDBBulkDocuments = require("tools").CouchDBBulkDocuments,
+	transport = require("emily").Transport;
 
-	var couchDBBulkDocuments = new CouchDBBulkDocuments();
+var couchDBBulkDocuments = new CouchDBBulkDocuments();
 
-	// check the installation section to see how to create the transport layer
-	// depending on the environment (browser or node.js)
-	couchDBBulkDocuments.setTransport(transport);
-
-});
+// check the installation section to see how to create the transport layer
+// depending on the environment (browser or node.js)
+couchDBBulkDocuments.setTransport(transport);
 ```
 
 #### Synchronizing with a bulk of CouchDB documents
