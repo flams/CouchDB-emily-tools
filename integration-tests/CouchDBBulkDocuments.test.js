@@ -1,26 +1,33 @@
+/**
+ * https://github.com/flams/CouchDB-emily-tools
+ * The MIT License (MIT)
+ * Copyright (c) 2012-2014 Olivier Scherrer <pode.fr@gmail.com>
+ */
 var emily = require("emily"),
-	tools = require("../tools"),
-	assert = require("assert"),
-	http = require("http");
+    tools = require("../tools"),
+    assert = require("assert"),
+    http = require("http");
+
+var handlers = new emily.Store();
 
 http.globalAgent.maxSockets = 64;
 
-emily.handlers.set("CouchDB", tools.handler);
+handlers.set("CouchDB", tools.handler);
 
 tools.configuration.adminAuth = "couchdb:couchdb";
 
 function catchError(error) {
-	if (typeof error == "object") {
-		error = JSON.stringify(error);
-	}
-	error && console.error('\u001b[31m' + error + '\u001b[0m');
+    if (typeof error == "object") {
+        error = JSON.stringify(error);
+    }
+    error && console.error('\u001b[31m' + error + '\u001b[0m');
 }
 
 function success(message) {
-		if (typeof message == "object") {
-		message = JSON.stringify(message);
-	}
-	message && console.log('\u001b[32m' + message + '\u001b[0m')
+        if (typeof message == "object") {
+        message = JSON.stringify(message);
+    }
+    message && console.log('\u001b[32m' + message + '\u001b[0m')
 }
 
 /**
@@ -35,111 +42,109 @@ function success(message) {
  * Remove all documents
  * Make sure they have all been removed
  */
-tools.requirejs(["CouchDBBulkDocuments", "Transport"], function (CouchDBBulkDocuments, Transport) {
+var CouchDBBulkDocuments = tools.CouchDBBulkDocuments,
+    Transport = emily.Transport;
 
-	var bulkDocumentsA = new CouchDBBulkDocuments([]),
-		bulkDocumentsB = new CouchDBBulkDocuments([]),
-		transport = new Transport(emily.handlers);
+var bulkDocumentsA = new CouchDBBulkDocuments([]),
+    bulkDocumentsB = new CouchDBBulkDocuments([]),
+    transport = new Transport(handlers);
 
-		bulkDocumentsA.setTransport(transport);
-		bulkDocumentsB.setTransport(transport);
+    bulkDocumentsA.setTransport(transport);
+    bulkDocumentsB.setTransport(transport);
 
-	bulkDocumentsB.sync("test", {
-		startkey: '"document2"',
-		endkey: '"document4"'
-	})
+bulkDocumentsB.sync("test", {
+    startkey: '"document2"',
+    endkey: '"document4"'
+})
 
-	.then(function () {
+.then(function () {
 
-		this.watch("added", function (id, document) {
-			success(document.id + " added");
-		}, this);
+    this.watch("added", function (id, document) {
+        success(document.id + " added");
+    }, this);
 
-	}, bulkDocumentsB, catchError)
+}, bulkDocumentsB, catchError)
 
-	.then(function () {
-		return bulkDocumentsA.sync("test", {
-			keys: []
-		});
-	})
+.then(function () {
+    return bulkDocumentsA.sync("test", {
+        keys: []
+    });
+})
 
-	.then(function () {
-		this.alter("push", {
-			doc: {
-				"_id": "document1"
-			}
-		});
+.then(function () {
+    this.alter("push", {
+        doc: {
+            "_id": "document1"
+        }
+    });
 
-		this.alter("push", {
-			doc: {
-				"_id": "document2"
-			}
-		});
+    this.alter("push", {
+        doc: {
+            "_id": "document2"
+        }
+    });
 
-		this.alter("push", {
-			doc: {
-				"_id": "document3"
-			}
-		});
+    this.alter("push", {
+        doc: {
+            "_id": "document3"
+        }
+    });
 
-		this.alter("push", {
-			doc: {
-				"_id": "document4"
-			}
-		});
+    this.alter("push", {
+        doc: {
+            "_id": "document4"
+        }
+    });
 
-		this.alter("push", {
-			doc: {
-				"_id": "document5"
-			}
-		});
+    this.alter("push", {
+        doc: {
+            "_id": "document5"
+        }
+    });
 
-		return this.upload();
-	}, bulkDocumentsA, catchError)
+    return this.upload();
+}, bulkDocumentsA, catchError)
 
-	.then(function () {
-		if (this.count() == 3) {
-			success("It can synchronize on a range of documents");
-		}
-	}, bulkDocumentsB, catchError)
+.then(function () {
+    if (this.count() == 3) {
+        success("It can synchronize on a range of documents");
+    }
+}, bulkDocumentsB, catchError)
 
-	.then(function () {
-		this.unsync();
+.then(function () {
+    this.unsync();
 
-		return this.sync("test", {
-			keys: ["document2", "document3", "document5"]
-		});
-	}, bulkDocumentsB, catchError)
+    return this.sync("test", {
+        keys: ["document2", "document3", "document5"]
+    });
+}, bulkDocumentsB, catchError)
 
-	.then(function () {
-		if (this.count() == 3 &&
-			this.get(2).id == "document5") {
-			success("It can synchronize on given documents");
-		}
-	}, bulkDocumentsB, catchError)
+.then(function () {
+    if (this.count() == 3 &&
+        this.get(2).id == "document5") {
+        success("It can synchronize on given documents");
+    }
+}, bulkDocumentsB, catchError)
 
-	.then(function () {
+.then(function () {
 
-		this.loop(function (document) {
-			document.doc._deleted = true;
-		}, this);
+    this.loop(function (document) {
+        document.doc._deleted = true;
+    }, this);
 
-		return this.upload();
-	}, bulkDocumentsA, catchError)
+    return this.upload();
+}, bulkDocumentsA, catchError)
 
-	.then(function () {
-		var self = this;
-		// We wait a bit for this document to be updated
-		// We could also simply whatch the remove event but this was easier
-		setTimeout(function () {
-			if (!self.count()) {
-				success("It can remove all of the documents");
-			}
-		}, 100);
-	}, bulkDocumentsB, catchError);
-
-});
-
+.then(function () {
+    var self = this;
+    // We wait a bit for this document to be updated
+    // We could also simply whatch the remove event but this was easier
+    setTimeout(function () {
+        if (!self.count()) {
+            success("It can remove all of the documents");
+        }
+    }, 100);
+}, bulkDocumentsB, catchError);
 
 process.on('uncaughtException', catchError);
 

@@ -5,3 +5,4 @@ couchdb-emily-tools.sublime-project
 couchdb.stderr
 couchdb.stdout
 temp.js
+node_modules/

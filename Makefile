@@ -1,7 +1,7 @@
 ###############################################################################################
 # https://github.com/flams/CouchDB-emily-tools
 # The MIT License (MIT)
-# Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
+# Copyright (c) 2012-2014 Olivier Scherrer <pode.fr@gmail.com>
 #
 # Targets:
 #
@@ -43,26 +43,28 @@ docs: clean-docs
 		-d=docs/latest/ \
 		-t=tools/JsDoc/templates/jsdoc
 
+jshint:
+	jshint src
+
 tests: tests-unit
 
-tests-unit: clean-temp temp.js
-	java -jar $(JsTestDriver) \
-		--tests all
+tests-unit:
+	jasmine-node specs/
 
 tests-integration:
 	node $(INTEGRATION)
 
-build: clean-build CouchDBTools.js
+build: clean-build CouchDBTools.min.js
 	cp LICENSE build/
-	cp -rf src/ build/src/
 
 temp.js: clean-temp
-	r.js -o tools/build.js
+	browserify -r ./src/CouchDBTools.js:CouchDBTools -u emily -o temp.js
 
 CouchDBTools.js: temp.js
 	mkdir -p build
 	cat LICENSE-MINI temp.js > build/$@
 
+CouchDBTools.min.js: CouchDBTools.js
 	java -jar tools/GoogleCompiler/compiler.jar \
 		--js build/CouchDBTools.js \
 		--js_output_file build/CouchDBTools.min.js \
@@ -122,4 +124,4 @@ endif
 	git checkout master
 
 
-.PHONY: docs clean-docs clean-build build tests release clean gh-pages
+.PHONY: docs clean-docs clean-build build tests release clean gh-pages jshint

@@ -1,16 +1,14 @@
 /**
  * @license https://github.com/flams/CouchDB-emily-tools
  * The MIT License (MIT)
- * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
+ * Copyright (c) 2012-2014 Olivier Scherrer <pode.fr@gmail.com>
  */
 
-var requirejs = require("requirejs"),
-	http = require("http"),
+var http = require("http"),
 	qs = require("querystring"),
 	cookie = require("cookie"),
-	emily = require("emily");
-
-requirejs(__dirname + "/build/CouchDBTools.js");
+	emily = require("emily"),
+	CouchDBTools = require("./src/CouchDBTools");
 
 var configuration = {
 	hostname: "localhost",
@@ -73,7 +71,7 @@ handler = function (data, onEnd, onData) {
 	};
 };
 
-exports.requirejs = requirejs;
-exports.handler = handler;
-exports.configuration = configuration;
-
+module.exports = emily.Tools.mixin(CouchDBTools, {
+	handler: handler,
+	configuration: configuration
+});
