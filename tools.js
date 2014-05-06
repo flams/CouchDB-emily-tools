@@ -8,25 +8,26 @@ var http = require("http"),
 	qs = require("querystring"),
 	cookie = require("cookie"),
 	emily = require("emily"),
-	CouchDBTools = require("./src/CouchDBTools");
+	CouchDBTools = require("./src/CouchDBTools")
+    follow = require("follow");
 
 var configuration = {
 	hostname: "localhost",
 	port: 5984,
 	cookieID: ''
-},
+};
 
-handler = function (data, onEnd, onData) {
+function handler(payload, onEnd, onData) {
 
 	var req = {},
 		isAborted = false;
 
-	data.hostname = configuration.hostname;
-	data.port = configuration.port;
-	data.path += "?" + qs.stringify(data.query);
+	payload.hostname = configuration.hostname;
+	payload.port = configuration.port;
+	payload.path += "?" + qs.stringify(payload.query);
 
 	var exec = function () {
-		req = http.request(data, function (res) {
+		req = http.request(payload, function (res) {
 
 			var body = "";
 
@@ -40,12 +41,12 @@ handler = function (data, onEnd, onData) {
 			});
 		});
 
-		req.end(data.data, "utf8");
+		req.end(payload.data, "utf8");
 	};
 
 	if (data.handshake && configuration.cookieID) {
 
-		var cookieJSON = cookie.parse(data.handshake.headers.cookie);
+		var cookieJSON = cookie.parse(payload.handshake.headers.cookie);
 
 		// I don't like the split but is there a better solution?
 		configuration.sessionStore.get(cookieJSON[configuration.cookieID].split("s:")[1].split(".")[0], function (err, session) {
@@ -53,7 +54,7 @@ handler = function (data, onEnd, onData) {
 				throw new Error(err);
 			} else {
 				if (!isAborted) {
-					data.auth = session.auth;
+					payload.auth = session.auth;
 					exec();
 				} else {
 					// do nothing!
@@ -69,9 +70,31 @@ handler = function (data, onEnd, onData) {
 		isAborted = true;
 		req.abort && req.abort();
 	};
-};
+}
+
+function changeHandler(payload, onEnd, onData) {
+
+    var url = data.hostname + ":" + data.port + payload.path,
+        feed = new follow.Feed(payload.query);
+
+    feed.on('change', function (data) {
+        onData(null, data);
+    });
+    feed.on('error', function (err) {
+        onEnd(err);
+        onData(err);
+        throw err;
+    });
+    feed.follow();
+
+    return function () {
+        feed.removeAllListeners();
+    }
+
+}
 
 module.exports = emily.Tools.mixin(CouchDBTools, {
 	handler: handler,
+    changeHandler: changeHandler,
 	configuration: configuration
 });
