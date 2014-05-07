@@ -172,6 +172,30 @@ function CouchDBBaseConstructor() {
     };
 
     /**
+     * Get the current CouchDBChange handler name
+     * @returns {String} the current changeHandler name
+     */
+    this.getChangeHandlerName = function getChangeHandlerName() {
+        return _changeHandlerName;
+    };
+
+    /**
+     * Set the current CouchDBChnage handler name
+     * @param {String} ChangeHandlerName the name of the change handler
+     * The name must be a string that matches with the handler
+     * as it's been added in Emily/Olives handlers
+     * @returns {Boolean} true if it's a string
+     */
+    this.setChangeHandlerName = function setChangeHandlerName(changeHandlerName) {
+        if (typeof changeHandlerName == "string") {
+            _changeHandlerName = changeHandlerName;
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+    /**
      * Synchronize the store with CouchDB
      * depending on the provided sync info
      * @param {Object} a configuration object
