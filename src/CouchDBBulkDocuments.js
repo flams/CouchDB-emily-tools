@@ -106,14 +106,18 @@ function CouchDBBulkDocumentsConstructor() {
         }, _syncInfo.query);
 
         this.stopListening = this.getTransport().listen(
-            this.getHandlerName(),
+            this.getChangeHandlerName(),
             {
-                path: "/" + _syncInfo.database + "/_changes",
+                path: "/" + _syncInfo.database,
                 query: _syncInfo.query
             },
-            function (changes) {
+            function (err, changes) {
                 var json,
                 action;
+
+                if (err) {
+                    throw new Error(error);
+                }
 
                 // Should I test for this very special case (heartbeat?)
                 // Or do I have to try catch for any invalid json?
