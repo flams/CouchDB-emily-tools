@@ -49,7 +49,7 @@ jshint:
 tests: tests-unit
 
 tests-unit:
-	jasmine-node specs/
+	jasmine-node specs-old/
 
 tests-integration:
 	node $(INTEGRATION)
