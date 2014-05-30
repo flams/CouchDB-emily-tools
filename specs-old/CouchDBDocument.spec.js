@@ -246,23 +246,14 @@ describe("CouchDBDocument requests the document then subscribes to changes", fun
         couchDBDocument.onListen();
         expect(couchDBDocument.stopListening).toBe(stopListening);
         expect(transportMock.listen.wasCalled).toBe(true);
-        expect(transportMock.listen.mostRecentCall.args[0]).toBe("CouchDB");
-        expect(transportMock.listen.mostRecentCall.args[1].path).toBe("/db/_changes");
+        expect(transportMock.listen.mostRecentCall.args[0]).toBe("CouchDBChange");
+        expect(transportMock.listen.mostRecentCall.args[1].path).toBe("/db");
         reqData = transportMock.listen.mostRecentCall.args[1].query;
         expect(reqData.feed).toBe("continuous");
         expect(reqData.heartbeat).toBe(20000);
         expect(reqData.descending).toBe(true);
         expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
         expect(transportMock.listen.mostRecentCall.args[3]).toBe(couchDBDocument);
-    });
-
-    it("should not fail with empty json from heartbeat", function () {
-        couchDBDocument.onListen();
-        callback = transportMock.listen.mostRecentCall.args[2];
-
-        expect(function() {
-            callback("\n");
-        }).not.toThrow();
     });
 
     it("should call for store update on document update", function () {
@@ -274,7 +265,7 @@ describe("CouchDBDocument requests the document then subscribes to changes", fun
         couchDBDocument.onListen();
         callback = transportMock.listen.mostRecentCall.args[2];
 
-        callback.call(couchDBDocument, listenRes);
+        callback.call(couchDBDocument, null, listenRes);
 
         expect(stateMachine.event.wasCalled).toBe(true);
         expect(stateMachine.event.mostRecentCall.args[0]).toBe("change");
@@ -289,7 +280,7 @@ describe("CouchDBDocument requests the document then subscribes to changes", fun
         couchDBDocument.onListen();
         callback = transportMock.listen.mostRecentCall.args[2];
 
-        callback.call(couchDBDocument, listenRes);
+        callback.call(couchDBDocument, null, listenRes);
 
         expect(stateMachine.event.wasCalled).toBe(false);
     });
@@ -305,7 +296,7 @@ describe("CouchDBDocument requests the document then subscribes to changes", fun
         couchDBDocument.onListen();
         callback = transportMock.listen.mostRecentCall.args[2];
 
-        callback.call(couchDBDocument, listenRes);
+        callback.call(couchDBDocument, null, listenRes);
 
         expect(stateMachine.event.wasCalled).toBe(false);
     });
@@ -319,7 +310,7 @@ describe("CouchDBDocument requests the document then subscribes to changes", fun
         couchDBDocument.onListen();
         callback = transportMock.listen.mostRecentCall.args[2];
 
-        callback.call(couchDBDocument, listenRes);
+        callback.call(couchDBDocument, null, listenRes);
 
         expect(stateMachine.event.wasCalled).toBe(true);
         expect(stateMachine.event.mostRecentCall.args[0]).toBe("remove");

@@ -65,6 +65,12 @@ function CouchDBBaseConstructor() {
     _handlerName = "CouchDB",
 
     /**
+     * The default change handler name
+     * @private
+     */
+    _changeHandlerName = "CouchDBChange",
+
+    /**
      * The transport to use to issue the requests
      * @private
      */
@@ -202,8 +208,6 @@ function CouchDBBaseConstructor() {
      * @returns {Boolean} false if no configuration object given
      */
     this.sync = function sync() {
-        var _syncInfo;
-
         _promise = new Promise();
         _syncInfo = this.setSyncInfo.apply(this, arguments);
 

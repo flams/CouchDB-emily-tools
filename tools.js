@@ -44,7 +44,7 @@ function handler(payload, onEnd, onData) {
 		req.end(payload.data, "utf8");
 	};
 
-	if (data.handshake && configuration.cookieID) {
+	if (payload.handshake && configuration.cookieID) {
 
 		var cookieJSON = cookie.parse(payload.handshake.headers.cookie);
 
@@ -74,7 +74,7 @@ function handler(payload, onEnd, onData) {
 
 function changeHandler(payload, onEnd, onData) {
 
-    var url = data.hostname + ":" + data.port + payload.path,
+    var url = payload.hostname + ":" + payload.port + payload.path,
         feed = new follow.Feed(payload.query);
 
     feed.on('change', function (data) {
