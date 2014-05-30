@@ -89,13 +89,7 @@ function CouchDBViewConstructor() {
             },
             function (err, changes) {
                 if (err) {
-                    throw new Error(error);
-                }
-                
-                // Should I test for this very special case (heartbeat?)
-                // Or do I have to try catch for any invalid json?
-                if (changes == "\n") {
-                    return false;
+                    throw new Error(err);
                 }
 
                 var json = JSON.parse(changes),

@@ -252,8 +252,8 @@ describe("CouchDBView requests the view, then subscribes to changes", function (
         couchDBView.onListen();
         expect(couchDBView.stopListening).toBe(stopListening);
         expect(transportMock.listen.wasCalled).toBe(true);
-        expect(transportMock.listen.mostRecentCall.args[0]).toBe("CouchDB");
-        expect(transportMock.listen.mostRecentCall.args[1].path).toBe("/db/_changes");
+        expect(transportMock.listen.mostRecentCall.args[0]).toBe("CouchDBChange");
+        expect(transportMock.listen.mostRecentCall.args[1].path).toBe("/db");
         reqData = transportMock.listen.mostRecentCall.args[1].query;
         expect(reqData.feed).toBe("continuous");
         expect(reqData.heartbeat).toBe(20000);
@@ -263,18 +263,6 @@ describe("CouchDBView requests the view, then subscribes to changes", function (
         expect(transportMock.listen.mostRecentCall.args[3]).toBe(couchDBView);
     });
 
-    it("should not fail with empty json from heartbeat", function () {
-        var callback;
-
-        couchDBView.onListen();
-        callback = transportMock.listen.mostRecentCall.args[2];
-
-        expect(function() {
-            callback("\n");
-        }).not.toThrow();
-
-    });
-
     it("should not fail if json has no changes properties (happens when used with couchdb lucene)", function () {
         var callback;
 
@@ -282,7 +270,7 @@ describe("CouchDBView requests the view, then subscribes to changes", function (
         callback = transportMock.listen.mostRecentCall.args[2];
 
         expect(function() {
-            callback.call(couchDBView, "{}");
+            callback.call(couchDBView, null, "{}");
         }).not.toThrow();
     });
 
@@ -294,7 +282,7 @@ describe("CouchDBView requests the view, then subscribes to changes", function (
 
         couchDBView.onListen(8);
         callback = transportMock.listen.mostRecentCall.args[2];
-        callback.call(couchDBView, listenRes);
+        callback.call(couchDBView, null, listenRes);
 
         expect(stateMachine.event.wasCalled).toBe(true);
         expect(stateMachine.event.mostRecentCall.args[0]).toBe("change");
@@ -309,7 +297,7 @@ describe("CouchDBView requests the view, then subscribes to changes", function (
 
         couchDBView.onListen(8);
         callback = transportMock.listen.mostRecentCall.args[2];
-        callback.call(couchDBView, listenRes);
+        callback.call(couchDBView, null, listenRes);
 
         expect(stateMachine.event.wasCalled).toBe(true);
         expect(stateMachine.event.mostRecentCall.args[0]).toBe("add");
@@ -324,7 +312,7 @@ describe("CouchDBView requests the view, then subscribes to changes", function (
 
         couchDBView.onListen(8);
         callback = transportMock.listen.mostRecentCall.args[2];
-        callback.call(couchDBView, listenRes);
+        callback.call(couchDBView, null, listenRes);
 
         expect(stateMachine.event.wasCalled).toBe(true);
         expect(stateMachine.event.mostRecentCall.args[0]).toBe("remove");
@@ -339,7 +327,7 @@ describe("CouchDBView requests the view, then subscribes to changes", function (
         couchDBView.getSyncInfo().reducedView = true;
         couchDBView.onListen(8);
         callback = transportMock.listen.mostRecentCall.args[2];
-        callback.call(couchDBView, listenRes);
+        callback.call(couchDBView, null, listenRes);
 
         expect(stateMachine.event.wasCalled).toBe(true);
         expect(stateMachine.event.mostRecentCall.args[0]).toBe("updateReduced");
