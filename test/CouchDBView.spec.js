@@ -89,6 +89,26 @@ describe("Given CouchDBView and a transport", function () {
                             done();
                         });
                     });
+
+                    describe("When the document is removed", function () {
+                        var onDeleted = null, promiseRemoved;
+
+                        sut.watch("deleted", function () {
+                            onDeleted = arguments;
+                        });
+
+                        promiseRemoved = promiseUploaded.then(function () {
+                            return couchDBDocument.remove();
+                        });
+
+                        it("Then publishes a 'deleted' event", function (done) {
+                            promiseRemoved.then(function () {
+                                var docIndex = onDeleted[1];
+                                expect(sut.get(docIndex)).to.be.undefined;
+                                done();
+                            });
+                        });
+                    });
                 });
             });
         });
