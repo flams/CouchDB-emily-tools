@@ -81,20 +81,16 @@ function CouchDBDocumentConstructor() {
                 }
             },
             function (err, changes) {
-                var json;
-
                 if (err) {
                     throw new Error(err);
                 }
 
-                json = JSON.parse(changes);
-
                 // The document is the modified document is the current one
-                if (json.id == _syncInfo.document &&
+                if (changes.id == _syncInfo.document &&
                     // And if it has a new revision
-                    json.changes.pop().rev != this.get("_rev")) {
+                    changes.changes.pop().rev != this.get("_rev")) {
 
-                    if (json.deleted) {
+                    if (changes.deleted) {
                         this.getStateMachine().event("remove");
                     } else {
                         this.getStateMachine().event("change");

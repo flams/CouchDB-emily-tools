@@ -53,6 +53,7 @@ function CouchDBViewConstructor() {
             query: _syncInfo.query
         }, function (results) {
             var json = JSON.parse(results);
+
             if (!json.rows) {
                 throw new Error("CouchDBStore [" + _syncInfo.database +
                  ", " + _syncInfo.design + ", " + _syncInfo.view + "].sync() failed: " + results);
@@ -79,7 +80,8 @@ function CouchDBViewConstructor() {
         Tools.mixin({
             feed: "continuous",
             heartbeat: 20000,
-            descending: true
+            descending: true,
+            since: "now"
         }, _syncInfo.query);
 
         this.stopListening = this.getTransport().listen(
@@ -92,23 +94,23 @@ function CouchDBViewConstructor() {
                     throw new Error(err);
                 }
 
-                var json = JSON.parse(changes),
-                    action;
+                var action;
 
                 // reducedView is known on the first get view
                 if (_syncInfo.reducedView) {
                     action = "updateReduced";
                 } else {
-                    if (json.deleted) {
+                    if (changes.deleted) {
                         action = "remove";
-                    } else if (json.changes && json.changes[0].rev.search("1-") === 0) {
+                    } else if (changes.changes && changes.changes[0].rev.search("1-") === 0) {
                         action = "add";
                     } else {
                         action = "change";
                     }
                 }
 
-                this.getStateMachine().event(action, json.id);
+            //    console.log("hey ", changes, action)
+                this.getStateMachine().event(action, changes.id);
             }, this);
     };
 
@@ -133,7 +135,7 @@ function CouchDBViewConstructor() {
             }, function (view) {
                 var json = JSON.parse(view);
 
-                if (json.rows.length == this.getNbItems()) {
+                if (json.rows.length == this.count()) {
                     json.rows.some(function (value, idx) {
                         if (value.id == id) {
                             this.set(idx, value);
@@ -152,7 +154,7 @@ function CouchDBViewConstructor() {
      * @private
      */
     this.evenDocsInStore = function evenDocsInStore(view, id) {
-        var nbItems = this.getNbItems();
+        var nbItems = this.count();
 
         // If a document was removed from the view
         if (view.length < nbItems) {

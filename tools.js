@@ -7,9 +7,10 @@
 var http = require("http"),
 	qs = require("querystring"),
 	cookie = require("cookie"),
-	emily = require("emily"),
+	mixin = require("simple-object-mixin"),
 	CouchDBTools = require("./src/CouchDBTools")
-    follow = require("follow");
+    follow = require("follow")
+	store = require("observable-store");
 
 var configuration = {
 	hostname: "localhost",
@@ -74,8 +75,12 @@ function handler(payload, onEnd, onData) {
 
 function changeHandler(payload, onEnd, onData) {
 
-    var url = payload.hostname + ":" + payload.port + payload.path,
-        feed = new follow.Feed(payload.query);
+    var url = "http://" + configuration.hostname + ":" + configuration.port + payload.path,
+        feed;
+
+	payload.query.db = url;
+
+	feed = new follow.Feed(payload.query);
 
     feed.on('change', function (data) {
         onData(null, data);
@@ -93,7 +98,7 @@ function changeHandler(payload, onEnd, onData) {
 
 }
 
-module.exports = emily.Tools.mixin(CouchDBTools, {
+module.exports = mixin(CouchDBTools, {
 	handler: handler,
     changeHandler: changeHandler,
 	configuration: configuration
