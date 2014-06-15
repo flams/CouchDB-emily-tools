@@ -3,18 +3,15 @@
  * The MIT License (MIT)
  * Copyright (c) 2012-2014 Olivier Scherrer <pode.fr@gmail.com>
  */
-var emily = require("emily"),
+var Transport = require("transport"),
     tools = require("../tools"),
-    assert = require("assert"),
-    http = require("http");
+    Store = require("observable-store"),
+    assert = require("assert");
 
-var handlers = new emily.Store();
-
-http.globalAgent.maxSockets = 64;
-
-handlers.set("CouchDB", tools.handler);
-
-tools.configuration.adminAuth = "couchdb:couchdb";
+var transport = new Transport(new Store({
+        "CouchDB": tools.handler,
+        "CouchDBChange": tools.changeHandler
+    }));
 
 function catchError(error) {
     if (typeof error == "object") {
@@ -42,15 +39,13 @@ function success(message) {
  * Remove all documents
  * Make sure they have all been removed
  */
-var CouchDBBulkDocuments = tools.CouchDBBulkDocuments,
-    Transport = emily.Transport;
+var CouchDBBulkDocuments = require("../src/CouchDBBulkDocuments");
 
 var bulkDocumentsA = new CouchDBBulkDocuments([]),
-    bulkDocumentsB = new CouchDBBulkDocuments([]),
-    transport = new Transport(handlers);
+    bulkDocumentsB = new CouchDBBulkDocuments([]);
 
-    bulkDocumentsA.setTransport(transport);
-    bulkDocumentsB.setTransport(transport);
+bulkDocumentsA.setTransport(transport);
+bulkDocumentsB.setTransport(transport);
 
 bulkDocumentsB.sync("test", {
     startkey: '"document2"',
@@ -136,15 +131,13 @@ bulkDocumentsB.sync("test", {
 }, bulkDocumentsA, catchError)
 
 .then(function () {
-    var self = this;
     // We wait a bit for this document to be updated
     // We could also simply whatch the remove event but this was easier
     setTimeout(function () {
-        if (!self.count()) {
+        if (!this.count()) {
             success("It can remove all of the documents");
         }
-    }, 100);
+    }.bind(this), 100);
 }, bulkDocumentsB, catchError);
 
 process.on('uncaughtException', catchError);
-
