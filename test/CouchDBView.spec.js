@@ -6,13 +6,10 @@
  var CouchDBView = require("../src/CouchDBView"),
     CouchDBDocument = require("../src/CouchDBDocument"),
 	chai = require("chai"),
-	chaiAsPromised = require("chai-as-promised"),
     serverTools = require("../tools"),
     Transport = require("transport"),
     Store = require("observable-store"),
 	expect = chai.expect;
-
-chai.use(chaiAsPromised);
 
 describe("Given CouchDBView and a transport", function () {
 
